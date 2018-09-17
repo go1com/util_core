@@ -9,6 +9,7 @@ use go1\util\enrolment\EnrolmentStatuses;
 use go1\util\lo\LiTypes;
 use go1\util\lo\LoHelper;
 use go1\util\lo\LoTypes;
+use go1\util\model\Enrolment;
 use go1\util\plan\PlanHelper;
 use go1\util\plan\PlanTypes;
 use go1\util\queue\Queue;
@@ -189,7 +190,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->link($this->db, EdgeTypes::HAS_MODULE, $this->courseId, $module4, 4);
         $this->link($this->db, EdgeTypes::HAS_MODULE, $this->courseId, $module5, 5);
         $courseEnrolmentId = $this->createEnrolment($this->db, ['profile_id' => $this->profileId, 'lo_id' => $this->courseId]);
-        $courseEnrolment = EnrolmentHelper::load($this->db, $courseEnrolmentId);
+        $courseEnrolment = EnrolmentHelper::loadSingle($this->db, $courseEnrolmentId);
         $progress = EnrolmentHelper::childrenProgressCount($this->db, $courseEnrolment);
         $this->assertEquals(5, $progress['total']);
         $basicModuleData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId, 'parent_lo_id' => $this->courseId];
@@ -229,7 +230,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
             $this->link($this->db, EdgeTypes::HAS_LI, $module2, $learningItemId, $key);
         }
         $courseEnrolmentId = $this->createEnrolment($this->db, ['profile_id' => $this->profileId, 'lo_id' => $course1]);
-        $courseEnrolment = EnrolmentHelper::load($this->db, $courseEnrolmentId);
+        $courseEnrolment = EnrolmentHelper::loadSingle($this->db, $courseEnrolmentId);
         $progress = EnrolmentHelper::childrenProgressCount($this->db, $courseEnrolment, true, LiTypes::all());
         $this->assertEquals(7, $progress['total']);
         $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId, 'parent_lo_id' => $module2];
@@ -250,12 +251,34 @@ class EnrolmentHelperTest extends UtilCoreTestCase
     public function testCreate()
     {
         $lo = LoHelper::load($this->db, $this->courseId);
-        $status = EnrolmentStatuses::NOT_STARTED;
-        $date = DateTime::formatDate('now');
-        EnrolmentHelper::create($this->db, $this->queue, 1, 1, 0, $lo, 1000, $status, $date, null, 0, 0, 0, [], null, true);
+        $enrolment = Enrolment::create();
+        $enrolment->id = 1;
+        $enrolment->profileId = 1;
+        $enrolment->parentLoId = 2;
+        $enrolment->parentEnrolmentId = 3;
+        $enrolment->takenPortalId = 4;
+        $enrolment->status = $status = EnrolmentStatuses::EXPIRED;
+        $enrolment->startDate = 5;
+        $enrolment->endDate = 6;
+        $enrolment->result = 7;
+        $enrolment->pass = 1;
+        $enrolment->changed = 6;
+        $enrolment->data = ['foo' => 'bar'];
 
-        $e = EnrolmentHelper::load($this->db, 1);
-        $this->assertEquals($status, $e->status);
+        EnrolmentHelper::create($this->db, $this->queue, $enrolment, $lo, null, true);
+
+        $e = EnrolmentHelper::loadSingle($this->db, 1);
+        $this->assertEquals($status, $enrolment->status);
+        $this->assertEquals($e->profileId, $enrolment->profileId);
+        $this->assertEquals($e->loId, $lo->id);
+        $this->assertEquals($e->parentLoId, $enrolment->parentLoId);
+        $this->assertEquals($e->parentEnrolmentId, $enrolment->parentEnrolmentId);
+        $this->assertEquals($e->startDate, $enrolment->startDate);
+        $this->assertEquals($e->endDate, $enrolment->endDate);
+        $this->assertEquals($e->result, $enrolment->result);
+        $this->assertEquals($e->pass, $enrolment->pass);
+        $this->assertEquals($e->changed, $enrolment->changed);
+        $this->assertEquals('bar', $e->data->foo);
 
         $message = $this->queueMessages[Queue::ENROLMENT_CREATE];
         $this->assertCount(1, $message);
@@ -268,12 +291,35 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $instanceId = $this->createPortal($this->db, []);
         $courseId = $this->createCourse($this->db, ['instance_id' => $instanceId, 'marketplace' => 1]);
         $lo = LoHelper::load($this->db, $courseId);
-        $status = EnrolmentStatuses::NOT_STARTED;
-        $date = DateTime::formatDate('now');
-        EnrolmentHelper::create($this->db, $this->queue, 1, 1, 0, $lo, 1000, $status, $date);
 
-        $e = EnrolmentHelper::load($this->db, 1);
-        $this->assertEquals($status, $e->status);
+        $enrolment = Enrolment::create();
+        $enrolment->id = 1;
+        $enrolment->profileId = 1;
+        $enrolment->parentLoId = 2;
+        $enrolment->parentEnrolmentId = 3;
+        $enrolment->takenPortalId = 4;
+        $enrolment->status = $status = EnrolmentStatuses::EXPIRED;
+        $enrolment->startDate = 5;
+        $enrolment->endDate = 6;
+        $enrolment->result = 7;
+        $enrolment->pass = 1;
+        $enrolment->changed = 6;
+        $enrolment->data = ['foo' => 'bar'];
+
+        EnrolmentHelper::create($this->db, $this->queue, $enrolment, $lo, null, true);
+
+        $e = EnrolmentHelper::loadSingle($this->db, 1);
+        $this->assertEquals($status, $enrolment->status);
+        $this->assertEquals($e->profileId, $enrolment->profileId);
+        $this->assertEquals($e->loId, $lo->id);
+        $this->assertEquals($e->parentLoId, $enrolment->parentLoId);
+        $this->assertEquals($e->parentEnrolmentId, $enrolment->parentEnrolmentId);
+        $this->assertEquals($e->startDate, $enrolment->startDate);
+        $this->assertEquals($e->endDate, $enrolment->endDate);
+        $this->assertEquals($e->result, $enrolment->result);
+        $this->assertEquals($e->pass, $enrolment->pass);
+        $this->assertEquals($e->changed, $enrolment->changed);
+        $this->assertEquals('bar', $e->data->foo);
 
         $this->assertCount(1, $this->queueMessages[Queue::DO_USER_CREATE_VIRTUAL_ACCOUNT]);
         $this->assertCount(1, $this->queueMessages[Queue::ENROLMENT_CREATE]);
@@ -403,5 +449,20 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals($enrolmentId, $enrolment->id);
         $this->assertEquals($takenPortalId, $enrolment->takenPortalId);
         $this->assertNull(EnrolmentHelper::loadSingle($this->db, 0));
+    }
+
+    public function testParentEnrolment()
+    {
+        $data = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
+        $courseEnrolmentId = $this->createEnrolment($this->db, $data + ['lo_id' => $this->courseId]);
+        $moduleEnrolmentId = $this->createEnrolment($this->db, $data + ['lo_id' => $this->moduleId, 'parent_lo_id' => $this->courseId, 'parent_enrolment_id' => $courseEnrolmentId]);
+        $videoEnrolmentId = $this->createEnrolment($this->db, $data + ['lo_id' => $this->liVideoId, 'parent_lo_id' => $this->moduleId, 'parent_enrolment_id' => $moduleEnrolmentId]);
+
+        $videoEnrolment = EnrolmentHelper::loadSingle($this->db, $videoEnrolmentId);
+        $moduleEnrolment = EnrolmentHelper::loadSingle($this->db, $moduleEnrolmentId);
+
+        $this->assertEquals($courseEnrolmentId, EnrolmentHelper::parentEnrolment($this->db, $videoEnrolment)->id);
+        $this->assertEquals($courseEnrolmentId, EnrolmentHelper::parentEnrolment($this->db, $moduleEnrolment)->id);
+        $this->assertEquals($moduleEnrolmentId, EnrolmentHelper::parentEnrolment($this->db, $videoEnrolment, LoTypes::MODULE)->id);
     }
 }
