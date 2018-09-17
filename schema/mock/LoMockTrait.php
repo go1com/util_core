@@ -105,13 +105,6 @@ trait LoMockTrait
             }
         }
 
-        if (!empty($options['new_tags'])) {
-            $tags = Text::parseInlineTags($options['new_tags']);
-            foreach ($tags as $tag) {
-                $this->postNewTag($db, $instanceId, $courseId, $tag);
-            }
-        }
-
         if (!empty($options['event'])) {
             $event = is_scalar($options['event']) ? json_decode($options['event'], true) : $options['event'];
             self::createEvent($db, $courseId, $event);
@@ -120,13 +113,13 @@ trait LoMockTrait
         return $courseId;
     }
 
-    public function postTag(Connection $db, $instanceId, $tag, $parentId = 0)
+    public function postTag(Connection $db, int $instanceId, int $loId, string $tag, $type = 1)
     {
-        ($id = $db->fetchColumn('SELECT id FROM gc_tag WHERE instance_id = ? AND title = ?', [$instanceId, $tag]))
-            ? $db->executeQuery('UPDATE gc_tag SET lo_count = lo_count + 1 WHERE instance_id = ? AND title = ?', [$instanceId, $tag])
-            : $db->insert('gc_tag', ['instance_id' => $instanceId, 'title' => $tag, 'parent_id' => $parentId, 'timestamp' => time()]);
+        ($id = $db->fetchColumn('SELECT id FROM gc_tags WHERE instance_id = ? AND lo_id = ? AND title = ? AND type = ?', [$instanceId, $loId, $tag, $type]))
+            ? $db->executeQuery('UPDATE gc_tag SET lo_count = lo_count + 1 WHERE instance_id = ? AND lo_id = ? AND title = ? AND type = ?', [$instanceId, $loId, $tag, $type])
+            : $db->insert('gc_tags', ['instance_id' => $instanceId, 'lo_id' => $loId, 'title' => $tag, 'type' => $type, 'timestamp' => time()]);
 
-        return $id ? $id : $db->lastInsertId('gc_tag');
+        return $id ? $id : $db->lastInsertId('gc_tags');
     }
 
     public function createEvent(Connection $db, int $loId, array $event)
@@ -189,17 +182,6 @@ trait LoMockTrait
             'lo_id'       => $loId,
             'tag'         => $tag,
             'status'      => $status,
-        ]);
-    }
-
-    public function postNewTag(Connection $db, int $instanceId, int $loId, $tag, $type = 1)
-    {
-        $db->insert('gc_tags', [
-            'title'       => trim($tag),
-            'lo_id'   => $loId,
-            'instance_id' => $instanceId,
-            'type'    => $type,
-            'timestamp'   => time(),
         ]);
     }
 }
