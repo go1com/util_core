@@ -105,6 +105,13 @@ trait LoMockTrait
             }
         }
 
+        if (!empty($options['new_tags'])) {
+            $tags = Text::parseInlineTags($options['new_tags']);
+            foreach ($tags as $tag) {
+                $this->postNewTag($db, $instanceId, $courseId, $tag);
+            }
+        }
+
         if (!empty($options['event'])) {
             $event = is_scalar($options['event']) ? json_decode($options['event'], true) : $options['event'];
             self::createEvent($db, $courseId, $event);
@@ -182,6 +189,17 @@ trait LoMockTrait
             'lo_id'       => $loId,
             'tag'         => $tag,
             'status'      => $status,
+        ]);
+    }
+
+    public function postNewTag(Connection $db, int $instanceId, int $loId, $tag, $type = 1)
+    {
+        $db->insert('gc_tags', [
+            'title'       => trim($tag),
+            'lo_id'   => $loId,
+            'instance_id' => $instanceId,
+            'type'    => $type,
+            'timestamp'   => time(),
         ]);
     }
 }
