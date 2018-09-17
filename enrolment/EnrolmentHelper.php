@@ -165,6 +165,9 @@ class EnrolmentHelper
         return !$assessorIds ? [] : UserHelper::loadMultiple($db, array_map('intval', $assessorIds));
     }
 
+    /**
+     * @deprecated
+     */
     public static function findParentEnrolment(Connection $db, stdClass $enrolment, $parentLoType = LoTypes::COURSE)
     {
         $loadLo = function ($loId) use ($db) {
@@ -228,17 +231,17 @@ class EnrolmentHelper
         return $completedRequiredLos >= count($requiredLoIds);
     }
 
-    public static function childrenProgressCount(Connection $db, stdClass $enrolment, $all = false, array $childTypes = [])
+    public static function childrenProgressCount(Connection $db, Enrolment $enrolment, $all = false, array $childTypes = [])
     {
-        $childIds = LoHelper::childIds($db, $enrolment->lo_id, $all);
-        $parentIds = array_merge($childIds, [$enrolment->lo_id]);
+        $childIds = LoHelper::childIds($db, $enrolment->loId, $all);
+        $parentIds = array_merge($childIds, [$enrolment->loId]);
         if ($childIds && $childTypes) {
             $childIds = $db->executeQuery('SELECT id FROM gc_lo WHERE type IN (?) AND id IN (?)', [$childTypes, $childIds], [DB::STRINGS, DB::INTEGERS])->fetchAll(DB::COL);
         }
         $progress = ['total' => count($childIds)];
         if ($childIds) {
             $q = 'SELECT status, count(id) as totalEnrolment FROM gc_enrolment WHERE lo_id IN (?) AND profile_id = ? AND parent_lo_id IN (?) GROUP BY status';
-            $q = $db->executeQuery($q, [$childIds, $enrolment->profile_id, $parentIds], [DB::INTEGERS, DB::INTEGER, DB::INTEGERS]);
+            $q = $db->executeQuery($q, [$childIds, $enrolment->profileId, $parentIds], [DB::INTEGERS, DB::INTEGER, DB::INTEGERS]);
             while ($row = $q->fetch(DB::OBJ)) {
                 $progress[$row->status] = $row->totalEnrolment;
             }
@@ -251,45 +254,29 @@ class EnrolmentHelper
         return $progress;
     }
 
-    public static function create(
-        Connection $db,
-        MqClient $queue,
-        int $id,
-        int $profileId,
-        int $parentLoId = 0,
-        stdClass $lo,
-        int $instanceId,
-        string $status = EnrolmentStatuses::IN_PROGRESS,
-        string $startDate = null,
-        string $endDate = null,
-        int $result = 0,
-        int $pass = 0,
-        string $changed = null,
-        array $data = [],
-        $assignerId = null,
-        $notify = true
-    )
+    public static function create(Connection $db, MqClient $queue, Enrolment $enrolment, stdClass $lo, $assignerId = null, $notify = true)
     {
         $date = DateTime::formatDate('now');
-        if (!$startDate && ($status != EnrolmentStatuses::NOT_STARTED)) {
-            $startDate = $date;
+        if (!$enrolment->startDate && ($enrolment->status != EnrolmentStatuses::NOT_STARTED)) {
+            $enrolment->startDate = $date;
         }
 
         $enrolment = [
-            'id'                => $id,
-            'profile_id'        => $profileId,
-            'parent_lo_id'      => $parentLoId,
-            'lo_id'             => $lo->id,
-            'instance_id'       => 0,
-            'taken_instance_id' => $instanceId,
-            'status'            => $status,
-            'start_date'        => $startDate,
-            'end_date'          => $endDate,
-            'result'            => $result,
-            'pass'              => $pass,
-            'changed'           => $changed ?? $date,
-            'timestamp'         => time(),
-            'data'              => json_encode($data),
+            'id'                  => $enrolment->id,
+            'profile_id'          => $enrolment->profileId,
+            'parent_lo_id'        => $enrolment->parentLoId,
+            'parent_enrolment_id' => $enrolment->parentEnrolmentId,
+            'lo_id'               => $lo->id,
+            'instance_id'         => 0,
+            'taken_instance_id'   => $enrolment->takenPortalId,
+            'status'              => $enrolment->status,
+            'start_date'          => $enrolment->startDate,
+            'end_date'            => $enrolment->endDate,
+            'result'              => $enrolment->result,
+            'pass'                => $enrolment->pass,
+            'changed'             => $enrolment->changed ?? $date,
+            'timestamp'           => time(),
+            'data'                => json_encode($enrolment->data),
         ];
 
         $db->insert('gc_enrolment', $enrolment);
@@ -388,5 +375,14 @@ class EnrolmentHelper
         $row = $db->executeQuery($row, [$enrolmentId], [DB::INTEGER])->fetch(DB::OBJ);
 
         return $row ? Enrolment::create($row) : null;
+    }
+
+    public static function parentEnrolment(Connection $db, Enrolment $enrolment, $parentLoType = LoTypes::COURSE):? Enrolment
+    {
+        if ($db->fetchColumn('SELECT 1 FROM gc_lo WHERE type = ? AND id = ?', [$parentLoType, $enrolment->loId])) {
+            return $enrolment;
+        }
+        $parentEnrolment = $enrolment->parentEnrolmentId ? EnrolmentHelper::loadSingle($db, $enrolment->parentEnrolmentId) : null;
+        return $parentEnrolment ? static::parentEnrolment($db, $parentEnrolment, $parentLoType) : null;
     }
 }

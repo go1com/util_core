@@ -16,6 +16,7 @@ class Schema
     const LOG_INDEX         = ES_INDEX . '_log';
     const ACTIVITY_INDEX    = ES_INDEX . '_activity';
     const PORTALS_INDEX     = ES_INDEX . '_portal*';
+    const PAYMENT_INDEX     = ES_INDEX . '_payment';
 
     const TEMP             = -32;
     const MAX_INPUT_LENGTH = 50;
@@ -37,6 +38,7 @@ class Schema
     const T_COMPLETION_CATEGORY = 'CATEGORY'; # must be in upper-case
     const T_OBJECT              = 'object';
     const T_NESTED              = 'nested';
+    const T_GEO_POINT           = 'geo_point';
 
     const O_EDGE                = 'edge';
     const O_PORTAL              = 'portal';
@@ -298,6 +300,7 @@ class Schema
             'title'           => ['type' => self::T_KEYWORD] + self::ANALYZED,
             'description'     => ['type' => self::T_TEXT],
             'tags'            => ['type' => self::T_KEYWORD] + self::ANALYZED,
+            'custom_tags'     => ['type' => self::T_KEYWORD] + self::ANALYZED,
             'image'           => ['type' => self::T_TEXT],
             'quantity'        => ['type' => self::T_DOUBLE],
             'collection_id'   => ['type' => self::T_INT],
@@ -337,6 +340,7 @@ class Schema
             'data'            => [
                 'properties' => [
                     'allow_resubmit' => ['type' => self::T_INT],
+                    'allow_reenrol'  => ['type' => self::T_SHORT],
                     'label'          => ['type' => self::T_KEYWORD],
                     'pass_rate'      => ['type' => self::T_FLOAT],
                     'url'            => ['type' => self::T_TEXT],
@@ -353,6 +357,7 @@ class Schema
                     'administrative_area_name' => ['type' => self::T_KEYWORD] + self::ANALYZED,
                     'locality'                 => ['type' => self::T_KEYWORD] + self::ANALYZED,
                     'thoroughfare'             => ['type' => self::T_KEYWORD] + self::ANALYZED,
+                    'coordinate'               => ['type' => self::T_GEO_POINT],
                 ],
             ],
             'vote'            => [
@@ -448,48 +453,49 @@ class Schema
         '_parent'           => ['type' => self::O_LO],
         '_routing'          => ['required' => true],
         'properties'        => [
-            'id'             => ['type' => self::T_KEYWORD],
+            'id'                  => ['type' => self::T_KEYWORD],
+            'parent_enrolment_id' => ['type' => self::T_INT],
             // Type of enrolment: enrolment, manual-record, plan-assigned.
-            'type'           => ['type' => self::T_KEYWORD],
-            'profile_id'     => ['type' => self::T_INT],
-            'lo_id'          => ['type' => self::T_INT],
-            'parent_id'      => ['type' => self::T_INT],
-            'status'         => ['type' => self::T_SHORT],
-            'last_status'    => ['type' => self::T_SHORT],
-            'quantity'       => ['type' => self::T_DOUBLE],
-            'result'         => ['type' => self::T_INT],
-            'pass'           => ['type' => self::T_INT],
-            'assessors'      => ['type' => self::T_INT],
+            'type'                => ['type' => self::T_KEYWORD],
+            'profile_id'          => ['type' => self::T_INT],
+            'lo_id'               => ['type' => self::T_INT],
+            'parent_id'           => ['type' => self::T_INT],
+            'status'              => ['type' => self::T_SHORT],
+            'last_status'         => ['type' => self::T_SHORT],
+            'quantity'            => ['type' => self::T_DOUBLE],
+            'result'              => ['type' => self::T_INT],
+            'pass'                => ['type' => self::T_INT],
+            'assessors'           => ['type' => self::T_INT],
             // It's used to calculate scheduled duration: scheduled_duration = due_date - assigned_date;
             // To get it: assigned_date = plan.created;
-            'assigned_date'  => ['type' => self::T_DATE],
-            'start_date'     => ['type' => self::T_DATE],
-            'end_date'       => ['type' => self::T_DATE],
-            'due_date'       => ['type' => self::T_DATE],
-            'submitted_date' => ['type' => self::T_DATE],
-            'marked_date'    => ['type' => self::T_DATE],
+            'assigned_date'       => ['type' => self::T_DATE],
+            'start_date'          => ['type' => self::T_DATE],
+            'end_date'            => ['type' => self::T_DATE],
+            'due_date'            => ['type' => self::T_DATE],
+            'submitted_date'      => ['type' => self::T_DATE],
+            'marked_date'         => ['type' => self::T_DATE],
             // For award enrolment only
-            'expire_date'    => ['type' => self::T_DATE],
+            'expire_date'         => ['type' => self::T_DATE],
             // It's used to calculate award completed duration: award_completed_duration = expire_date - begin_expire;
             // To get it: begin_expire = fixed expiry date ? start_date : end_date;
-            'begin_expire'   => ['type' => self::T_DATE],
-            'changed'        => ['type' => self::T_DATE],
-            'created'        => ['type' => self::T_DATE],
+            'begin_expire'        => ['type' => self::T_DATE],
+            'changed'             => ['type' => self::T_DATE],
+            'created'             => ['type' => self::T_DATE],
             // Duration between end date and start date (hours).
             // @todo Support quiz and interactive.
-            'duration'       => ['type' => self::T_INT],
-            'is_assigned'    => ['type' => self::T_SHORT],
-            'lo'             => [
+            'duration'            => ['type' => self::T_INT],
+            'is_assigned'         => ['type' => self::T_SHORT],
+            'lo'                  => [
                 'properties' => self::LO_MAPPING['properties'],
             ],
-            'parent_lo'      => [
+            'parent_lo'           => [
                 'properties' => [
                     'id'    => ['type' => self::T_KEYWORD],
                     'type'  => ['type' => self::T_KEYWORD],
                     'title' => ['type' => self::T_KEYWORD] + self::ANALYZED,
                 ],
             ],
-            'assessor'       => [
+            'assessor'            => [
                 'properties' => [
                     'id'         => ['type' => self::T_KEYWORD],
                     'mail'       => ['type' => self::T_KEYWORD] + self::ANALYZED,
@@ -498,10 +504,10 @@ class Schema
                     'last_name'  => ['type' => self::T_KEYWORD] + self::ANALYZED,
                 ],
             ],
-            'account'        => [
+            'account'             => [
                 'properties' => self::ACCOUNT_MAPPING['properties'],
             ],
-            'progress'       => [
+            'progress'            => [
                 'properties' => [
                     EnrolmentStatuses::NOT_STARTED => ['type' => self::T_INT],
                     EnrolmentStatuses::IN_PROGRESS => ['type' => self::T_INT],
@@ -510,7 +516,7 @@ class Schema
                     EnrolmentStatuses::PERCENTAGE  => ['type' => self::T_INT],
                 ],
             ],
-            'certificates'   => [
+            'certificates'        => [
                 'type'       => self::T_NESTED,
                 'properties' => [
                     'type' => ['type' => self::T_KEYWORD],
@@ -519,7 +525,7 @@ class Schema
                     'size' => ['type' => self::T_TEXT],
                 ],
             ],
-            'metadata'       => [
+            'metadata'            => [
                 'properties' => [
                     'account_id'          => ['type' => self::T_INT],
                     'course_enrolment_id' => ['type' => self::T_INT],
@@ -601,6 +607,7 @@ class Schema
             ],
             'metadata'            => [
                 'properties' => [
+                    'updated_at'  => ['type' => self::T_INT],
                     'instance_id' => ['type' => self::T_INT],
                 ],
             ],
@@ -614,9 +621,11 @@ class Schema
             'id'       => ['type' => self::T_KEYWORD], # Enrolment ID
             'lo_id'    => ['type' => self::T_INT],
             'type'     => ['type' => self::T_KEYWORD],
+            'status'   => ['type' => self::T_SHORT],
             'metadata' => [
                 'properties' => [
                     'instance_id' => ['type' => self::T_INT],
+                    'course_id'   => ['type' => self::T_INT],
                     'updated_at'  => ['type' => self::T_INT],
                 ],
             ],
@@ -790,6 +799,7 @@ class Schema
     const PURCHASE_REQUEST_MAPPING = [
         'properties' => [
             'id'            => ['type' => self::T_KEYWORD],
+            'portal_id'     => ['type' => self::T_INT],
             'user'          => [
                 'properties' => self::USER_MAPPING['properties'],
             ],
@@ -800,8 +810,8 @@ class Schema
                 'properties' => self::LO_MAPPING['properties'],
             ],
             'status'        => ['type' => self::T_SHORT],
-            'request_date'  => ['type' => self::T_TEXT],
-            'response_date' => ['type' => self::T_TEXT],
+            'request_date'  => ['type' => self::T_DATE],
+            'response_date' => ['type' => self::T_DATE],
             'approve_url'   => ['type' => self::T_TEXT],
             'reject_url'    => ['type' => self::T_TEXT],
             'metadata'      => [
@@ -913,7 +923,7 @@ class Schema
         'start'                    => ['type' => self::T_DATE],
         'end'                      => ['type' => self::T_DATE],
         'timezone'                 => ['type' => self::T_KEYWORD],
-        'seats'                    => ['type' => self::T_INT],
+        'seats'                    => ['type' => self::T_INT], # Or attendee_limit
         'available_seats'          => ['type' => self::T_INT],
         'country'                  => ['type' => self::T_KEYWORD],
         'country_name'             => ['type' => self::T_KEYWORD] + self::ANALYZED,
@@ -928,6 +938,7 @@ class Schema
         'organisation_name'        => ['type' => self::T_KEYWORD],
         'name_line'                => ['type' => self::T_KEYWORD],
         'postal_code'              => ['type' => self::T_KEYWORD],
+        'instructor_ids'           => ['type' => self::T_INT],
     ];
 
     const EVENT_MAPPING = [
