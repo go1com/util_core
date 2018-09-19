@@ -209,5 +209,23 @@ class LoSchema
             $tags->addIndex(['type']);
             $tags->addIndex(['timestamp']);
         }
+
+        if (!$schema->hasTable('gc_lo_attributes')) {
+            $attributes = $schema->createTable('gc_lo_attributes');
+            $attributes->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
+            $attributes->addColumn('lo_id', 'integer', ['unsigned' => true]);
+            $attributes->addColumn('mobile_optimised', 'boolean');
+            $attributes->addColumn('wcag', 'boolean');
+            $attributes->addColumn('assessable', 'boolean');
+            $attributes->addColumn('published_date', 'integer', ['unsigned' => true]);
+            $attributes->addColumn('published_update_date', 'integer', ['unsigned' => true]);
+            $attributes->setPrimaryKey(['id']);
+            $attributes->addIndex(['lo_id']);
+            $attributes->addIndex(['mobile_optimised']);
+            $attributes->addIndex(['wcag']);
+            $attributes->addIndex(['assessable']);
+            $attributes->addIndex(['published_date']);
+            $attributes->addIndex(['published_update_date']);
+        }
     }
 }
