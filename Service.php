@@ -49,7 +49,7 @@ class Service
         $pattern = $pattern ?: 'http://SERVICE.ENVIRONMENT.go1.service';
 
         // There are some services don't have staging instance yet.
-        if (in_array($name, ['rules'])) {
+        if (in_array($name, ['rules', 'index_url', 'marketplace-indexer_url', 'index-content-sharing_url', 'payment-index_url'])) {
             $env = 'production';
         }
 
