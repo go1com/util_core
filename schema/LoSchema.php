@@ -209,5 +209,17 @@ class LoSchema
             $tags->addIndex(['type']);
             $tags->addIndex(['created']);
         }
+
+        if (!$schema->hasTable('gc_lo_availabilities')) {
+            $tags = $schema->createTable('gc_lo_availabilities');
+            $tags->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
+            $tags->addColumn('lo_id', 'integer', ['unsigned' => true]);
+            $tags->addColumn('country_code', 'string');
+            $tags->addColumn('created', 'integer', ['unsigned' => true]);
+            $tags->setPrimaryKey(['id']);
+            $tags->addIndex(['lo_id']);
+            $tags->addIndex(['country_code']);
+            $tags->addIndex(['created']);
+        }
     }
 }
