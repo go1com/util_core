@@ -159,7 +159,7 @@ class EdgeHelper
             ->andWhere('type IN (:types)')
             ->setParameter(':types', $types, Connection::PARAM_INT_ARRAY);
 
-        return $q->execute()->fetchAll($mode);
+        return $q->orderBy('weight')->execute()->fetchAll($mode);
     }
 
     public function getSingle(Connection $db, array $sourceIds = [], array $targetIds = [], array $types = [], $mode = DB::OBJ)
