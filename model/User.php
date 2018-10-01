@@ -78,7 +78,11 @@ class User implements JsonSerializable
                 $q = 'SELECT * FROM gc_user WHERE status = 1 AND mail = ? AND instance = ?';
                 $account = $db->executeQuery($q, [$user->mail, $portalName])->fetch(DB::OBJ);
                 if ($account) {
-                    $user->accounts[] = static::create($account, $db, false);
+                    $q = 'SELECT 1 FROM gc_ro WHERE type = ? AND source_id = ? AND target_id = ?';
+                    $has = $db->executeQuery($q, [EdgeTypes::HAS_ACCOUNT, $user->id, $account->id])->fetchColumn();
+                    if ($has) {
+                        $user->accounts[] = static::create($account, $db, false);
+                    }
                 }
             }
         }
