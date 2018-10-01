@@ -50,7 +50,7 @@ class LoUpdateEventEmbedder extends LoCreateEventEmbedder
         $hasLiEdges = EdgeHelper::edgesFromTarget($this->go1, $lo->id, [EdgeTypes::HAS_LI, EdgeTypes::HAS_ELECTIVE_LI]);
         if ($hasLiEdges) {
             foreach ($hasLiEdges as $hasLiEdge) {
-                $embedded['ro'][$hasLiEdge] = $hasLiEdge;
+                $embedded['ro'][$hasLiEdge->id] = $hasLiEdge;
                 $moduleIds[] = (int) $hasLiEdge->source_id;
             }
         }
@@ -59,7 +59,7 @@ class LoUpdateEventEmbedder extends LoCreateEventEmbedder
             $hasModuleEdges = EdgeHelper::edgesFromTargets($this->go1, $moduleIds, [EdgeTypes::HAS_MODULE]);
             foreach ($hasModuleEdges as $hasModuleEdge) {
                 $embedded['ro'][$hasModuleEdge->id] = $hasModuleEdge;
-                $courseIds[] = (int) $hasModuleEdge;
+                $courseIds[] = (int) $hasModuleEdge->source_id;
             }
         }
 
