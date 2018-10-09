@@ -1,6 +1,6 @@
 <?php
 
-namespace go1\util\lo\event_publishing;
+namespace go1\util\user\event_publishing;
 
 use Doctrine\DBAL\Connection;
 use go1\util\AccessChecker;
@@ -8,10 +8,10 @@ use go1\util\portal\PortalHelper;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
 
-class LoCreateEventEmbedder
+class AccountEventsEmbedder
 {
-    protected $go1;
-    protected $access;
+    private $go1;
+    private $access;
 
     public function __construct(Connection $go1, AccessChecker $access)
     {
@@ -19,16 +19,16 @@ class LoCreateEventEmbedder
         $this->access = $access;
     }
 
-    public function embedded(stdClass $lo, Request $req): array
+    public function embed(stdClass $account, Request $req = null): array
     {
         $embedded = [];
 
-        $portal = PortalHelper::load($this->go1, $lo->instance_id);
+        $portal = PortalHelper::load($this->go1, $account->instance);
         if ($portal) {
             $embedded['portal'] = $portal;
         }
 
-        $user = $this->access->validUser($req, $portal ? $portal->title : null);
+        $user = $req ? $this->access->validUser($req, $portal ? $portal->title : null) : null;
         if ($user) {
             $embedded['jwt']['user'] = $user;
         }
