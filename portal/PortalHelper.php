@@ -53,15 +53,13 @@ class PortalHelper
         $portal = $go1->executeQuery($portal, [$nameOrId])->fetch(DB::OBJ);
 
         if ($portal) {
-            $portalData = array();
-
-            if ($includePortalData) {
-                $portalData = self::loadPortalDataById($go1, (int)$portal->id);
-            }
-
             $portal->data = isset($portal->data) ? (object) json_decode($portal->data) : new stdClass();
 
-            return (object)array_merge((array)$portal, (array)$portalData);
+            if ($includePortalData) {
+                $portal->data->portal_data = self::loadPortalDataById($go1, (int)$portal->id);
+            }
+
+            return $portal;
         }
 
         if ($aliasSupport && !is_numeric($nameOrId)) {

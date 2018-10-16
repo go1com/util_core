@@ -149,6 +149,6 @@ class PortalHelperTest extends UtilCoreTestCase
         $this->createPortalData($this->db, ['id' => $portalId, 'customer_id' => $customerID]);
         $portalData = PortalHelper::load($this->db, $portalId, '*', false, true);
         $this->assertEquals($portalId, $portalData->id);
-        $this->assertEquals($customerID, $portalData->customer_id);
+        $this->assertEquals($customerID, $portalData->data->portal_data->customer_id);
     }
 }
