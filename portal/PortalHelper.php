@@ -46,10 +46,11 @@ class PortalHelper
         PortalCollectionConfiguration::SHARE,
     ];
 
-    public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false): ?stdClass
+    public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false, bool $IncludePortalData = false): ?stdClass
     {
         $column = is_numeric($nameOrId) ? 'id' : 'title';
-        $portal = "SELECT {$columns} FROM gc_instance WHERE $column = ?";
+        $JoinPortalData = ($IncludePortalData) ? " LEFT JOIN portal_data ON gc_instance.id = portal_data.id" : "";
+        $portal = "SELECT {$columns} FROM gc_instance" . $JoinPortalData . " WHERE {$column} = ? ";
         $portal = $go1->executeQuery($portal, [$nameOrId])->fetch(DB::OBJ);
         if ($portal) {
             $portal->data = isset($portal->data) ? (object) json_decode($portal->data) : new stdClass();
