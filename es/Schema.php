@@ -3,6 +3,7 @@
 namespace go1\util\es;
 
 use go1\util\enrolment\EnrolmentStatuses;
+use go1\util\event\AttendanceStatuses;
 
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
@@ -19,9 +20,9 @@ class Schema
     const PAYMENT_INDEX     = ES_INDEX . '_payment';
 
     # Indices for explore
-    const EXPLORE_INDEX             = ES_INDEX.'_explore';
-    const EXPLORE_GROUP_INDEX       = ES_INDEX.'_explore_group';
-    const EXPLORE_MARKETPLACE_INDEX = ES_INDEX.'_explore_marketplace';
+    const EXPLORE_INDEX             = ES_INDEX . '_explore';
+    const EXPLORE_GROUP_INDEX       = ES_INDEX . '_explore_group';
+    const EXPLORE_MARKETPLACE_INDEX = ES_INDEX . '_explore_marketplace';
 
     const TEMP             = -32;
     const MAX_INPUT_LENGTH = 50;
@@ -71,6 +72,7 @@ class Schema
     const O_LO_POLICY           = 'lo_policy';
     const O_LO_TAG              = 'lo_tag';
     const O_EVENT               = 'event';
+    const O_EVENT_ATTENDANCE    = 'event_attendance';
     const O_AWARD               = 'award';
     const O_AWARD_ITEM          = 'award_item';
     const O_AWARD_ITEM_MANUAL   = 'award_item_manual';
@@ -123,6 +125,7 @@ class Schema
         self::O_ECK_METADATA        => self::ECK_METADATA_MAPPING,
         self::O_COUPON              => self::COUPON_MAPPING,
         self::O_EVENT               => self::EVENT_MAPPING,
+        self::O_EVENT_ATTENDANCE    => self::EVENT_ATTENDANCE_MAPPING,
         self::O_AWARD               => self::AWARD_MAPPING,
         self::O_AWARD_ITEM          => self::AWARD_ITEM_MAPPING,
         self::O_AWARD_ITEM_MANUAL   => self::AWARD_ITEM_MANUAL_MAPPING,
@@ -921,6 +924,19 @@ class Schema
         ],
     ];
 
+    const INSTRUCTOR_PROPERTIES = [
+        'id'           => ['type' => self::T_KEYWORD],
+        'profile_id'     => ['type' => self::T_INT],
+        'instance'     => ['type' => self::T_KEYWORD],
+        'mail'         => ['type' => self::T_KEYWORD] + self::ANALYZED,
+        'name'         => ['type' => self::T_KEYWORD] + self::ANALYZED,
+        'first_name'   => ['type' => self::T_KEYWORD] + self::ANALYZED,
+        'last_name'    => ['type' => self::T_KEYWORD] + self::ANALYZED,
+        'status'       => ['type' => self::T_SHORT],
+        'avatar'       => ['type' => self::T_TEXT],
+        'roles'        => ['type' => self::T_KEYWORD]
+    ];
+
     const EVENT_PROPERTIES = [
         'id'                       => ['type' => self::T_KEYWORD],
         'lo_id'                    => ['type' => self::T_INT],
@@ -944,7 +960,12 @@ class Schema
         'name_line'                => ['type' => self::T_KEYWORD],
         'postal_code'              => ['type' => self::T_KEYWORD],
         'location_name'            => ['type' => self::T_KEYWORD] + self::ANALYZED,
+        'module_title'             => ['type' => self::T_KEYWORD] + self::ANALYZED,
         'instructor_ids'           => ['type' => self::T_INT],
+        'instructors'              => [
+            'type'       => self::T_NESTED,
+            'properties' => self::INSTRUCTOR_PROPERTIES,
+        ],
         'coordinate'               => ['type' => self::T_GEO_POINT],
     ];
 
@@ -962,6 +983,40 @@ class Schema
                     ],
                 ],
             ],
+    ];
+
+    const EVENT_ATTENDANCE_MAPPING = [
+        '_parent'    => ['type' => self::O_ENROLMENT],
+        '_routing'   => ['required' => true],
+        'properties' => [
+            'id'           => ['type' => self::T_KEYWORD],
+            'user_id'      => ['type' => self::T_INT],
+            'lo_id'        => ['type' => self::T_INT],
+            'enrolment_id' => ['type' => self::T_INT],
+            'event_id'     => ['type' => self::T_INT],
+            'portal_id'    => ['type' => self::T_INT],
+            'profile_id'   => ['type' => self::T_INT],
+            'start_at'     => ['type' => self::T_DATE],
+            'end_at'       => ['type' => self::T_DATE],
+            'status'       => ['type' => self::T_SHORT],
+            'result'       => ['type' => self::T_INT],
+            'pass'         => ['type' => self::T_INT],
+            'timestamp'    => ['type' => self::T_DATE],
+            'progress'     => [
+                'properties' => [
+                    AttendanceStatuses::ATTENDED     => ['type' => self::T_INT],
+                    AttendanceStatuses::NOT_ATTENDED => ['type' => self::T_INT],
+                    AttendanceStatuses::ATTENDING    => ['type' => self::T_INT],
+                    AttendanceStatuses::PENDING      => ['type' => self::T_INT],
+                ],
+            ],
+            'metadata'     => [
+                'properties' => [
+                    'updated_at'  => ['type' => self::T_INT],
+                    'instance_id' => ['type' => self::T_INT],
+                ],
+            ],
+        ],
     ];
 
     const AWARD_MAPPING = [
