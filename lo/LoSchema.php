@@ -64,12 +64,30 @@ class LoSchema
             $price->addColumn('recurring', Type::BLOB, ['notnull' => false]);
             $price->setPrimaryKey(['id']);
             $price->addIndex(['price']);
-        }
-        else {
+        } else {
             $price = $schema->getTable('gc_lo_pricing');
             if (!$price->hasColumn('recurring')) {
                 $price->addColumn('recurring', Type::BLOB, ['notnull' => false]);
             }
+        }
+
+        if (!$schema->hasTable('gc_lo_view_access')) {
+            // user who has record on LO of certain portal, have view access.
+            $access = $schema->createTable('gc_lo_view_access');
+            $access->addColumn('lo_id', Type::INTEGER, ['unsigned' => true]);
+            $access->addColumn('active_portal_id', Type::INTEGER, ['unsigned' => true]);
+            $access->addColumn('user_id', Type::INTEGER, ['unsigned' => true]);
+            $access->setPrimaryKey(['lo_id', 'active_portal_id', 'user_id']);
+        }
+
+        if (!$schema->hasTable('gc_lo_view_access_log')) {
+            // Should only filter result by ID; no more.
+            $log = $schema->createTable('gc_lo_view_access_log');
+            $log->addColumn('id', Type::STRING); # format: $loId:$portalId:$userId
+            $log->addColumn('domain_name', Type::STRING);
+            $log->addColumn('op', Type::SMALLINT, ['unsigned' => true]); # 0: revoke, 1: grant
+            $log->addColumn('timestamp', Type::INTEGER, ['unsigned' => true]);
+            $log->addIndex(['id']);
         }
 
         if (!$schema->hasTable('gc_lo_group')) {
@@ -214,7 +232,7 @@ class LoSchema
             $table = $schema->createTable('gc_lo_attributes');
             $table->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $table->addColumn('lo_id', 'integer', ['unsigned' => true]);
-            $table->addColumn('key', 'integer', ['unsigned' => true]);  /** @see \go1\util\lo\LoAttributes */
+            $table->addColumn('key', 'integer', ['unsigned' => true]); # @see \go1\util\lo\LoAttributes
             $table->addColumn('value', 'string');
             $table->addColumn('created', 'integer', ['unsigned' => true]);
             $table->setPrimaryKey(['id']);
