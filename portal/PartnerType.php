@@ -20,4 +20,33 @@ class PartnerType
             (new ReflectionClass(__CLASS__))->getConstants()
         );
     }
+
+    public static function toString(string $type): string
+    {
+        switch ($type) {
+            case self::COMPLISPACE:
+                return 'Complispace';
+
+            case self::GO1:
+                return 'GO1';
+
+            case self::JOBREADY:
+                return 'JobReady';
+
+            case self::JSE:
+                return 'JSE';
+
+            case self::PARTNER_HUB:
+                return 'Partner Hub';
+
+            case self::TOTARA:
+                return 'Totara';
+
+            case self::XERO:
+                return 'Xero';
+
+            default:
+                throw new InvalidArgumentException('Unknown partner type: ' . $type);
+        }
+    }
 }
