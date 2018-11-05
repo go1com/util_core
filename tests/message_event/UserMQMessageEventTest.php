@@ -31,9 +31,10 @@ class UserMQMessageEventTest extends UtilCoreTestCase
             'first_name' => 'Bob',
             'last_name'  => 'Bay',
             'status'     => 1,
+            'instance'   => $this->instance
         ];
 
-        $userId = $this->createUser($this->db, $data + ['instance' => $this->instance]);
+        $userId = $this->createUser($this->db, $data);
         $user = UserHelper::load($this->db, $userId);
         $context[MqClient::CONTEXT_PORTAL_NAME] = $this->instance;
         $context[MqClient::CONTEXT_ENTITY_TYPE] = 'user';
@@ -42,8 +43,7 @@ class UserMQMessageEventTest extends UtilCoreTestCase
 
         $payload = $userMessage->jsonSerialize();
 
-        $this->assertEquals($userId, $payload->id);
-        $embedded = $payload->embedded;
-        $this->assertEquals($this->instance, $embedded['portal']->title);
+        $this->assertEquals($userId, $payload['id']);
+        $this->assertEquals($this->instance, $payload['embedded']['portal']->title);
     }
 }

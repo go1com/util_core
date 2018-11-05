@@ -2,8 +2,8 @@
 
 namespace go1\util\message_event;
 
-use Doctrine\DBAL\Connection;
 use go1\util\AccessChecker;
+use go1\util\message_event\pipelines\MessageEmbeddedPipeline;
 use go1\util\queue\Queue;
 use Symfony\Component\HttpFoundation\Request;
 use Exception;
@@ -19,11 +19,12 @@ class MQMessageEvent implements MessageEvent
     protected $routingKey;
     protected $payload;
     protected $context = [];
+    protected $pipelines = [];
 
     public function __construct($payload, string $routingKey, array $context = [])
     {
         $this->routingKey = $routingKey;
-        $this->payload = is_scalar($payload) ? json_decode($payload) : $payload;
+        $this->payload = is_scalar($payload) ? json_decode($payload) : (is_object($payload) ? (array) $payload : $payload);
         $this->context = $context;
 
         $this->processMessage();
@@ -73,16 +74,9 @@ class MQMessageEvent implements MessageEvent
             }
 
             try {
-                $propertyPathID = '[id]';
-                $propertyPathOriginal = '[original]';
-                if (is_object($this->payload)) {
-                    $propertyPathID = 'id';
-                    $propertyPathOriginal = 'original';
-                }
-
                 $accessor = PropertyAccess::createPropertyAccessor();
-                $accessor->getValue($this->payload, $propertyPathID);
-                $accessor->getValue($this->payload, $propertyPathOriginal);
+                $accessor->getValue($this->payload, '[id]');
+                $accessor->getValue($this->payload, '[original]');
             } catch (Exception $e) {
                 throw new Exception("Missing entity ID or original data.");
             }
@@ -114,7 +108,11 @@ class MQMessageEvent implements MessageEvent
         }
     }
 
-    public function format(Connection $db = null): void
+    public function embed()
     {
+        /** @var MessageEmbeddedPipeline $pipeline */
+        foreach ($this->pipelines as $pipeline) {
+            $pipeline->embed($this);
+        }
     }
 }
