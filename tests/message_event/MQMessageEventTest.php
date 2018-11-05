@@ -37,6 +37,6 @@ class MQMessageEventTest extends UtilCoreTestCase
         $message = new MQMessageEvent($payload, 'message.update');
 
         $payload = $message->jsonSerialize();
-        $this->assertEquals(1, $payload->id);
+        $this->assertEquals(1, $payload['id']);
     }
 }
