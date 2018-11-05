@@ -43,6 +43,7 @@ class Queue
     const LO_UPDATE                    = 'lo.update'; # Body: LO object with extra property: origin.
     const LO_DELETE                    = 'lo.delete'; # Body: LO object.
     const LO_SAVE_ASSESSORS            = 'lo.save.assessors';          # Body: {body: [create: INT[], update: INT[], delete: INT[]], id: INT}
+    const LO_SAVE_LI_LINKS             = 'lo.save.li-links';           # Body: {body: lo: LO-Object, links:[[create: edge[], update: edge[], delete: edge[]]]}
     const USER_CREATE                  = 'user.create';
     const USER_UPDATE                  = 'user.update';
     const USER_DELETE                  = 'user.delete';
