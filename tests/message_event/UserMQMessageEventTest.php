@@ -36,9 +36,7 @@ class UserMQMessageEventTest extends UtilCoreTestCase
 
         $userId = $this->createUser($this->db, $data);
         $user = UserHelper::load($this->db, $userId);
-        $context[MqClient::CONTEXT_PORTAL_NAME] = $this->instance;
-        $context[MqClient::CONTEXT_ENTITY_TYPE] = 'user';
-        $userMessage = new UserMQMessageEvent($user, Queue::USER_CREATE, $context);
+        $userMessage = new UserMQMessageEvent($user, Queue::USER_CREATE);
         $userMessage->format($this->db);
 
         $payload = $userMessage->jsonSerialize();
