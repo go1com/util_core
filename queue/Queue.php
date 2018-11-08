@@ -203,6 +203,7 @@ class Queue
     const LI_VIDEO_PROCESS_S3          = 'li_video.process.s3';
     const LO_UPDATE_ATTRIBUTES         = 'lo.update.attributes';
     const CONTENT_IMPORT_PROCESS_IMPORT     = 'content_import.process.import';
+    const CONTENT_IMPORT_COMPLETE      = 'notify_content_import.process.complete';
 
     # routingKey that tell some service to do something.
     #
