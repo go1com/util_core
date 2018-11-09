@@ -5,6 +5,7 @@ namespace go1\util\model;
 use Doctrine\DBAL\Connection;
 use go1\util\DB;
 use go1\util\edge\EdgeTypes;
+use go1\util\portal\PortalHelper;
 use JsonSerializable;
 use PDO;
 use stdClass;
@@ -15,10 +16,16 @@ use stdClass;
 class User implements JsonSerializable
 {
     /** @var integer */
-    public $id, $profileId;
+    public $id, $profileId, $portalId;
+
+    /**
+     * @deprecated
+     * @var string
+     */
+    public $instance;
 
     /** @var string */
-    public $instance, $name, $mail, $firstName, $lastName, $avatar;
+    public $name, $mail, $firstName, $lastName, $avatar, $portalName;
 
     /** @var bool */
     public $status;
@@ -44,12 +51,14 @@ class User implements JsonSerializable
      *   When the param is provided, sub account will be filled.
      * @return User
      */
-    public static function create(stdClass $row, Connection $db = null, $root = true, string $portalName = null)
+    public static function create(stdClass $row, Connection $db = null, $root = true, string $portalName = null, stdClass $portal = null)
     {
         $user = new User;
         $user->id = $row->id;
         $user->profileId = $row->profile_id ?? null;
         $user->instance = $row->instance ?? null;
+        $user->portalId = $portal->id ?? null;
+        $user->portalName = $row->instance ?? null;
         $user->name = $row->name ?? null;
         $user->mail = $row->mail ?? null;
         $user->firstName = $row->first_name ?? null;
@@ -81,7 +90,7 @@ class User implements JsonSerializable
                     $q = 'SELECT 1 FROM gc_ro WHERE type = ? AND source_id = ? AND target_id = ?';
                     $has = $db->executeQuery($q, [EdgeTypes::HAS_ACCOUNT, $user->id, $account->id])->fetchColumn();
                     if ($has) {
-                        $user->accounts[] = static::create($account, $db, false);
+                        $user->accounts[] = static::create($account, $db, false, null, PortalHelper::load($db, $account->instance));
                     }
                 }
             }
@@ -98,22 +107,24 @@ class User implements JsonSerializable
     function jsonSerialize()
     {
         return [
-            'id'         => $this->id,
-            'profile_id' => $this->profileId,
-            'instance'   => $this->instance,
-            'name'       => $this->name,
-            'mail'       => $this->mail,
-            'first_name' => $this->firstName,
-            'last_name'  => $this->lastName,
-            'avatar'     => $this->avatar,
-            'status'     => $this->status,
-            'created'    => $this->created,
-            'access'     => $this->access,
-            'login'      => $this->login,
-            'timestamp'  => $this->timestamp,
-            'roles'      => $this->roles,
-            'accounts'   => $this->accounts,
-            'data'       => $this->data,
+            'id'          => $this->id,
+            'profile_id'  => $this->profileId,
+            'instance'    => $this->instance,
+            'portal_id'   => $this->portalId,
+            'portal_name' => $this->portalName,
+            'name'        => $this->name,
+            'mail'        => $this->mail,
+            'first_name'  => $this->firstName,
+            'last_name'   => $this->lastName,
+            'avatar'      => $this->avatar,
+            'status'      => $this->status,
+            'created'     => $this->created,
+            'access'      => $this->access,
+            'login'       => $this->login,
+            'timestamp'   => $this->timestamp,
+            'roles'       => $this->roles,
+            'accounts'    => $this->accounts,
+            'data'        => $this->data,
         ];
     }
 

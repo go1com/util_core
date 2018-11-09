@@ -4,16 +4,19 @@ namespace go1\util\tests;
 
 use go1\util\AccessChecker;
 use go1\util\edge\EdgeTypes;
+use go1\util\schema\mock\PortalMockTrait;
 use go1\util\schema\mock\UserMockTrait;
 use go1\util\Text;
 use Symfony\Component\HttpFoundation\Request;
 
 class AccessCheckerTest extends UtilCoreTestCase
 {
+    use PortalMockTrait;
     use UserMockTrait;
 
     public function testValidAccount()
     {
+        $portalId = $this->createPortal($this->db, ['title' => 'qa.mygo1.com']);
         $userId = $this->createUser($this->db, ['instance' => 'accounts.gocatalyze.com']);
         $accountId = $this->createUser($this->db, ['instance' => 'qa.mygo1.com']);
         $this->link($this->db, EdgeTypes::HAS_ACCOUNT, $userId, $accountId);
@@ -22,15 +25,18 @@ class AccessCheckerTest extends UtilCoreTestCase
         $jwt = $this->jwtForUser($this->db, $userId, 'qa.mygo1.com');
         $payload = Text::jwtContent($jwt);
         $req->attributes->set('jwt.payload', $payload);
+
         $account = (new AccessChecker)->validAccount($req, 'qa.mygo1.com');
+        $this->assertEquals($account->id, $accountId);
+
+        $account = (new AccessChecker)->validAccount($req, $portalId);
         $this->assertEquals($account->id, $accountId);
     }
 
     public function testVirtualAccount()
     {
         $userId = $this->createUser($this->db, ['instance' => 'accounts.gocatalyze.com']);
-        $portalName = 'portal.mygo1.com';
-        $accountId = $this->createUser($this->db, ['instance' => $portalName]);
+        $accountId = $this->createUser($this->db, ['instance' => $portalName = 'portal.mygo1.com']);
         $this->link($this->db, EdgeTypes::HAS_ACCOUNT_VIRTUAL, $userId, $accountId);
 
         $payload = $this->getPayload([]);
