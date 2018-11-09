@@ -12,7 +12,7 @@ class ContentImportCompleteTest extends UtilCoreTestCase
 
     public function testContentImportCompleteMessage() {
 
-      $messageBody = (object) [
+      $payload = (object) [
           'id' => 1,
           'type' => 'CSV_Public',
           'instanceId'=> 1,
@@ -27,18 +27,18 @@ class ContentImportCompleteTest extends UtilCoreTestCase
           'message' => 'heh'
       ];
 
-      $contentJob = ContentImportCompleteCreate::publish($messageBody);
+      $message = ContentImportCompleteCreate::publish($payload);
 
-        $this->assertEquals($contentJob->id, $messageBody->id);
-        $this->assertEquals($contentJob->type, $messageBody->type);
-        $this->assertEquals($contentJob->instanceId, $messageBody->instanceId);
-        $this->assertEquals($contentJob->configuration, $messageBody->configuration);
-        $this->assertEquals($contentJob->status, $messageBody->status);
-        $this->assertEquals($contentJob->priority, $messageBody->priority);
-        $this->assertEquals($contentJob->analytics, $messageBody->analytics);
-        $this->assertEquals($contentJob->reoccurringPeriod, $messageBody->reoccurringPeriod);
-        $this->assertEquals($contentJob->scheduleJobId, $messageBody->scheduleJobId);
-        $this->assertEquals($contentJob->createdDate, $messageBody->createdDate);
-        $this->assertEquals($contentJob->modifiedDate, $messageBody->modifiedDate);
+        $this->assertEquals($message->id, $payload->id);
+        $this->assertEquals($message->type, $payload->type);
+        $this->assertEquals($message->instanceId, $payload->instanceId);
+        $this->assertEquals($message->configuration, $payload->configuration);
+        $this->assertEquals($message->status, $payload->status);
+        $this->assertEquals($message->priority, $payload->priority);
+        $this->assertEquals($message->analytics, $payload->analytics);
+        $this->assertEquals($message->reoccurringPeriod, $payload->reoccurringPeriod);
+        $this->assertEquals($message->scheduleJobId, $payload->scheduleJobId);
+        $this->assertEquals($message->createdDate, $payload->createdDate);
+        $this->assertEquals($message->modifiedDate, $payload->modifiedDate);
     }
 }
