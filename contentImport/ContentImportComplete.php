@@ -1,15 +1,16 @@
 <?php
- namespace go1\util\lo\event_publishing;
+ namespace go1\util\ContentImport;
+
  use stdClass;
- class EventAttendanceCreate
+
+class ContentImportCompleteCreate
 {
     const ROUTING_KEY = 'notify.content_import.complete';
 
-    public function publish(stdClass $body): stdClass
+    public static function publish(stdClass $body): stdClass
     {
       $contentJob = new stdClass();
 
-      $contentJob = new ContentJob;
       $contentJob->id = $body->id;
       $contentJob->type = $body->type;
       $contentJob->instanceId = $body->instanceId;
