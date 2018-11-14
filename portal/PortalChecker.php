@@ -156,6 +156,8 @@ class PortalChecker
                 break;
         }
 
+        $env !== 'production' && $uri .= '?portalName=' . $portal->title;
+
         if (getenv('MONOLITH') && getenv('ENV_HOSTNAME')) {
             $domain = getenv('ENV_HOSTNAME') . '/p';
         }
