@@ -13,7 +13,6 @@ class PortalType
     const COMPLISPACE          = 'complispace';
     const JSE_CUSTOMER         = 'jse_customer';
     const TOTARA_CUSTOMER      = 'totara_customer';
-    const PORTAL_LAUNCHER      = 'portal_launcher';
 
     public static function all()
     {
