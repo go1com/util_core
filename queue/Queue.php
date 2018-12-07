@@ -205,6 +205,8 @@ class Queue
     const MARKETPLACE_SCHEDULED_PUBLISH = 'marketplace.scheduled_publish';
 
     /**
+     * @deprecated
+     *
      * Let #work's consumer handle your message.
      *
      * This routingKey should be not used directly, it's being used internal by MqClient::queue()
@@ -216,7 +218,7 @@ class Queue
      * When you use #work, it's depends on your use case:
      *
      *  - #consumer processes messages synchronously
-     *  0 #work     processes messages asynchronously
+     *  - #work     processes messages asynchronously
      */
     const WORKER_QUEUE_NAME = 'worker';
 
