@@ -676,25 +676,6 @@ class Schema
         ],
     ];
 
-    const MAIL_MAPPING = [
-        '_parent'    => ['type' => self::O_PORTAL],
-        '_routing'   => ['required' => true],
-        'properties' => [
-            'id'          => ['type' => self::T_KEYWORD],
-            'recipient'   => ['type' => self::T_KEYWORD],
-            'sender'      => ['type' => self::T_KEYWORD],
-            'cc'          => ['type' => self::T_KEYWORD],
-            'bcc'         => ['type' => self::T_KEYWORD],
-            'subject'     => ['type' => self::T_KEYWORD],
-            'body'        => ['type' => self::T_TEXT],
-            'html'        => ['type' => self::T_TEXT],
-            'context'     => ['type' => self::T_OBJECT],
-            'options'     => ['type' => self::T_OBJECT],
-            'attachments' => ['type' => self::T_OBJECT],
-            'timestamp'   => ['type' => self::T_DATE],
-        ],
-    ];
-
     const PAYMENT_TRANSACTION_MAPPING = [
         'properties' => [
             'id'                 => ['type' => self::T_KEYWORD],
