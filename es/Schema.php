@@ -113,7 +113,6 @@ class Schema
         self::O_ENROLMENT_REVISION  => self::ENROLMENT_MAPPING_REVISION,
         self::O_GROUP               => self::GROUP_MAPPING,
         self::O_GROUP_ITEM          => self::GROUP_ITEM_MAPPING,
-        self::O_MAIL                => self::MAIL_MAPPING,
         self::O_PAYMENT_TRANSACTION => self::PAYMENT_TRANSACTION_MAPPING,
         self::O_CREDIT              => self::CREDIT_MAPPING,
         self::O_QUIZ_USER_ANSWER    => self::QUIZ_USER_ANSWER_MAPPING,
