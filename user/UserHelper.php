@@ -34,6 +34,7 @@ class UserHelper
 
     public static function load(Connection $db, int $id, string $instance = null, $columns = '*')
     {
+        $columns = self::processColumns($columns);
         $sql = "SELECT $columns FROM gc_user WHERE id = ?";
         $params = [$id];
 
@@ -47,6 +48,7 @@ class UserHelper
 
     public static function loadByEmail(Connection $db, string $instance, string $mail, $columns = '*')
     {
+        $columns = self::processColumns($columns);
         return $db
             ->executeQuery("SELECT $columns FROM gc_user WHERE instance = ? AND mail = ?", [$instance, $mail])
             ->fetch(DB::OBJ);
@@ -54,7 +56,8 @@ class UserHelper
 
     public static function queryMultiple(Connection $db, array $ids)
     {
-        return $db->executeQuery('SELECT * FROM gc_user WHERE id IN (?)', [$ids], [Connection::PARAM_INT_ARRAY]);
+        $columns = self::processColumns('*');
+        return $db->executeQuery("SELECT {$columns} FROM gc_user WHERE id IN (?)", [$ids], [Connection::PARAM_INT_ARRAY]);
     }
 
     public static function loadMultiple(Connection $db, array $ids): array
@@ -64,6 +67,7 @@ class UserHelper
 
     public static function loadByProfileId(Connection $db, int $profileId, string $portalName, $columns = '*')
     {
+        $columns = self::processColumns($columns);
         $sql = "SELECT $columns FROM gc_user WHERE profile_id = ? AND instance = ?";
 
         return $db->executeQuery($sql, [$profileId, $portalName])->fetch(DB::OBJ);
@@ -275,10 +279,20 @@ class UserHelper
 
     public static function loadUserByProfileId(Connection $db, int $profileId, string $columns = '*'): ?stdClass
     {
+        $columns = self::processColumns($columns);
         $user = $db
             ->executeQuery("SELECT $columns FROM gc_users WHERE profile_id = ?", [$profileId], [DB::INTEGER])
             ->fetch(DB::OBJ);
 
         return $user ?: null;
+    }
+
+    public static function processColumns(string $columns): string
+    {
+        if ($columns == '*') {
+            return 'id, uuid, instance, profile_id, mail, created, access, login, status, first_name, last_name, allow_public, data, timestamp';
+        }
+
+        return $columns;
     }
 }
