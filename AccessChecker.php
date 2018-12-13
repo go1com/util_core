@@ -304,4 +304,12 @@ class AccessChecker
 
         return false;
     }
+
+    public function isEventSessionInstructor(Connection $eventDB, int $eventSessionId, int $accountId)
+    {
+        $q = 'SELECT instructor_ids FROM event_session WHERE id = ?';
+        $instructors = $eventDB->executeQuery($q, [$eventSessionId])->fetchColumn();
+
+        return !empty($instructors) && in_array($accountId, unserialize($instructors));
+    }
 }

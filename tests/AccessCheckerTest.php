@@ -2,8 +2,12 @@
 
 namespace go1\util\tests;
 
+use go1\event\domain\schema\EventSchema;
+use go1\event\tests\mock\EventSessionMockTrait;
 use go1\util\AccessChecker;
 use go1\util\edge\EdgeTypes;
+use go1\util\lo\LiTypes;
+use go1\util\schema\mock\LoMockTrait;
 use go1\util\schema\mock\UserMockTrait;
 use go1\util\Text;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 class AccessCheckerTest extends UtilCoreTestCase
 {
     use UserMockTrait;
+    use EventSessionMockTrait;
+    use LoMockTrait;
+
+    protected $schemaClasses = [EventSchema::class];
 
     public function testValidAccount()
     {
@@ -61,5 +69,16 @@ class AccessCheckerTest extends UtilCoreTestCase
         $req = new Request;
         $req->attributes->set('jwt.payload', $this->getPayload(['id' => $manager2Id, 'mail' => $manager2Mail]));
         $this->assertFalse((new AccessChecker)->isStudentManager($this->go1, $req, $studentMail, $portalName, EdgeTypes::HAS_MANAGER));
+    }
+
+    public function testEventSessionInstructor()
+    {
+        $instructors = [
+            $this->createUser($this->go1, ['mail' => $studentMail = 'student@mail.com', 'instance' => $portalName = 'portal.mygo1.com']),
+        ];
+
+        $loId = $this->createLO($this->go1, ['type' => LiTypes::EVENT]);
+        $eventSessionId = $this->createEventSession($this->go1, ['lo_id' => $loId, 'instructor_ids' => $instructors]);
+        $this->assertTrue((new AccessChecker())->isEventSessionInstructor($this->go1, $eventSessionId, $instructors[0]));
     }
 }
