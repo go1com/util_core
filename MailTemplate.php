@@ -2,6 +2,7 @@
 
 namespace go1\util;
 
+use go1\util\content_import\ContentImportCompleteCreate;
 use InvalidArgumentException;
 use ReflectionClass;
 use go1\util\queue\Queue;
@@ -1349,6 +1350,20 @@ class MailTemplate
             '!primary_domain'  => 'Primary domain of portal.',
         ]
     ];
+
+    public const CONTENT_IMPORT_COMPLETE = [
+        'key'    => ContentImportCompleteCreate::ROUTING_KEY,
+        'tokens' => [
+            '!user_first_name'   => 'User first name',
+            '!content_import_status' => 'Content job import status',
+            '!processed_count' => 'Total processed count, which is successCount + failedCount',
+            '!success_count' => 'Success Count',
+            '!failed_count' => 'Failed count',
+            '!portal' => "Portal name",
+            '!user_mail' => 'User email',
+        ]
+    ];
+
 
     public static function has(string $key): bool
     {

@@ -13,6 +13,7 @@ class LoExploreSchema
 
     const MAPPING = [
         Schema::O_LO         => self::LO_MAPPING,
+        Schema::O_GROUP      => self::GROUP_MAPPING,
         Schema::O_ENROLMENT  => self::ENROLMENT_MAPPING,
         Schema::O_GROUP_ITEM => self::GROUP_ITEM_MAPPING,
         Schema::O_ACCOUNT    => self::ACCOUNT_MAPPING,
@@ -99,14 +100,19 @@ class LoExploreSchema
                     'administrative_area'      => ['type' => Schema::T_KEYWORD],
                     'administrative_area_name' => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     'locality'                 => ['type' => Schema::T_KEYWORD],
+                    'location_name'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     'dependent_locality'       => ['type' => Schema::T_KEYWORD],
                     'thoroughfare'             => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     'instructor_ids'           => ['type' => Schema::T_INT],
+                    'coordinate'               => ['type' => Schema::T_GEO_POINT],
                 ],
             ],
             'vote'            => [
                 'properties' => [
-                    'rank' => ['type' => Schema::T_INT],
+                    'percent' => ['type' => Schema::T_INT],
+                    'rank'    => ['type' => Schema::T_INT],
+                    'like'    => ['type' => Schema::T_INT],
+                    'dislike' => ['type' => Schema::T_INT],
                 ],
             ],
             'policy'          => [
@@ -170,11 +176,13 @@ class LoExploreSchema
             'groups'    => ['type' => Schema::T_INT],
             'enrolment' => [
                 'properties' => [
-                    EnrolmentStatuses::NOT_STARTED => ['type' => Schema::T_INT],
-                    EnrolmentStatuses::IN_PROGRESS => ['type' => Schema::T_INT],
-                    EnrolmentStatuses::COMPLETED   => ['type' => Schema::T_INT],
-                    EnrolmentStatuses::EXPIRED     => ['type' => Schema::T_INT],
-                    'all'                          => ['type' => Schema::T_INT],
+                    'assigned'                   => ['type' => Schema::T_KEYWORD],
+                    'not_started'                => ['type' => Schema::T_KEYWORD],
+                    'in_progress'                => ['type' => Schema::T_KEYWORD],
+                    'last_completed'             => ['type' => Schema::T_KEYWORD],
+                    EnrolmentStatuses::COMPLETED => ['type' => Schema::T_KEYWORD],
+                    EnrolmentStatuses::EXPIRED   => ['type' => Schema::T_KEYWORD],
+                    'all'                        => ['type' => Schema::T_KEYWORD],
                 ],
             ],
             'metadata'  => [
@@ -192,6 +200,20 @@ class LoExploreSchema
             'id'       => ['type' => Schema::T_KEYWORD],
             'groups'   => ['type' => Schema::T_INT],
             'metadata' => [
+                'properties' => [
+                    'portal_id'  => ['type' => Schema::T_INT],
+                    'updated_at' => ['type' => Schema::T_INT],
+                ],
+            ],
+        ],
+    ];
+
+    const GROUP_MAPPING = [
+        '_routing'   => ['required' => true],
+        'properties' => [
+            'id'               => ['type' => Schema::T_KEYWORD],
+            'assigned_content' => ['type' => Schema::T_INT],
+            'metadata'         => [
                 'properties' => [
                     'portal_id'  => ['type' => Schema::T_INT],
                     'updated_at' => ['type' => Schema::T_INT],

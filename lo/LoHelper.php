@@ -43,9 +43,22 @@ class LoHelper
         'expiration' => ['type' => 'string', 'default' => '+ 1 year'],
     ];
 
-    public static function load(Connection $db, int $id, int $instanceId = null, bool $expensiveTree = false)
+    # I was able to import stdClass before, now sometime, I can't!
+    public static function isEmbeddedPortalActive(\stdClass $lo): bool
     {
-        return ($learningObjects = static::loadMultiple($db, [$id], $instanceId, $expensiveTree)) ? $learningObjects[0] : false;
+        $portal = $lo->embedded->portal ?? null;
+
+        return $portal ? $portal->status : true;
+    }
+
+    public static function loadOrGetFromEmbeddedData(Connection $go1, stdClass $payload, string $loIdProperty = 'lo_id')
+    {
+        return $payload->embedded->lo ?? self::load($go1, $payload->{$loIdProperty});
+    }
+
+    public static function load(Connection $go1, int $id, int $portalId = null, bool $expensiveTree = false)
+    {
+        return ($learningObjects = static::loadMultiple($go1, [$id], $portalId, $expensiveTree)) ? $learningObjects[0] : false;
     }
 
     public static function loadMultiple(Connection $db, array $ids, int $portalId = null, bool $expensiveTree = false): array
