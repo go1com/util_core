@@ -60,7 +60,10 @@ class ServiceConsumeController
                     $consumer->consume($routingKey, $body, $context);
                     $headers['X-CONSUMERS'][] = get_class($consumer);
                 } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
+                    $errors[get_class($consumer)] = [
+                        'message' => $e->getMessage(),
+                        'trace'   => $e->getTrace(),
+                    ];
 
                     if (class_exists(TestCase::class, false)) {
                         throw $e;
@@ -72,6 +75,7 @@ class ServiceConsumeController
         }
 
         if (!empty($errors)) {
+            ini_set('log_errors_max_len', 0);
             $err = 'failed to consume [%s] with %s %s: %s';
             $err = sprintf($err, $routingKey, json_encode($body), json_encode($context), json_encode($errors));
             $this->logger->error($err);
