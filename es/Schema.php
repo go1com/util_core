@@ -19,6 +19,9 @@ class Schema
     const PORTALS_INDEX     = ES_INDEX . '_portal*';
     const PAYMENT_INDEX     = ES_INDEX . '_payment';
 
+    # GO1-core indices
+    const LEARNING_RECORD_INDEX = ES_INDEX.'_learning_record';
+
     # Indices for explore
     const EXPLORE_INDEX             = ES_INDEX . '_explore';
     const EXPLORE_GROUP_INDEX       = ES_INDEX . '_explore_group';
@@ -454,7 +457,6 @@ class Schema
      * @TODO Make sure the revisions are indexed on content re-indexing.
      */
     const ENROLMENT_MAPPING = [
-        '_parent'           => ['type' => self::O_LO],
         '_routing'          => ['required' => true],
         'properties'        => [
             'id'                  => ['type' => self::T_KEYWORD],
@@ -716,6 +718,7 @@ class Schema
                 'type'       => self::T_NESTED,
                 'properties' => self::PAYMENT_TRANSACTION_ITEM_MAPPING['properties'],
             ],
+            'taken_portal_id'    => ['type' => self::T_INT],
             'credit_usage_count' => ['type' => self::T_INT],
         ],
     ];
