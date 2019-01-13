@@ -42,7 +42,7 @@ class DB
 
         return [
             'driver'        => 'pdo_mysql',
-            'dbname'        => getenv("{$prefix}_NAME") ?: $dbName,
+            'dbname'        => self::getEnvByPriority(["{$prefix}_NAME", 'RDS_DB_NAME', 'DEV_DB_NAME', $dbName]),
             'host'          => $slave,
             'user'          => self::getEnvByPriority(["{$prefix}_USERNAME", 'RDS_DB_USERNAME', 'DEV_DB_USERNAME']),
             'password'      => self::getEnvByPriority(["{$prefix}_PASSWORD", 'RDS_DB_PASSWORD', 'DEV_DB_PASSWORD']),
