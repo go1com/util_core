@@ -128,6 +128,75 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals($this->lpId, $lp->id);
     }
 
+    public function testFindParentEnrolmentNoParentIdAndOtherPortal()
+    {
+        $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
+        $enrolments = [
+            'lp'       => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->lpId]),
+            'course'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->courseId]),
+            'module'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->moduleId]),
+            'video'    => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liVideoId]),
+            'resource' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liResourceId]),
+            'question' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveQuestionId]),
+            'text'     => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveTextId]),
+        ];
+
+        $otherPortalId = $this->createPortal($this->go1, ['title' => 'other-portal.mygo1.com']);
+        $otherPortalLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $otherPortalId];
+        $enrolmentsOtherPortal = [
+            'lp'       => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->lpId]),
+            'course'   => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->courseId]),
+            'module'   => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->moduleId]),
+            'video'    => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->liVideoId]),
+            'resource' => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->liResourceId]),
+            'question' => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->electiveQuestionId]),
+            'text'     => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->electiveTextId]),
+        ];
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['lp']));
+        $this->assertFalse($course);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['module']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['resource']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['question']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['text']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEANING_PATHWAY);
+        $this->assertEquals($enrolments['lp'], $lp->id);
+
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['lp']));
+        $this->assertFalse($course);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['module']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['video']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['resource']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['question']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['text']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['video']), LoTypes::LEANING_PATHWAY);
+        $this->assertEquals($enrolmentsOtherPortal['lp'], $lp->id);
+    }
+
     public function testFindParentEnrolmentWithParentId()
     {
         $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
@@ -161,6 +230,76 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
         $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEANING_PATHWAY);
         $this->assertEquals($this->lpId, $lp->id);
+    }
+
+    public function testFindParentEnrolmentWithParentIdAndOtherProtal()
+    {
+        $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
+        $enrolments = [
+            'lp'       => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->lpId]),
+            'course'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->courseId, 'parent_lo_id' => $this->lpId]),
+            'module'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->moduleId, 'parent_lo_id' => $this->courseId]),
+            'video'    => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liVideoId, 'parent_lo_id' => $this->moduleId]),
+            'resource' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liResourceId, 'parent_lo_id' => $this->moduleId]),
+            'question' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveQuestionId, 'parent_lo_id' => $this->moduleId]),
+            'text'     => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveTextId, 'parent_lo_id' => $this->moduleId]),
+        ];
+
+        $otherPortalId = $this->createPortal($this->go1, ['title' => 'other-portal.mygo1.com']);
+        $otherPortalLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $otherPortalId];
+        $enrolmentsOtherPortal = [
+            'lp'       => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->lpId]),
+            'course'   => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->courseId, 'parent_lo_id' => $this->lpId]),
+            'module'   => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->moduleId, 'parent_lo_id' => $this->courseId]),
+            'video'    => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->liVideoId, 'parent_lo_id' => $this->moduleId]),
+            'resource' => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->liResourceId, 'parent_lo_id' => $this->moduleId]),
+            'question' => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->electiveQuestionId, 'parent_lo_id' => $this->moduleId]),
+            'text'     => $this->createEnrolment($this->go1, $otherPortalLiData + ['lo_id' => $this->electiveTextId, 'parent_lo_id' => $this->moduleId]),
+        ];
+
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['lp']));
+        $this->assertFalse($course);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['module']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['resource']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['question']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['text']));
+        $this->assertEquals($enrolments['course'], $course->id);
+
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEANING_PATHWAY);
+        $this->assertEquals($enrolments['lp'], $lp->id);
+
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['lp']));
+        $this->assertFalse($course);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['module']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['video']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['resource']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['question']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['text']));
+        $this->assertEquals($enrolmentsOtherPortal['course'], $course->id);
+
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolmentsOtherPortal['video']), LoTypes::LEANING_PATHWAY);
+        $this->assertEquals($enrolmentsOtherPortal['lp'], $lp->id);
     }
 
     public function testSequenceEnrolmentCompleted()

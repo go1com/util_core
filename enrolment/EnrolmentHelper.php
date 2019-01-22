@@ -78,7 +78,7 @@ class EnrolmentHelper
      * @deprecated
      * @see EnrolmentHelper::loadByLoProfileAndPortal()
      */
-    public static function loadByLoAndProfileId(Connection $db, int $loId, int $profileId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ)
+    public static function loadByLoAndProfileId(Connection $db, int $loId, int $profileId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ, int $portalId = null)
     {
         $q = $db
             ->createQueryBuilder()
@@ -88,6 +88,7 @@ class EnrolmentHelper
             ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', $profileId);
 
         $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', $parentLoId);
+        $portalId && $q->andWhere('taken_instance_id = :taken_instance_id')->setParameter(':taken_instance_id', $portalId);
         $enrolments = $q->execute()->fetchAll($fetchMode);
         if (count($enrolments) > 1) {
             throw new LengthException('More than one enrolment return.');
@@ -192,7 +193,17 @@ class EnrolmentHelper
 
             return [
                 $parentLo = $parentLoId ? $loadLo($parentLoId) : false,
-                $parentEnrolment = $parentLo ? EnrolmentHelper::loadByLoAndProfileId($db, $parentLo->id, $enrolment->profile_id) : false,
+                $parentEnrolment = $parentLo
+                    ? EnrolmentHelper::loadByLoAndProfileId(
+                        $db,
+                        $parentLo->id,
+                        $enrolment->profile_id,
+                        null,
+                        '*',
+                        DB::OBJ,
+                        $enrolment->taken_instance_id
+                    )
+                    : false,
             ];
         };
         $lo = $loadLo($enrolment->lo_id);
