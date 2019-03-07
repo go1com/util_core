@@ -33,6 +33,9 @@ trait InstallTrait
                     $edge->addIndex(['source_id']);
                     $edge->addIndex(['target_id']);
                     $edge->addUniqueIndex(['type', 'source_id', 'target_id']);
+                    $edge->addIndex(['source_id', 'target_id', 'type']);
+                    $edge->addIndex(['source_id', 'type']);
+                    $edge->addIndex(['target_id', 'type']);
                 }
 
                 if (!$schema->hasTable('gc_access')) {
