@@ -20,7 +20,7 @@ class PortalHelper
     const WEBSITE_DOMAIN           = 'www.go1.com';
     const WEBSITE_PUBLIC_INSTANCE  = 'public.mygo1.com';
     const WEBSITE_STAGING_INSTANCE = 'staging.mygo1.com';
-    const WEBSITE_QA_INSTANCE      = 'qa.mygo1.com';
+    const WEBSITE_QA_INSTANCE      = 'qa.go1.cloud';
     const WEBSITE_DEV_INSTANCE     = 'dev.mygo1.com';
 
     const LANGUAGE                             = 'language';
