@@ -156,4 +156,46 @@ class CustomerEsSchema
             'mappings' => self::MAPPING,
         ];
     }
+
+    public static function customFieldMapping()
+    {
+        return [
+            'field_string'   => [
+                'properties' => [
+                    'field_name'  => ['type' => Schema::T_TEXT],
+                    'field_value' => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                ],
+            ],
+            'field_text'     => [
+                'properties' => [
+                    'field_name'  => ['type' => Schema::T_TEXT],
+                    'field_value' => ['type' => Schema::T_TEXT],
+                ],
+            ],
+            'field_integer'  => [
+                'properties' => [
+                    'field_name'  => ['type' => Schema::T_TEXT],
+                    'field_value' => ['type' => Schema::T_INT],
+                ],
+            ],
+            'field_float'    => [
+                'properties' => [
+                    'field_name'  => ['type' => Schema::T_TEXT],
+                    'field_value' => ['type' => Schema::T_DOUBLE],
+                ],
+            ],
+            'field_date'     => [
+                'properties' => [
+                    'field_name'  => ['type' => Schema::T_TEXT],
+                    'field_value' => ['type' => Schema::T_DATE],
+                ],
+            ],
+            'field_datetime' => [
+                'properties' => [
+                    'field_name'  => ['type' => Schema::T_TEXT],
+                    'field_value' => ['type' => Schema::T_DATE],
+                ],
+            ],
+        ];
+    }
 }
