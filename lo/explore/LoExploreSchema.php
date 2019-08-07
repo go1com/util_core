@@ -37,6 +37,7 @@ class LoExploreSchema
             'locale'          => ['type' => Schema::T_KEYWORD],
             'title'           => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'description'     => ['type' => Schema::T_TEXT],
+            'summary'         => ['type' => Schema::T_TEXT],
             'tags'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'custom_tags'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
             'topics'          => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
@@ -88,13 +89,21 @@ class LoExploreSchema
             ],
             'attributes'    => [
                 'properties' => [
+                    'learning_outcomes'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     'assessable'            => ['type' => Schema::T_INT],
                     'mobile_optimised'      => ['type' => Schema::T_INT],
                     'wcag'                  => ['type' => Schema::T_INT],
                     'region_restrictions'    => [
                         'type'          => Schema::T_NESTED,
                         'properties'    => [
-                            'value'     => ['type' => Schema::T_KEYWORD],
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
+                    'topics'    => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                             'key'       => ['type' => Schema::T_KEYWORD],
                         ],
                     ],
