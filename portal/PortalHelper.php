@@ -48,7 +48,7 @@ class PortalHelper
         PortalCollectionConfiguration::SHARE,
     ];
 
-    public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false, bool $includePortalData = false): ?stdClass
+    public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false, bool $includePortalData = false, bool $includePortalConf = false): ?stdClass
     {
         $column = is_numeric($nameOrId) ? 'id' : 'title';
         $portal = "SELECT {$columns} FROM gc_instance WHERE {$column} = ? ";
@@ -59,6 +59,10 @@ class PortalHelper
 
             if ($includePortalData) {
                 $portal->data->portal_data = self::loadPortalDataById($go1, (int) $portal->id);
+            }
+
+            if ($includePortalConf) {
+                $portal->portal_conf = self::loadPortalConf($go1, $portal->title);
             }
 
             return $portal;
@@ -218,6 +222,11 @@ class PortalHelper
     public static function loadPortalDataById(Connection $db, int $portalId)
     {
         return $db->executeQuery('SELECT * FROM portal_data WHERE id = ?', [$portalId])->fetch(DB::OBJ);
+    }
+
+    public static function loadPortalConf(Connection $db, string $instance)
+    {
+        return $db->executeQuery('SELECT * from portal_conf WHERE instance = ?', [$instance])->fetchAll(DB::OBJ);
     }
 
     public static function getDomainDNSRecords($name): array
