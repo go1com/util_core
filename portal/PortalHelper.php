@@ -62,7 +62,7 @@ class PortalHelper
             }
 
             if ($includePortalConf) {
-                $portal->portal_conf = self::loadPortalConf($go1, $portal->title);
+                $portal->portalConf = self::loadPortalConf($go1, $portal->title);
             }
 
             return $portal;
