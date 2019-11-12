@@ -91,6 +91,7 @@ class CustomerEsSchema
                     'user_id'     => ['type' => Schema::T_INT],
                     'instance_id' => ['type' => Schema::T_INT],
                     'updated_at'  => ['type' => Schema::T_INT],
+                    'name_lowercase'  => ['type' => Schema::T_KEYWORD]
                 ],
             ],
             'learning'     => [
