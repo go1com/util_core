@@ -7,17 +7,21 @@ use ReflectionClass;
 class LiTypes
 {
     const ACTIVITY    = 'activities';
-    const ATTENDANCE  = 'attendance';
     const ASSIGNMENT  = 'assignment';
+    const ATTENDANCE  = 'attendance';
+    const AUDIO       = 'audio';
     const DOCUMENT    = 'document';
+    const EVENT       = 'event';
     const H5P         = 'h5p';
-    const MANUAL      = 'manual';
     /**
      * @deprecated use the LINK type instead
      */
     const IFRAME      = 'iframe';
-    const LINK        = 'link';
+    const INTEGRATION = 'integration';
     const INTERACTIVE = 'interactive';
+    const LINK        = 'link';
+    const LTI         = 'lti';
+    const MANUAL      = 'manual';
     const QUESTION    = 'question';
     const QUIZ        = 'quiz';
     /**
@@ -26,12 +30,9 @@ class LiTypes
     const RESOURCE    = 'resource';
     const TEXT        = 'text';
     const VIDEO       = 'video';
-    const AUDIO       = 'audio';
     const WORKSHOP    = 'workshop';
-    const LTI         = 'lti';
-    const EVENT       = 'event';
-    const INTEGRATION = 'integration';
-    const COMPLEX     = ['assignment', 'h5p', 'interactive', 'quiz', 'lti', 'event'];
+
+    const COMPLEX     = ['assignment', 'event', 'h5p', 'interactive', 'quiz', 'lti'];
 
     const PRIVATE_PROPERTIES = [
         self::DOCUMENT    => ['path'],
