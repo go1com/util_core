@@ -32,6 +32,7 @@ class EdgeTypes
         self::HAS_MODULE,
         self::HAS_ELECTIVE_LO,
         self::HAS_ELECTIVE_LI,
+        self::GROUP_HAS_ITEM,
     ];
 
     const LO_HAS_CHILDREN = [
@@ -106,6 +107,7 @@ class EdgeTypes
     const HAS_AWARD_LOCATION          = 43; # T: gc_location.id       | S: award_award.id
     const HAS_SUGGESTED_COMPLETION    = 44; # T: 0                    | S: gc_ro.id              | data: { KEY: VALUE }
     const AWARD_ASSESSOR              = 45; # T: Account              | S: award.id
+    const GROUP_HAS_ITEM              = 46; # T: Learning object      | S: Learning object (group lo only)
 
     # LO & enrolment scheduling
     # ---------------------
@@ -121,6 +123,7 @@ class EdgeTypes
     const  PUBLISH_ENROLMENT_SELF_START_BASE_DONE = 30; # T: Timestamp     | S: Enrolment  | N: PUBLISH_ENROLMENT_SELF_START_BASE record will be coverted to this when it's processed.
     const  PUBLISH_MARKETPLACE_REQUEST_REJECTED   = 50; # T: User-Rejecter | S: LO         | Learning object
     const  PUBLISH_MARKETPLACE_REQUEST_APPROVED   = 51; # T: User-Acceptor | S: LO         | Learning object
+    const  PUBLISH_MARKETPLACE_SCHEDULED          = 52; # T: Timestamp     | S: LO         | Data contains whether publishing to marketplace, which groups to join to, and the flag which should be resolved
 
     # Award relationships
     # ---------------------

@@ -23,29 +23,34 @@ class AccessChecker
     const ACCESS_ROOT          = 300;
     const ACCESS_OWNER         = 400;
 
-    public function isContentAdministrator(Request $req, $instance)
+    public function isContentAdministrator(Request $req, $instance, bool $inheritance = true)
     {
-        return !$this->isPortalAdmin($req, $instance) ? $this->isPortalAdmin($req, $instance, Roles::ADMIN_CONTENT) : true;
+        if ($inheritance && $this->isPortalAdmin($req, $instance, Roles::ADMIN, $inheritance)) {
+            return true;
+        }
+
+        return $this->isPortalAdmin($req, $instance, Roles::ADMIN_CONTENT, $inheritance);
     }
 
     /**
      * @param Request $req
-     * @param string  $instance
+     * @param string  $portalIdOrName
      * @return null|bool|stdClass
      */
-    public function isPortalAdmin(Request $req, $instance, $role = Roles::ADMIN)
+    public function isPortalAdmin(Request $req, $portalIdOrName, $role = Roles::ADMIN, bool $inheritance = true)
     {
         if (!$user = $this->validUser($req)) {
             return null;
         }
 
-        if ($this->isAccountsAdmin($req)) {
+        if ($inheritance && $this->isAccountsAdmin($req)) {
             return 1;
         }
 
         $accounts = isset($user->accounts) ? $user->accounts : [];
         foreach ($accounts as &$account) {
-            if ($instance === $account->instance) {
+            $actual = is_numeric($portalIdOrName) ? $account->portal_id : $account->instance;
+            if ($portalIdOrName === $actual) {
                 if (!empty($account->roles) && in_array($role, $account->roles)) {
                     return $account;
                 }
@@ -55,9 +60,9 @@ class AccessChecker
         return false;
     }
 
-    public function isPortalTutor(Request $req, $portalName, $role = Roles::TUTOR, bool $strict = true)
+    public function isPortalTutor(Request $req, $portalIdOrName, $role = Roles::TUTOR, bool $strict = true)
     {
-        if ($strict && $this->isPortalAdmin($req, $portalName)) {
+        if ($strict && $this->isPortalAdmin($req, $portalIdOrName)) {
             return 1;
         }
 
@@ -67,7 +72,8 @@ class AccessChecker
 
         $accounts = isset($user->accounts) ? $user->accounts : [];
         foreach ($accounts as &$account) {
-            if ($portalName === $account->instance) {
+            $actual = is_numeric($portalIdOrName) ? $account->portal_id : $account->instance;
+            if ($portalIdOrName == $actual) {
                 if (!empty($account->roles) && in_array($role, $account->roles)) {
                     return $account;
                 }
@@ -77,9 +83,9 @@ class AccessChecker
         return false;
     }
 
-    public function isPortalManager(Request $req, $portalName, bool $strict = true)
+    public function isPortalManager(Request $req, $portalIdOrName, bool $strict = true)
     {
-        return $this->isPortalTutor($req, $portalName, Roles::MANAGER, $strict);
+        return $this->isPortalTutor($req, $portalIdOrName, Roles::MANAGER, $strict);
     }
 
     public function isAccountsAdmin(Request $req)
@@ -88,10 +94,15 @@ class AccessChecker
             return null;
         }
 
-        return in_array(Roles::ROOT, isset($user->roles) ? $user->roles : []) ? $user : false;
+        return $this->hasAccountsAdminRole($user) ? $user : false;
     }
 
-    public function validUser(Request $req, $instance = null, Connection $db = null)
+    public function hasAccountsAdminRole($user)
+    {
+        return in_array(Roles::ROOT, isset($user->roles) ? $user->roles : []);
+    }
+
+    public function validAccount(Request $req, $portalIdOrName)
     {
         $payload = $req->attributes->get('jwt.payload');
         if ($payload && !empty($payload->object->type) && ('user' === $payload->object->type)) {
@@ -100,19 +111,40 @@ class AccessChecker
         }
 
         if (!empty($user)) {
-            if (!$instance || empty($user->instance) || ($user->instance == $instance)) {
+            $accounts = isset($user->accounts) ? $user->accounts : [];
+            foreach ($accounts as $account) {
+                $match = $portalIdOrName == (is_numeric($portalIdOrName) ? ($account->portal_id ?? 0) : $account->instance);
+                if ($match) {
+                    return $account;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function validUser(Request $req, $portalName = null, Connection $db = null)
+    {
+        $payload = $req->attributes->get('jwt.payload');
+        if ($payload && !empty($payload->object->type) && ('user' === $payload->object->type)) {
+            $user = &$payload->object->content;
+            $user = !empty($user->mail) ? $user : null;
+        }
+
+        if (!empty($user)) {
+            if (!$portalName || empty($user->instance) || ($user->instance == $portalName)) {
                 return $user;
             }
 
             $accounts = isset($user->accounts) ? $user->accounts : [];
             foreach ($accounts as $account) {
-                if ($instance == $account->instance) {
+                if ($portalName == $account->instance) {
                     return $account;
                 }
             }
 
             if ($db) {
-                $account = UserHelper::loadByEmail($db, $instance, $user->mail);
+                $account = UserHelper::loadByEmail($db, $portalName, $user->mail);
                 if (is_object($account)) {
                     $hasLink = EdgeHelper::hasLink($db, EdgeTypes::HAS_ACCOUNT_VIRTUAL, $user->id, $account->id);
                     if ($hasLink) {
@@ -131,22 +163,22 @@ class AccessChecker
             return false;
         }
 
-        return $user->{$property} == $profileId;
+        return isset($user->{$property}) && ($user->{$property} == $profileId);
     }
 
-    public function hasAccount(Request $req, $instance)
+    public function hasAccount(Request $req, string $portalName)
     {
         if (!$user = $this->validUser($req)) {
             return false;
         }
 
-        if ($this->isPortalTutor($req, $instance)) {
+        if ($this->isPortalTutor($req, $portalName)) {
             return true;
         }
 
         $accounts = isset($user->accounts) ? $user->accounts : [];
         foreach ($accounts as &$account) {
-            if ($instance === $account->instance) {
+            if ($portalName === $account->instance) {
                 return true;
             }
         }
@@ -154,7 +186,7 @@ class AccessChecker
         return false;
     }
 
-    public function isStudentManager(Connection $db, Request $req, string $studentMail, string $instance)
+    public function isStudentManager(Connection $db, Request $req, string $studentMail, string $portalName)
     {
         if (!$user = $this->validUser($req)) {
             return false;
@@ -165,7 +197,7 @@ class AccessChecker
             . ' WHERE type = ?'
             . '   AND source_id = (SELECT id FROM gc_user WHERE instance = ? AND mail = ?)'
             . '   AND target_id = ?',
-            [EdgeTypes::HAS_MANAGER, $instance, $studentMail, $user->id],
+            [EdgeTypes::HAS_MANAGER, $portalName, $studentMail, $user->id],
             0,
             [PDO::PARAM_INT, PDO::PARAM_STR, PDO::PARAM_STR, PDO::PARAM_INT]
         ) ? true : false;
@@ -246,7 +278,7 @@ class AccessChecker
     }
 
     public function isAwardAssessor(
-        Connection $go1Db,
+        Connection $go1,
         Connection $awardDb,
         int $awardId,
         int $assessorId,
@@ -260,13 +292,13 @@ class AccessChecker
 
         $award = AwardHelper::load($awardDb, $awardId);
         if ($req && $award) {
-            $instance = PortalHelper::load($go1Db, $award->instance_id);
+            $instance = PortalHelper::load($go1, $award->instance_id);
             if ($instance && $this->isPortalAdmin($req, $instance->title)) {
                 return true;
             }
         }
 
-        if (EdgeHelper::hasLink($go1Db, EdgeTypes::AWARD_ASSESSOR, $awardId, $assessorId)) {
+        if (EdgeHelper::hasLink($go1, EdgeTypes::AWARD_ASSESSOR, $awardId, $assessorId)) {
             return true;
         }
 
@@ -274,7 +306,7 @@ class AccessChecker
             $currentChildAwardIds = [$awardId];
             while ($awardParentIds = AwardHelper::awardParentIds($awardDb, $currentChildAwardIds)) {
                 foreach ($awardParentIds as $awardParentId) {
-                    if (EdgeHelper::hasLink($go1Db, EdgeTypes::AWARD_ASSESSOR, $awardParentId, $assessorId)) {
+                    if (EdgeHelper::hasLink($go1, EdgeTypes::AWARD_ASSESSOR, $awardParentId, $assessorId)) {
                         return true;
                     }
                 }

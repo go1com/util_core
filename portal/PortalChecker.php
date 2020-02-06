@@ -3,8 +3,10 @@
 namespace go1\util\portal;
 
 use Doctrine\DBAL\Connection;
+use go1\util\collection\PortalCollectionConfiguration;
 use go1\util\DB;
 use go1\util\user\Roles;
+use stdClass;
 
 class PortalChecker
 {
@@ -126,41 +128,62 @@ class PortalChecker
         return $portal->configuration->modulesEnabled->allowRegister ?? true;
     }
 
-    public function buildLink($portal, $uri, $prefix = '')
+    /**
+     * @param stdClass $portal
+     * @param string $uri
+     * @param string $prefix Pointing url come from specific web app. 'etc: 'p/#' from APIOM, 'r' from react-app, 'play' from 1_player
+     * @param bool $replacePublicDomain If set to false, does not replace public.mygo1.com with www.go1.com
+     * @return string
+     */
+    public function buildLink(stdClass $portal, string $uri, string $prefix = PortalHelper::DEFAULT_APP_PREFIX, bool $replacePublicDomain = true) : string
     {
         $uri = ltrim($uri, '/');
-        $env = getenv('ENV') ?: 'production';
+
+        $domain = $this->getDomain($portal, $replacePublicDomain);
+
+        return (PortalHelper::WEBSITE_DOMAIN == $domain || strpos($domain, PortalHelper::DEFAULT_WEB_APP))
+            ? "https://{$domain}/{$uri}"
+            : "https://{$domain}/{$prefix}/{$uri}";
+    }
+
+    private function getDomain(stdClass $portal, bool $replacePublicDomain = true): string
+    {
+        $env = (getenv('MONOLITH') && getenv('ENV_HOSTNAME')) ? 'monolith' : (getenv('ENV') ?: 'production');
+
         switch ($env) {
             case 'production':
-                if (PortalHelper::WEBSITE_PUBLIC_INSTANCE == $portal->title) {
+                if ($replacePublicDomain && PortalHelper::WEBSITE_PUBLIC_INSTANCE == $portal->title) {
                     $domain = PortalHelper::WEBSITE_DOMAIN;
-                    if (stripos($domain, 'www.') === false) {
-                        $domain = 'www.' . $domain;
-                    }
                 } else {
-                    $domain = $this->getPrimaryDomain($portal);
-                    $domain = $this->isVirtual($portal) ? "{$domain}/p" : "{$domain}/webapp";
+                    $primaryDomain = $this->getPrimaryDomain($portal);
+                    $domain = $this->isVirtual($portal) ? "{$primaryDomain}" : "{$primaryDomain}/" . PortalHelper::DEFAULT_WEB_APP;
                 }
                 break;
 
             case 'staging':
-                $domain = PortalHelper::WEBSITE_STAGING_INSTANCE . '/p';
+                // Supporting `ENV_HOSTNAME_QA` for keeping other places logic working as previously on staging
+                // @TODO provide a variable to set for $domain across env. Etc: setEnv('ENV_DOMAIN=yourDomain')
+                $domain = getenv('ENV_HOSTNAME_QA') ?: PortalHelper::WEBSITE_STAGING_INSTANCE;
                 break;
 
             case 'qa':
-                $domain = PortalHelper::WEBSITE_QA_INSTANCE . '/p';
+                $domain = getenv('ENV_HOSTNAME_QA') ?: PortalHelper::WEBSITE_QA_INSTANCE;
                 break;
 
             case 'dev':
-                $domain = PortalHelper::WEBSITE_DEV_INSTANCE . '/p';
+                $domain = PortalHelper::WEBSITE_DEV_INSTANCE;
+                break;
+
+            case 'monolith':
+                $domain = getenv('ENV_HOSTNAME');
+                break;
+
+            default:
+                $domain = '';
                 break;
         }
 
-        if (getenv('MONOLITH') && getenv('ENV_HOSTNAME')) {
-            $domain = getenv('ENV_HOSTNAME') . '/p';
-        }
-
-        return (PortalHelper::WEBSITE_DOMAIN == $domain) ? "https://{$domain}/{$uri}" : "https://{$domain}/{$prefix}#/{$uri}";
+        return $domain;
     }
 
     public function allowPublicGroup($portal): bool
@@ -222,5 +245,22 @@ class PortalChecker
         $config = (array) $portal->configuration->{PortalHelper::FEATURE_NOTIFY_REMIND_MAJOR_EVENT} ?? [];
 
         return boolval($config[$role] ?? false);
+    }
+
+    public static function selectedContentSelections(stdClass $portal): bool
+    {
+        $collections = PortalHelper::collections($portal);
+        if (in_array(PortalCollectionConfiguration::SUBSCRIBE, $collections)) {
+            return true;
+        }
+
+        if (PortalChecker::allowMarketplace($portal)) {
+            if (in_array(PortalCollectionConfiguration::FREE, $collections)
+                || in_array(PortalCollectionConfiguration::PAID, $collections)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -8,6 +8,7 @@ use go1\clients\MqClient;
 use go1\util\DB;
 use go1\util\model\Edge;
 use go1\util\queue\Queue;
+use stdClass;
 
 class EdgeHelper
 {
@@ -27,10 +28,10 @@ class EdgeHelper
             $edge->original = clone $edge;
             $oldType = $edge->type;
 
+            $edge->data = $edge->data ?: new stdClass();
             if (isset($edge->data->oldType)) {
                 $edge->data->oldType->{$oldType} = time();
-            }
-            else {
+            } else {
                 $edge->data->oldType[$oldType] = time();
             }
             $edge->type = $newType;
@@ -54,7 +55,13 @@ class EdgeHelper
         return $helper;
     }
 
-    public static function link(Connection $db, MqClient $queue, $type, $sourceId, $targetId, $weight = 0, $data = null, array $payload = []): int
+    public static function link(
+        Connection $db,
+        MqClient $queue,
+        int $type,
+        int $sourceId,
+        int $targetId,
+        int $weight = 0, $data = null, array $payload = []): int
     {
         $db->insert('gc_ro', $edge = [
             'type'      => $type,
@@ -83,7 +90,13 @@ class EdgeHelper
         });
     }
 
-    public static function unlink(Connection $db, MqClient $queue, $type, $sourceId = null, $targetId = null, $weight = null): array
+    public static function unlink(
+        Connection $db,
+        MqClient $queue,
+        int $type,
+        int $sourceId = null,
+        int $targetId = null,
+        int $weight = null): array
     {
         if (!$sourceId && !$targetId) {
             throw new BadFunctionCallException('Require source or target.');
@@ -103,7 +116,7 @@ class EdgeHelper
         $affectedRoIds = [];
         while ($row = $q->fetch(DB::OBJ)) {
             $edge = Edge::create($row);
-            $affectedRoIds []= $edge->id;
+            $affectedRoIds[] = $edge->id;
             $db->executeQuery('DELETE FROM gc_ro WHERE id = ?', [$edge->id]);
             $queue->publish($edge->jsonSerialize(), Queue::RO_DELETE);
         }

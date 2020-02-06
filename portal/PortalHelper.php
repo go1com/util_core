@@ -11,17 +11,19 @@ use go1\util\edge\EdgeTypes;
 use go1\util\queue\Queue;
 use go1\util\user\UserHelper;
 use stdClass;
+use Exception;
 
 class PortalHelper
 {
     const LEGACY_VERSION = 'v2.11.0';
     const STABLE_VERSION = 'v3.0.0';
 
-    const WEBSITE_DOMAIN           = 'www.go1.com';
-    const WEBSITE_PUBLIC_INSTANCE  = 'public.mygo1.com';
-    const WEBSITE_STAGING_INSTANCE = 'staging.mygo1.com';
-    const WEBSITE_QA_INSTANCE      = 'qa.mygo1.com';
-    const WEBSITE_DEV_INSTANCE     = 'dev.mygo1.com';
+    const WEBSITE_DOMAIN             = 'www.go1.com';
+    const WEBSITE_PUBLIC_INSTANCE    = 'public.mygo1.com';
+    const WEBSITE_STAGING_INSTANCE   = 'staging.mygo1.com';
+    const WEBSITE_QA_INSTANCE        = 'qa.mygo1.com';
+    const WEBSITE_DEV_INSTANCE       = 'dev.mygo1.com';
+    CONST CUSTOM_DOMAIN_DEFAULT_HOST = 'go1portals.com';
 
     const LANGUAGE                             = 'language';
     const LANGUAGE_DEFAULT                     = 'en';
@@ -46,13 +48,23 @@ class PortalHelper
         PortalCollectionConfiguration::SHARE,
     ];
 
-    public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false): ?stdClass
+    CONST PLAYER_APP_PREFIX = 'play';
+    CONST REACT_APP_PREFIX = 'r';
+    CONST DEFAULT_APP_PREFIX = 'p/#';
+    CONST DEFAULT_WEB_APP = 'webapp/#';
+
+    public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false, bool $includePortalData = false): ?stdClass
     {
         $column = is_numeric($nameOrId) ? 'id' : 'title';
-        $portal = "SELECT {$columns} FROM gc_instance WHERE $column = ?";
+        $portal = "SELECT {$columns} FROM gc_instance WHERE {$column} = ? ";
         $portal = $go1->executeQuery($portal, [$nameOrId])->fetch(DB::OBJ);
+
         if ($portal) {
             $portal->data = isset($portal->data) ? (object) json_decode($portal->data) : new stdClass();
+
+            if ($includePortalData) {
+                $portal->data->portal_data = self::loadPortalDataById($go1, (int) $portal->id);
+            }
 
             return $portal;
         }
@@ -212,4 +224,37 @@ class PortalHelper
     {
         return $db->executeQuery('SELECT * FROM portal_data WHERE id = ?', [$portalId])->fetch(DB::OBJ);
     }
+
+    public static function getDomainDNSRecords($name): array
+    {
+        foreach (dns_get_record($name, DNS_A) as $mappingDomain => $mapping) {
+            isset($mapping['ip']) && $ips[] = $mapping['ip'];
+        }
+
+        return $ips ?? [];
+    }
+
+    public static function validateCustomDomainDNS(string $domain): bool
+    {
+        $GO1Ips = self::getDomainDNSRecords(self::CUSTOM_DOMAIN_DEFAULT_HOST);
+        $domainIps = self::getDomainDNSRecords($domain);
+        $validated = array_intersect($GO1Ips, $domainIps);
+
+        return sizeof($validated) > 0;
+    }
+
+    public static function isSSLEnabledDomain(string $domain): bool
+    {
+        try {
+            $streamContext = stream_context_create(["ssl" => ["capture_peer_cert" => true]]);
+            $read = fopen("https://" . $domain, "rb", false, $streamContext);
+            $response = stream_context_get_params($read);
+            $enabled = !!$response["options"]["ssl"]["peer_certificate"];
+
+            return $enabled;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
 }

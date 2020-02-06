@@ -16,13 +16,13 @@ class LoHelper
 {
     # configuration key for LO, which put under gc_lo.data
     # ---------------------
-    const DISCUSSION_ALLOW           = 'allow_discussion';
-    const ENROLMENT_ALLOW            = 'allow_enrolment';
+    const DISCUSSION_ALLOW = 'allow_discussion';
+    const ENROLMENT_ALLOW  = 'allow_enrolment';
     /** @deprecated */
-    const ENROLMENT_ALLOW_DEFAULT    = 'allow';
-    const ASSIGNMENT_ALLOW_RESUBMIT  = 'allow_resubmit';
+    const ENROLMENT_ALLOW_DEFAULT   = 'allow';
+    const ASSIGNMENT_ALLOW_RESUBMIT = 'allow_resubmit';
     /** @deprecated */
-    const ENROLMENT_ALLOW_DISABLE    = 'disable';
+    const ENROLMENT_ALLOW_DISABLE = 'disable';
     /** @deprecated */
     const ENROLMENT_ALLOW_ENQUIRY    = 'enquiry';
     const ENROLMENT_RE_ENROL         = 're_enrol';
@@ -34,6 +34,7 @@ class LoHelper
     const SUGGESTED_COMPLETION_UNIT  = 'suggested_completion_unit';
     const PASS_RATE                  = 'pass_rate';
     const SINGLE_LI                  = 'single_li';
+    const ALLOW_REUSE_ENROLMENT      = 'allow_reuse_enrolment'; // Use existing enrollments for reused content
 
     // GO1P-5665: Expiration for award.
     const AWARD      = 'award';
@@ -42,21 +43,25 @@ class LoHelper
         'expiration' => ['type' => 'string', 'default' => '+ 1 year'],
     ];
 
-    public static function load(Connection $db, int $id, int $instanceId = null, bool $expensiveTree = false)
+    # I was able to import stdClass before, now sometime, I can't!
+    public static function isEmbeddedPortalActive(\stdClass $lo): bool
     {
-        return ($learningObjects = static::loadMultiple($db, [$id], $instanceId, $expensiveTree)) ? $learningObjects[0] : false;
+        $portal = $lo->embedded->portal ?? null;
+
+        return $portal ? $portal->status : true;
     }
 
-    /**
-     * Load multiple learning objects.
-     *
-     * @param Connection $db
-     * @param  []int     $ids
-     * @param   int      $instanceId
-     * @param bool       $expensiveTree
-     * @return array
-     */
-    public static function loadMultiple(Connection $db, array $ids, int $instanceId = null, bool $expensiveTree = false): array
+    public static function loadOrGetFromEmbeddedData(Connection $go1, stdClass $payload, string $loIdProperty = 'lo_id')
+    {
+        return $payload->embedded->lo ?? self::load($go1, $payload->{$loIdProperty});
+    }
+
+    public static function load(Connection $go1, int $id, int $portalId = null, bool $expensiveTree = false, bool $attachAttributes = false)
+    {
+        return ($learningObjects = static::loadMultiple($go1, [$id], $portalId, $expensiveTree, $attachAttributes)) ? $learningObjects[0] : false;
+    }
+
+    public static function loadMultiple(Connection $db, array $ids, int $portalId = null, bool $expensiveTree = false, bool $attachAttributes = false): array
     {
         $ids = array_map('intval', $ids);
         $learningObjects = !$ids ? [] : $db
@@ -90,10 +95,10 @@ class LoHelper
         }
 
         if ($loIds) {
-            if ($instanceId) {
+            if ($portalId) {
                 # Load custom tags.
                 $q = 'SELECT lo_id, tag FROM gc_lo_tag WHERE status = 1 AND instance_id = ? AND lo_id IN (?)';
-                $q = $db->executeQuery($q, [$instanceId, $loIds], [DB::INTEGER, DB::INTEGERS]);
+                $q = $db->executeQuery($q, [$portalId, $loIds], [DB::INTEGER, DB::INTEGERS]);
                 while ($row = $q->fetch(DB::OBJ)) {
                     foreach ($learningObjects as &$lo) {
                         if ($lo->id == $row->lo_id) {
@@ -104,9 +109,9 @@ class LoHelper
             }
 
             if ($expensiveTree) {
-                $load = function (array &$nodes, array &$nodeIds, array $edgeTypes) use (&$db, $instanceId) {
+                $load = function (array &$nodes, array &$nodeIds, array $edgeTypes) use (&$db, $portalId) {
                     $itemIds = [];
-                    $q = 'SELECT source_id, target_id FROM gc_ro WHERE source_id IN (?) AND type IN (?)';
+                    $q = 'SELECT source_id, target_id FROM gc_ro WHERE source_id IN (?) AND type IN (?) ORDER BY weight';
                     $q = $db->executeQuery($q, [$nodeIds, $edgeTypes], [DB::INTEGERS, DB::INTEGERS]);
 
                     while ($edge = $q->fetch(DB::OBJ)) {
@@ -118,7 +123,7 @@ class LoHelper
                         }
                     }
 
-                    if ($itemIds && $items = self::loadMultiple($db, $itemIds, $instanceId, true)) {
+                    if ($itemIds && $items = self::loadMultiple($db, $itemIds, $portalId, true)) {
                         foreach ($items as &$item) {
                             foreach ($nodes as &$node) {
                                 if (!empty($node->items)) {
@@ -152,11 +157,59 @@ class LoHelper
             }
         }
 
+        if ($attachAttributes) {
+            $attributes = self::getAttributes($db, $loIds);
+            foreach ($learningObjects as &$lo) {
+                $lo->attributes = (object) ($attributes[$lo->id] ?? []);
+            }
+        }
+
+
         # Load events.
         $learningObjects && static::attachEvents($db, $learningObjects, $loIds);
 
         return $learningObjects;
     }
+
+    private static function getAttributes(Connection $db, array $ids)
+    {
+        $arr = [];
+        try {
+            $qb = $db
+                ->createQueryBuilder()
+                ->select('DISTINCT gc_lo_attributes.lo_id, gc_lo_attributes.key', 'gc_lo_attributes.value', 'lookup.attribute_type', 'lookup.is_array', 'lo.type', 'lookup.dimension_id')
+                ->from('gc_lo_attributes')
+                ->join('gc_lo_attributes', 'gc_lo', 'lo', 'gc_lo_attributes.lo_id = lo.id')
+                ->leftJoin('gc_lo_attributes', 'gc_lo_attributes_lookup', 'lookup', 'gc_lo_attributes.key = lookup.key')
+                ->andWhere('lo_id in (:lo_id)')
+                ->setParameter(':lo_id', $ids, DB::INTEGERS);
+
+            $attributes = $qb
+                ->execute()
+                ->fetchAll(DB::OBJ);
+
+            foreach ($attributes as $attribute) {
+                if (in_array($attribute->key, LoAttributes::all())) {
+                    $_ = LoAttributes::machineName($attribute->key);
+                    $atts = new StdClass();
+                    $atts->isArray = $attribute->is_array;
+                    $atts->dimensionId = $attribute->dimension_id;
+                    $atts->loId = $attribute->lo_id;
+                    $atts->attributeType = $attribute->attribute_type;
+                    if ($atts->isArray) {
+                        $arr[$attribute->lo_id][$_][] = self::formatAttributeValue($attribute->value, $atts);
+                    } else {
+                        $arr[$attribute->lo_id][$_] = self::formatAttributeValue($attribute->value, $atts);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Do nothing, this is here in case it is used before the required tables are added
+        }
+
+        return $arr;
+    }
+
 
     private static function attachEvents(Connection $db, array &$los, array &$loIds)
     {
@@ -191,8 +244,7 @@ class LoHelper
                             'postal_code'             => $event['loc_postal_code'],
                         ],
                     ];
-                }
-                # Get location from gc_location table
+                } # Get location from gc_location table
                 else if (!empty($event['country'])) {
                     $node->event->locations = [
                         [
@@ -268,7 +320,7 @@ class LoHelper
             'b', 'code', 'del', 'dd', 'dl', 'dt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'sup', 'sub', 'div', 'p', 'blockquote', 'strong', 'i', 'kbd', 's',
             'strike', 'hr', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'em', 'pre', 'br',
-            'table', 'a', 'iframe', 'img', 'ul', 'li', 'ol', 'caption', 'span',
+            'table', 'a', 'iframe', 'img', 'ul', 'li', 'ol', 'caption', 'span', 'u',
         ]);
         $cnf->set('HTML.AllowedAttributes', [
             'a.href', 'a.rel', 'a.target',
@@ -280,7 +332,7 @@ class LoHelper
             'iframe.frameborder', 'iframe.mozallowfullscreen', 'iframe.webkitallowfullscreen',
         ]);
         $cnf->set('HTML.SafeIframe', true);
-        $cnf->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/|fast\.wistia\.net\/embed/)%');
+        $cnf->set('URI.SafeIframeRegexp', '%^(https?:)?//(www\.youtube(?:-nocookie)?\.com/embed/|player\.vimeo\.com/video/|fast\.wistia\.net\/embed/|video\.blueoceanacademy\.cn)%');
         $cnf->set('Attr.AllowedFrameTargets', ['_blank', '_self', '_parent', '_top']);
 
         $def = $cnf->getHTMLDefinition(true);
@@ -301,6 +353,13 @@ class LoHelper
         $cnf->set('Core.HiddenElements', []);
 
         return $cnf;
+    }
+
+    public static function sanitizeTitle(string $title = "") {
+        // HTML Decode Characters, replace br and new lines with spaces
+        $title = preg_replace("/(<br\W*?\/?>)|(\s+)/im", " ", html_entity_decode($title, ENT_QUOTES));
+        // Strip tags and trim
+        return trim(strip_tags($title));
     }
 
     public static function assessorIds(Connection $db, int $loId): array
@@ -408,6 +467,14 @@ class LoHelper
         return $ids;
     }
 
+    public static function moduleIdToCourseId(Connection $db, int $moduleId): int
+    {
+        $_ = 'SELECT source_id FROM gc_ro WHERE (type = ? OR type = ?) AND target_id = ?';
+        $_ = $db->fetchColumn($_, [EdgeTypes::HAS_MODULE, EdgeTypes::HAS_ELECTIVE_LO, $moduleId]);
+
+        return (int) $_;
+    }
+
     public static function moduleIds(Connection $db, int $loId): array
     {
         return EdgeHelper
@@ -498,12 +565,34 @@ class LoHelper
         foreach ($rows as $row) {
             if ($row['type'] == LiTypes::EVENT && $row['count'] > 0) {
                 $result++;
-            }
-            else {
+            } else {
                 $result += $row['count'];
             }
         }
 
         return $result;
+    }
+
+    public static function allowReuseEnrolment(stdClass $lo): bool
+    {
+        return boolval($lo->data->{self::ALLOW_REUSE_ENROLMENT} ?? false);
+    }
+
+    public static function formatAttributeValue($value, $lookup)
+    {
+        if (empty($lookup)) {
+            return $value;
+        }
+
+        if ($lookup->isArray) {
+            $tempValue = json_decode($value);
+            if (!is_null($tempValue) && !is_numeric($tempValue)) {
+                $value = $tempValue;
+            } else if ($lookup->attributeType == LoAttributeTypes::TEXT) {
+                $value = "$value";
+            }
+        }
+
+        return $value;
     }
 }

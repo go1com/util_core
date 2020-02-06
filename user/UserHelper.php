@@ -11,6 +11,8 @@ use PDO;
 use RuntimeException;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
+use function array_fill_keys;
+use function array_map;
 
 class UserHelper
 {
@@ -24,6 +26,14 @@ class UserHelper
     const INTERACTIVE_ADMIN_PROFILE_ID = -100;
     const QUIZ_ADMIN_USER_ID           = -200;
     const QUIZ_ADMIN_PROFILE_ID        = -200;
+
+    public static function isEmbeddedPortalActive(stdClass $user): bool
+    {
+        $portals = $user->embedded->portal ?? null;
+        $portal = is_array($portals) ? array_shift($portals) : $portals;
+
+        return $portal ? $portal->status : true;
+    }
 
     public static function load(Connection $db, int $id, string $instance = null, $columns = '*')
     {
@@ -45,31 +55,21 @@ class UserHelper
             ->fetch(DB::OBJ);
     }
 
-    public static function queryMultiple(Connection $db, array $ids)
+    public static function queryMultiple(Connection $db, array $ids, string $columns = '*')
     {
-        return $db->executeQuery('SELECT * FROM gc_user WHERE id IN (?)', [$ids], [Connection::PARAM_INT_ARRAY]);
+        return $db->executeQuery("SELECT $columns FROM gc_user WHERE id IN (?)", [$ids], [Connection::PARAM_INT_ARRAY]);
     }
 
-    public static function loadMultiple(Connection $db, array $ids): array
+    public static function loadMultiple(Connection $db, array $ids, string $columns = '*'): array
     {
-        return self::queryMultiple($db, $ids)->fetchAll(DB::OBJ);
+        return self::queryMultiple($db, $ids, $columns)->fetchAll(DB::OBJ);
     }
 
-    public static function loadByProfileId(Connection $db, int $profileId, string $instanceName, $columns = '*')
+    public static function loadByProfileId(Connection $db, int $profileId, string $portalName, $columns = '*')
     {
         $sql = "SELECT $columns FROM gc_user WHERE profile_id = ? AND instance = ?";
 
-        return $db->executeQuery($sql, [$profileId, $instanceName])->fetch(DB::OBJ);
-    }
-
-    public function uuid2jwt(Client $client, $userUrl, $uuid)
-    {
-        $url = rtrim($userUrl, '/') . "/account/current/{$uuid}";
-        $res = $client->get($url, ['http_errors' => false]);
-
-        return (200 == $res->getStatusCode())
-            ? json_decode($res->getBody()->getContents())->jwt
-            : false;
+        return $db->executeQuery($sql, [$profileId, $portalName])->fetch(DB::OBJ);
     }
 
     public static function uuidByProfileId(Connection $db, string $accountsName, int $profileId)
@@ -88,13 +88,6 @@ class UserHelper
             : false;
     }
 
-    public function profileId2jwt(Client $client, $userUrl, $profileId)
-    {
-        return ($uuid = $this->profileId2uuid($client, $userUrl, $profileId))
-            ? $this->uuid2jwt($client, $userUrl, $uuid)
-            : false;
-    }
-
     public static function name(stdClass $user, bool $last = false)
     {
         $name = $last ? "{$user->first_name} {$user->last_name}" : $user->first_name;
@@ -106,8 +99,7 @@ class UserHelper
     {
         if ($account->instance != $accountsName) {
             $user = static::loadByEmail($db, $accountsName, $account->mail);
-        }
-        else {
+        } else {
             $user = $account;
         }
 
@@ -118,8 +110,7 @@ class UserHelper
     {
         if ($account->instance != $accountsName) {
             $user = static::loadByEmail($db, $accountsName, $account->mail);
-        }
-        else {
+        } else {
             $user = $account;
         }
 
@@ -212,8 +203,7 @@ class UserHelper
                             'profile_id' => (int) $user->profile_id,
                         ];
                     }
-                }
-                else {
+                } else {
                     if ($user->mail == $account->mail) {
                         $account->root = [
                             'id'         => (int) $user->id,
@@ -276,8 +266,7 @@ class UserHelper
         if ($account = self::load($db, $accountId)) {
             if ($account->instance == $accountsName) {
                 return $account->id;
-            }
-            else {
+            } else {
                 if ($user = self::loadByEmail($db, $accountsName, $account->mail)) {
                     return $user->id;
                 }
@@ -285,5 +274,67 @@ class UserHelper
         }
 
         return null;
+    }
+
+    public static function loadUserByProfileId(Connection $db, int $profileId, string $columns = '*'): ?stdClass
+    {
+        $user = $db
+            ->executeQuery("SELECT $columns FROM gc_users WHERE profile_id = ?", [$profileId], [DB::INTEGER])
+            ->fetch(DB::OBJ);
+
+        return $user ?: null;
+    }
+
+    public static function userIdsToAccountIds(Connection $db, string $portalName, array $userIds): array
+    {
+        $userIds = array_map('intval', $userIds);
+        if (!$userIds) {
+            return [];
+        }
+
+        $q = 'SELECT gc_ro.source_id AS userId, acc.id AS accountId';
+        $q .= ' FROM gc_accounts acc';
+        $q .= ' INNER JOIN gc_ro ON gc_ro.type = ? AND gc_ro.source_id IN (?) AND acc.id = gc_ro.target_id';
+        $q .= ' WHERE acc.instance = ?';
+        $q = $db->executeQuery($q, [EdgeTypes::HAS_ACCOUNT, $userIds, $portalName], [DB::INTEGER, DB::INTEGERS, DB::STRING]);
+
+        $results = array_fill_keys($userIds, null);
+        while ($_ = $q->fetch(DB::OBJ)) {
+            $results[(int) $_->userId] = (int) $_->accountId;
+        }
+
+        return $results;
+    }
+
+    public static function accountIdsToUserIds(Connection $db, array $accountIds): array
+    {
+        $accountIds = array_map('intval', $accountIds);
+        if (!$accountIds) {
+            return [];
+        }
+
+        $q = 'SELECT source_id AS userId, target_id AS accountId';
+        $q .= ' FROM gc_ro';
+        $q .= ' WHERE type = ? AND target_id IN (?)';
+        $q = $db->executeQuery($q, [EdgeTypes::HAS_ACCOUNT, $accountIds], [DB::INTEGER, DB::INTEGERS, DB::INTEGER]);
+
+        $results = array_fill_keys($accountIds, null);
+        while ($_ = $q->fetch(DB::OBJ)) {
+            $results[(int) $_->accountId] = (int) $_->userId;
+        }
+
+        return $results;
+    }
+
+    public static function getAccountIds(Connection $db, int $userId): array
+    {
+        $accountIds = $db
+            ->executeQuery(
+                "SELECT target_id FROM gc_ro ro WHERE type = ? AND source_id = ?",
+                [EdgeTypes::HAS_ACCOUNT, $userId]
+            )
+            ->fetchAll(PDO::FETCH_COLUMN);
+
+        return array_map('intval', $accountIds);
     }
 }
