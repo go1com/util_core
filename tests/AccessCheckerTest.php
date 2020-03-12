@@ -82,16 +82,12 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_ACCOUNT, $userId, $accountId);
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $userId, $this->createAccountsAdminRole($this->go1, ['instance' => $accountsName]));
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $accountId, $this->createPortalAdminRole($this->go1, ['instance' => $portalName]));
-        
+
         $req = new Request;
         $access = new AccessChecker;
         $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
-        $this->assertTrue((bool) $access->isPortalAdmin($req, $portalName));
         $this->assertTrue((bool) $access->isPortalAdmin($req, $portalId));
-        $this->assertTrue((bool) $access->isPortalAdmin($req, $portalName), false);
         $this->assertTrue((bool) $access->isPortalAdmin($req, $portalId), false);
-        $this->assertTrue((bool) $access->isContentAdministrator($req, $portalName));
-        $this->assertFalse((bool) $access->isContentAdministrator($req, $portalName, false));
     }
 
     public function testPortalContentAdminWithInheritance()
@@ -102,22 +98,23 @@ class AccessCheckerTest extends UtilCoreTestCase
             'data'     => ['roles' => [Roles::ROOT]],
         ]);
         $accountId = $this->createUser($this->go1, [
-            'mail'     => $mail,
-            'instance' => $portalName = 'content-admin.go1.co',
-            'data'     => ['roles' => [Roles::ADMIN_CONTENT]],
+            'mail'      => $mail,
+            'portal_id' => $portalId = 55555,
+            'instance'  => 'content-admin.go1.co',
+            'data'      => ['roles' => [Roles::ADMIN_CONTENT]],
         ]);
 
         $this->link($this->go1, EdgeTypes::HAS_ACCOUNT, $userId, $accountId);
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $userId, $this->createAccountsAdminRole($this->go1, ['instance' => $accountsName]));
-        $this->link($this->go1, EdgeTypes::HAS_ROLE, $portalName, $this->createPortalContentAdminRole($this->go1, ['instance' => $portalName]));
+        $this->link($this->go1, EdgeTypes::HAS_ROLE, $portalId, $this->createPortalContentAdminRole($this->go1, ['instance' => $portalId]));
 
         $req = new Request;
         $accessChecker = new AccessChecker;
-        $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
-        $this->assertTrue((bool) $accessChecker->isPortalAdmin($req, $portalName));
-        $this->assertFalse((bool) $accessChecker->isPortalAdmin($req, $portalName, Roles::ADMIN, false));
-        $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalName));
-        $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalName, Roles::ADMIN, false));
+        $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalId), 'INTERNAL', ['HS256']));
+        $this->assertTrue((bool) $accessChecker->isPortalAdmin($req, $portalId));
+        $this->assertFalse((bool) $accessChecker->isPortalAdmin($req, $portalId, Roles::ADMIN, false));
+        $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalId));
+        $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalId, Roles::ADMIN, false));
     }
 
     public function testGetAccessToken()
@@ -128,7 +125,7 @@ class AccessCheckerTest extends UtilCoreTestCase
         $accessChecker = new AccessChecker;
         $this->assertNull($accessChecker->sessionToken($req));
 
-        $req->attributes->set('jwt.payload', (object)['sid' => $sessionToken]);
+        $req->attributes->set('jwt.payload', (object) ['sid' => $sessionToken]);
         $this->assertEquals($sessionToken, $accessChecker->sessionToken($req));
     }
 }

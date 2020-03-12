@@ -14,6 +14,7 @@ use go1\util\user\UserHelper;
 use PDO;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
+use function in_array;
 
 class AccessChecker
 {
@@ -23,21 +24,21 @@ class AccessChecker
     const ACCESS_ROOT          = 300;
     const ACCESS_OWNER         = 400;
 
-    public function isContentAdministrator(Request $req, $instance, bool $inheritance = true)
+    public function isContentAdministrator(Request $req, int $portalId, bool $inheritance = true)
     {
-        if ($inheritance && $this->isPortalAdmin($req, $instance, Roles::ADMIN, $inheritance)) {
+        if ($inheritance && $this->isPortalAdmin($req, $portalId, Roles::ADMIN, $inheritance)) {
             return true;
         }
 
-        return $this->isPortalAdmin($req, $instance, Roles::ADMIN_CONTENT, $inheritance);
+        return $this->isPortalAdmin($req, $portalId, Roles::ADMIN_CONTENT, $inheritance);
     }
 
     /**
      * @param Request $req
-     * @param string  $portalIdOrName
+     * @param int     $portalId
      * @return null|bool|stdClass
      */
-    public function isPortalAdmin(Request $req, $portalIdOrName, $role = Roles::ADMIN, bool $inheritance = true)
+    public function isPortalAdmin(Request $req, int $portalId, $role = Roles::ADMIN, bool $inheritance = true)
     {
         if (!$user = $this->validUser($req)) {
             return null;
@@ -49,10 +50,11 @@ class AccessChecker
 
         $accounts = isset($user->accounts) ? $user->accounts : [];
         foreach ($accounts as &$account) {
-            $actual = is_numeric($portalIdOrName) ? $account->portal_id : $account->instance;
-            if ($portalIdOrName === $actual) {
-                if (!empty($account->roles) && in_array($role, $account->roles)) {
-                    return $account;
+            if ($portalId == $account->portal_id) {
+                if (!empty($account->roles)) {
+                    if (in_array($role, $account->roles)) {
+                        return $account;
+                    }
                 }
             }
         }
@@ -60,9 +62,9 @@ class AccessChecker
         return false;
     }
 
-    public function isPortalTutor(Request $req, $portalIdOrName, $role = Roles::TUTOR, bool $strict = true)
+    public function isPortalTutor(Request $req, int $portalId, $role = Roles::TUTOR, bool $strict = true)
     {
-        if ($strict && $this->isPortalAdmin($req, $portalIdOrName)) {
+        if ($strict && $this->isPortalAdmin($req, $portalId)) {
             return 1;
         }
 
@@ -72,8 +74,8 @@ class AccessChecker
 
         $accounts = isset($user->accounts) ? $user->accounts : [];
         foreach ($accounts as &$account) {
-            $actual = is_numeric($portalIdOrName) ? $account->portal_id : $account->instance;
-            if ($portalIdOrName == $actual) {
+            $actual = is_numeric($portalId) ? $account->portal_id : $account->instance;
+            if ($portalId == $actual) {
                 if (!empty($account->roles) && in_array($role, $account->roles)) {
                     return $account;
                 }
@@ -210,13 +212,13 @@ class AccessChecker
         ) ? true : false;
     }
 
-    public function accessLevel(Request $req, $instance = null)
+    public function accessLevel(Request $req, int $portalId = null)
     {
         if ($this->isAccountsAdmin($req)) {
             return static::ACCESS_ROOT;
         }
 
-        if ($instance && $this->isPortalAdmin($req, $instance)) {
+        if ($portalId && $this->isPortalAdmin($req, $portalId)) {
             return static::ACCESS_ADMIN;
         }
 
@@ -233,7 +235,7 @@ class AccessChecker
             }
 
             if (0 === strpos($entityType, 'account')) {
-                $account = $instance ? $this->validUser($req, $instance) : false;
+                $account = $portalId ? $this->validUser($req, $portalId) : false;
                 if ($account && $account->id == $entityId) {
                     return static::ACCESS_OWNER;
                 }
