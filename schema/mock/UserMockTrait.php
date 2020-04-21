@@ -70,6 +70,7 @@ trait UserMockTrait
         $db->insert('gc_user', [
             'id'           => $options['id'] ?? null,
             'uuid'         => isset($options['uuid']) ? $options['uuid'] : uniqid('xxxxxxxx'),
+            'user_uuid'    => isset($options['user_uuid']) ? $options['user_uuid'] : null,
             'instance'     => isset($options['instance']) ? $options['instance'] : 'az.mygo1.com',
             'profile_id'   => isset($options['profile_id']) ? $options['profile_id'] : $profileId++,
             'mail'         => isset($options['mail']) ? $options['mail'] : $this->defaultUserMail(),
@@ -89,12 +90,13 @@ trait UserMockTrait
     }
 
     # NOTE: This is not yet stable, JWT is large, not good for production usage.
-    public function jwtForUser(Connection $db, int $userId, string $portalName = null): string
+    public function jwtForUser(Connection $db, int $userId, string $portalName = null, string $sid = null): string
     {
         $payload = [
             'iss'    => 'go1.user',
             'ver'    => '1.1',
             'exp'    => strtotime('+ 1 year'),
+            'sid'    => $sid,
             'object' => (object) [
                 'type'    => 'user',
                 'content' => call_user_func(

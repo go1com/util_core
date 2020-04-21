@@ -156,6 +156,8 @@ class LoExploreSchema
                             'key'       => ['type' => Schema::T_KEYWORD],
                         ],
                     ],
+                    'roles'             => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                    'skills'            => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
                     /** @see https://github.com/go1com/util_core/blob/master/lo/LoAttributes.php#L20 */
                     'provider' => ['type' => Schema::T_KEYWORD],
                 ],
@@ -208,6 +210,8 @@ class LoExploreSchema
                 ],
             ],
             'product_ids' => ['type' => Schema::T_INT], # @see go1-core/content-subscription-index
+            'decommissioned_at' => ['type' => Schema::T_DATE],
+            'removed_at' => ['type' => Schema::T_DATE],
         ],
     ];
 
