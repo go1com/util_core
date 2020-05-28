@@ -17,6 +17,16 @@ define('DEFAULT_USER_ID', 91);
 
 trait UserMockTrait
 {
+    protected function defaultUserMail()
+    {
+        return 'thehongtt@gmail.com';
+    }
+
+    protected function defautlUserPass()
+    {
+        return 'xxxxxxx';
+    }
+
     public function createAccountsAdminRole($db, array $options = [])
     {
         return $this->createRole($db, $options + ['name' => Roles::ROOT]);
@@ -60,10 +70,11 @@ trait UserMockTrait
         $db->insert('gc_user', [
             'id'           => $options['id'] ?? null,
             'uuid'         => isset($options['uuid']) ? $options['uuid'] : uniqid('xxxxxxxx'),
+            'user_uuid'    => isset($options['user_uuid']) ? $options['user_uuid'] : null,
             'instance'     => isset($options['instance']) ? $options['instance'] : 'az.mygo1.com',
             'profile_id'   => isset($options['profile_id']) ? $options['profile_id'] : $profileId++,
-            'mail'         => isset($options['mail']) ? $options['mail'] : 'thehongtt@gmail.com',
-            'password'     => isset($options['password']) ? $options['password'] : 'xxxxxxx',
+            'mail'         => isset($options['mail']) ? $options['mail'] : $this->defaultUserMail(),
+            'password'     => isset($options['password']) ? $options['password'] : $this->defautlUserPass(),
             'created'      => isset($options['created']) ? $options['created'] : strtotime('-10 days'),
             'login'        => isset($options['login']) ? $options['login'] : strtotime('-2 days'),
             'access'       => isset($options['access']) ? $options['access'] : strtotime('-1 days'),
@@ -73,19 +84,22 @@ trait UserMockTrait
             'allow_public' => isset($options['allow_public']) ? $options['allow_public'] : 0,
             'data'         => $data,
             'timestamp'    => isset($options['timestamp']) ? $options['timestamp'] : time(),
+            'locale'       => isset($options['locale']) ? $options['locale'] : null,
         ]);
 
         return $db->lastInsertId('gc_user');
     }
 
     # NOTE: This is not yet stable, JWT is large, not good for production usage.
-    public function jwtForUser(Connection $db, int $userId, string $portalName = null): string
+    public function jwtForUser(Connection $db, int $userId, string $portalName = null, string $sid = null, bool $usedCreds = false): string
     {
         $payload = [
-            'iss'    => 'go1.user',
-            'ver'    => '1.1',
-            'exp'    => strtotime('+ 1 year'),
-            'object' => (object) [
+            'iss'       => 'go1.user',
+            'ver'       => '1.1',
+            'exp'       => strtotime('+ 1 year'),
+            'sid'       => $sid,
+            'usedCreds' => $usedCreds ? 1 : 0,
+            'object'    => (object)[
                 'type'    => 'user',
                 'content' => call_user_func(
                     function () use ($db, $userId, $portalName) {
@@ -94,7 +108,7 @@ trait UserMockTrait
 
                         if ($user && !empty($user->accounts[0])) {
                             $account = &$user->accounts[0];
-                            $account->portalId = (int) $db->fetchColumn('SELECT id FROM gc_instance WHERE title = ?', [$account->instance]);
+                            $account->portalId = (int)$db->fetchColumn('SELECT id FROM gc_instance WHERE title = ?', [$account->instance]);
                         }
 
                         return $user;
@@ -131,8 +145,7 @@ trait UserMockTrait
         $userProfileId = DEFAULT_USER_PROFILE_ID,
         $userId = DEFAULT_USER_ID,
         $encode = true
-    )
-    {
+    ) {
         $payload = $this->getPayload([
             'id'              => $accountId,
             'accounts_name'   => $accountName,
@@ -187,10 +200,10 @@ trait UserMockTrait
             'last_name'     => 'T',
             'instance_name' => isset($options['accounts_name']) ? $options['accounts_name'] : 'accounts.gocatalyze.com',
             'profile_id'    => intval($userProfileId),
-            'mail'          => $mail = isset($options['mail']) ? $options['mail'] : 'thehongtt@gmail.com',
+            'mail'          => $mail = isset($options['mail']) ? $options['mail'] : $this->defaultUserMail(),
             'roles'         => $roles = isset($options['roles']) ? $options['roles'] : ['authenticated'],
             'accounts'      => [
-                (object) $account
+                (object) $account,
             ],
         ];
 
@@ -297,9 +310,9 @@ trait UserMockTrait
         return $db->lastInsertId('gc_ro');
     }
 
-    protected function addEmail(Connection $db, $email)
+    protected function addEmail(Connection $db, $email, $userId)
     {
-        $db->insert('gc_user_mail', ['title' => $email]);
+        $db->insert('gc_user_mail', ['user_id' => $userId, 'title' => $email]);
 
         return $db->lastInsertId('gc_user_mail');
     }

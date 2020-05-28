@@ -177,6 +177,7 @@ class UserHelper
             'status'     => (bool) $user->status,
             'data'       => (object) (is_array($data) ? array_diff_key($data, ['avatar' => 0, 'roles' => 0, 'phone' => 0]) : $data),
             'timestamp'  => intval($user->timestamp),
+            'locale'     => $user->locale ?? null,
             'phone'      => $data['phone'] ?? null,
             'root'       => null,
         ];
@@ -324,5 +325,47 @@ class UserHelper
         }
 
         return $results;
+    }
+
+    public static function getAccountIds(Connection $db, int $userId): array
+    {
+        $accountIds = $db
+            ->executeQuery(
+                "SELECT target_id FROM gc_ro ro WHERE type = ? AND source_id = ?",
+                [EdgeTypes::HAS_ACCOUNT, $userId]
+            )
+            ->fetchAll(PDO::FETCH_COLUMN);
+
+        return array_map('intval', $accountIds);
+    }
+
+    public static function getPortalJWT(stdClass $portal): string
+    {
+        $payload = [
+            'iss'    => 'go1.user',
+            'ver'    => '1.0',
+            'exp'    => strtotime('+ 1 month'),
+            'object' => [
+                'type'    => 'user',
+                'content' => [
+                    'id'         => 1,
+                    'profile_id' => 1,
+                    'mail'       => "user.0@{$portal->title}",
+                    'name'       => 'public',
+                    'accounts'   => [
+                        [
+                            'id'         => 1,
+                            'profile_id' => 1,
+                            'instance'   => $portal->title,
+                            'portal_id'  => (int)$portal->id,
+                            'name'       => 'public',
+                            'roles'      => [Roles::STUDENT]
+                        ]
+                    ]
+                ],
+            ],
+        ];
+
+        return JWT::encode($payload, 'INTERNAL');
     }
 }
