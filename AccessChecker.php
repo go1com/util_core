@@ -123,6 +123,11 @@ class AccessChecker
         return false;
     }
 
+    public function jwt(Request $req): ?string
+    {
+        return $req->attributes->get('jwt.raw');
+    }
+
     public function sessionToken(Request $req): ?string
     {
         $payload = $req->attributes->get('jwt.payload');
@@ -157,6 +162,7 @@ class AccessChecker
                 }
             }
 
+            // @TODO: To be removed this logic
             if ($db) {
                 $account = UserHelper::loadByEmail($db, $portalName, $user->mail);
                 if (is_object($account)) {
