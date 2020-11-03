@@ -421,6 +421,8 @@ class Schema
                     'instance_id'         => ['type' => self::T_INT],
                     'updated_at'          => ['type' => self::T_INT],
                     'event_details'       => ['type' => self::T_KEYWORD] + self::ANALYZED, # Ex: Induction training | 08 August 2018 - 09 August 2018 | Brisbane
+                    'utm_source'          => ['type' => self::T_KEYWORD],
+                    'utm_content'         => ['type' => self::T_KEYWORD],
                 ],
             ],
         ],
