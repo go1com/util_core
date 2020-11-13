@@ -547,4 +547,13 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->expectExceptionMessage('More than one enrolment return.');
         $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId));
     }
+
+    public function testLoadByLoUserAndPortal()
+    {
+        $fooEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => 1, 'taken_instance_id' => 1, 'lo_id' => 1, 'user_id' => 2]);
+        $barEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => 1, 'taken_instance_id' => 2, 'lo_id' => 1, 'user_id' => 2]);
+
+        $this->assertEquals($fooEnrolmentId, EnrolmentHelper::loadByLoUserAndPortal($this->go1, 1, 2, 1)->id);
+        $this->assertEquals($barEnrolmentId, EnrolmentHelper::loadByLoUserAndPortal($this->go1, 1, 2, 2)->id);
+    }
 }

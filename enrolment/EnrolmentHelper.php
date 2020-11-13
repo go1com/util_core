@@ -112,6 +112,21 @@ class EnrolmentHelper
         return $q->execute()->fetch($fetchMode);
     }
 
+    public static function loadByLoUserAndPortal(Connection $db, int $loId, int $userId, int $portalId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ)
+    {
+        $q = $db
+            ->createQueryBuilder()
+            ->select($select)
+            ->from('gc_enrolment')
+            ->where('lo_id = :lo_id')->setParameter(':lo_id', (int) $loId)
+            ->andWhere('user_id = :user_id')->setParameter(':user_id', (int) $userId, DB::INTEGER)
+            ->andWhere('taken_instance_id = :taken_instance_id')->setParameter(':taken_instance_id', (int) $portalId, DB::INTEGER);
+
+        $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
+
+        return $q->execute()->fetch($fetchMode);
+    }
+
     public static function loadRevision(Connection $db, int $id)
     {
         return $db
