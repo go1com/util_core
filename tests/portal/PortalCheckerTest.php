@@ -98,13 +98,11 @@ class PortalCheckerTest extends UtilCoreTestCase
             ['production', 'public.mygo1.com', '', '', 'https://www.go1.com/'],
             ['production', 'az.mygo1.com', 'embed-course/12345/', 'p/embed.html#', 'https://az.mygo1.com/p/embed.html#/embed-course/12345/'],
             ['production', 'az.mygo1.com', '123', 'play', 'https://az.mygo1.com/play/123'],
-            ['staging', 'staging.mygo1.com', '', 'p/#', 'https://staging.mygo1.com/p/#/'],
-            ['staging', 'staging.mygo1.com', '123', 'play', 'https://staging.mygo1.com/play/123'],
-            ['qa', 'qa.go1.cloud', '', 'p/#', 'https://qa.go1.cloud/p/#/'],
-            ['qa', 'qa.go1.cloud', '123', 'play', 'https://qa.go1.cloud/play/123'],
-            ['dev', 'dev.mygo1.com', '', 'p/#', 'https://dev.mygo1.com/p/#/'],
-            ['', 'dev.mygo1.com', '', 'p/#', 'https://dev.mygo1.com/p/#/'],
-            ['', 'dev.mygo1.com', '123', 'play', 'https://dev.mygo1.com/play/123'],
+            ['staging', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
+            ['staging', 'az.mygo1.com', '123', 'play', 'https://az.mygo1.com/play/123'],
+            ['qa', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
+            ['dev', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
+            ['', 'az.mygo1.com', '', 'p/#', 'https://az.mygo1.com/p/#/'],
         ];
     }
 
@@ -131,24 +129,27 @@ class PortalCheckerTest extends UtilCoreTestCase
     public function testAllowDiscussion()
     {
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal1.mygo1.com',
             'data' => ['configuration' => ['discussion' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowDiscussion($portal));
 
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal2.mygo1.com',
             'data' => ['configuration' => ['discussion' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowDiscussion($portal));
 
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal3.mygo1.com',
             'data' => ['configuration' => ['discussionEnabled' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowDiscussion($portal));
 
-        $id = $this->createPortal($this->go1, []);
+        $id = $this->createPortal($this->go1, ['title' => 'portal4.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowDiscussion($portal));
     }
@@ -156,18 +157,20 @@ class PortalCheckerTest extends UtilCoreTestCase
     public function testAllowUserInvite()
     {
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal1.mygo1.com',
             'data' => ['configuration' => ['user_invite' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowUserInvite($portal));
 
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal2.mygo1.com',
             'data' => ['configuration' => ['user_invite' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowUserInvite($portal));
 
-        $id = $this->createPortal($this->go1, []);
+        $id = $this->createPortal($this->go1, ['title' => 'portal3.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowUserInvite($portal));
     }
@@ -175,18 +178,20 @@ class PortalCheckerTest extends UtilCoreTestCase
     public function testAllowPublicProfile()
     {
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal1.mygo1.com',
             'data' => ['configuration' => ['public_profiles' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowPublicProfile($portal));
 
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal2.mygo1.com',
             'data' => ['configuration' => ['public_profiles' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowPublicProfile($portal));
 
-        $id = $this->createPortal($this->go1, []);
+        $id = $this->createPortal($this->go1, ['title' => 'portal3.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowPublicProfile($portal));
     }
@@ -194,18 +199,20 @@ class PortalCheckerTest extends UtilCoreTestCase
     public function testAllowUserPayment()
     {
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal1.mygo1.com',
             'data' => ['configuration' => ['user_payment' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowUserPayment($portal));
 
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal2.mygo1.com',
             'data' => ['configuration' => ['user_payment' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowUserPayment($portal));
 
-        $id = $this->createPortal($this->go1, []);
+        $id = $this->createPortal($this->go1, ['title' => 'portal3.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowUserPayment($portal));
     }
@@ -213,18 +220,20 @@ class PortalCheckerTest extends UtilCoreTestCase
     public function testAllowMarketplace()
     {
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal1.mygo1.com',
             'data' => ['features' => ['marketplace' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowMarketplace($portal));
 
         $id = $this->createPortal($this->go1, [
+            'title' => 'portal2.mygo1.com',
             'data' => ['features' => ['marketplace' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowMarketplace($portal));
 
-        $id = $this->createPortal($this->go1, []);
+        $id = $this->createPortal($this->go1, ['title' => 'portal3.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowMarketplace($portal));
     }
@@ -265,6 +274,7 @@ class PortalCheckerTest extends UtilCoreTestCase
     public function testAllowNotifyRemindMajorEventByRole($data, $expected)
     {
         $id = $this->createPortal($this->go1, [
+            'title' => 'qa.mygo1.com',
             'data' => ['configuration' => [PortalHelper::FEATURE_NOTIFY_REMIND_MAJOR_EVENT => $data]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);

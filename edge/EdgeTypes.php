@@ -137,15 +137,21 @@ class EdgeTypes
 
     # User relationships
     # ---------------------
+    // @deprecated Use UserDomainHelper
     const HAS_ROLE                       = 500; # T: Role               | S: User
+    // @deprecated Use UserDomainHelper
     const HAS_ACCOUNT                    = 501; # T: Account            | S: User
+    // @deprecated Use UserDomainHelper
     const HAS_TUTOR_EDGE                 = 502; # T: User (Tutor)       | S: gc_ro id - the record has source_id is course, target_id is (Module)
     const HAS_AUTHOR_EDGE                = 503; # T: User               | S: Learning object
+    // @deprecated Use UserDomainHelper
     const HAS_MANAGER                    = 504; # T: User Id of manager | S: gc_user.id Account Id of student
+    // @deprecated Use UserDomainHelper
     const HAS_EMAIL                      = 505; # T: gc_user_mail id    | S: gc_user id @Deprecated by query in gc_user_email instead
     const HAS_TUTOR_ENROLMENT_EDGE       = 506; # T: gc_enrolment id    | S: gc_user id
     const HAS_FOLLOWING                  = 508; # T: gc_user.id         | S: gc_user.id
     const HAS_PORTAL_EDGE                = 509; # T: gc_instance.id     | S: gc_user.id | Portal - Owner Relationship
+    // @deprecated by no longer use virtual account
     const HAS_ACCOUNT_VIRTUAL            = 510; # T: User               | S: Account
     const HAS_MENTION                    = 602; # T: gc_lo.id           | S: gc_user.id
     const HAS_SHARE_GROUP_NOTE           = 604; # T: gc_social_group.id | S: gc_note.id

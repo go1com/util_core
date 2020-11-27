@@ -32,6 +32,7 @@ class UserSchema
             $user->addColumn('timestamp', 'integer');
             $user->addColumn('locale', 'string', ['length' => 12, 'notnull' => false]);
             $user->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+            $user->addColumn('job_role', 'string', ['notnull' => false]);
 
             $user->setPrimaryKey(['id']);
             $user->addIndex(['uuid']);
