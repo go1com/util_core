@@ -72,6 +72,7 @@ class EnrolmentSchema
             $revision->addIndex(['pass']);
             $revision->addIndex(['parent_enrolment_id']);
             $revision->addIndex(['timestamp']);
+            $revision->addIndex(['lo_id']);
         }
 
         if (!$schema->hasTable('gc_enrolment_transaction')) {
