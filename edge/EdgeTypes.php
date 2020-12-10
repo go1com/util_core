@@ -109,6 +109,7 @@ class EdgeTypes
     const AWARD_ASSESSOR              = 45; # T: Account              | S: award.id
     const GROUP_HAS_ITEM              = 46; # T: Learning object      | S: Learning object (group lo only)
     const PLAYLIST_HAS_ITEM           = 47; # T: LO                   | S: playlist.
+    const HAS_STRUCTURED_LO           = 48; # T: gc_lo.id             | S: achievement_goal.id | Linked LOs into Achievements
 
     # LO & enrolment scheduling
     # ---------------------
