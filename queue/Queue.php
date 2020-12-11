@@ -218,7 +218,7 @@ class Queue
     const MERGE_ACCOUNT_ENROLMENT_REVISION  = 'merge-account.enrolment-revision'; // Change profile_id of enrolment revisions, body: {profile_id, portal_id}
     const CONTENT_JOB_PROCESS_IMPORT        = 'content_job.process.import';
     const CONTENT_JOB_PROCESS_IMPORT_JOB    = 'content_job_job.process.import';
-    const ACCESS_SESSION_INVALIDATED        = 'access.session.invalidated';
+    const ACCESS_SESSIONS_INVALIDATED       = 'access.sessions.invalidated';
 
     # user-domain events.
     const USER_DOMAIN_USER_CREATE           = 'user-domain.user.create';
