@@ -230,7 +230,6 @@ class Queue
     # lrs events
     const LRS_EVENT_NEW                     = 'lrs.event.new'; // Receive learning record from external parties, body: {"event":"lrs", instanceId, oauth2ClientId, userId, payload}
 
-
     /**
      * @deprecated
      *
