@@ -100,6 +100,16 @@ class AccessChecker
     {
         return in_array(Roles::ROOT, isset($user->roles) ? $user->roles : []);
     }
+    
+    public function contextPortal(Request $req): ?stdClass
+    {
+        $user = $this->validUser($req);
+        if ($user) {
+            return $user->accounts[0] ?? null;
+        }
+
+        return null;
+    }
 
     public function validAccount(Request $req, $portalIdOrName)
     {
