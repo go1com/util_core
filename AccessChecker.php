@@ -104,11 +104,16 @@ class AccessChecker
     public function contextPortal(Request $req): ?stdClass
     {
         $user = $this->validUser($req);
-        if ($user) {
-            return $user->accounts[0] ?? null;
+        if (!$user) {
+            return null;
         }
 
-        return null;
+        $account = $user->accounts[0] ?? null;
+        if (!$account) {
+            return null;
+        }
+
+        return (object) ['id' => $account->portal_id, 'title' => $account->instance];
     }
 
     public function validAccount(Request $req, $portalIdOrName)
