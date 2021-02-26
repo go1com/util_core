@@ -28,6 +28,13 @@ class AccessCheckerTest extends UtilCoreTestCase
         $payload = Text::jwtContent($jwt);
         $req->attributes->set('jwt.payload', $payload);
         $service = new AccessChecker;
+        
+        {
+            // context portal
+            $portal = $service->contextPortal($req);
+            $this->assertEquals('qa.mygo1.com', $portal->title);
+            $this->assertEquals($portalId, $portal->id);
+        }
 
         {
             // check by name
