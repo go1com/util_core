@@ -19,15 +19,11 @@ class ManualRecordTest extends UtilCoreTestCase
     /** @var MqClient */
     protected $queue;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
-        DB::install($this->go1, [
-            function (Schema $schema) {
-                EnrolmentSchema::installManualRecord($schema);
-            },
-        ]);
+        DB::install($this->go1, [fn(Schema $schema) => EnrolmentSchema::installManualRecord($schema)]);
 
         $this->queue = $this
             ->getMockBuilder(MqClient::class)

@@ -108,6 +108,7 @@ class EnrolmentSchema
         static::update01($schema);
         static::update02($schema);
         static::update03($schema);
+        static::update04($schema);
     }
 
     public static function installManualRecord(Schema $schema)
@@ -179,6 +180,24 @@ class EnrolmentSchema
             if (!$revision->hasColumn('user_id')) {
                 $revision->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
                 $revision->addIndex(['user_id']);
+            }
+        }
+    }
+
+    public static function update04(Schema $schema)
+    {
+        if ($schema->hasTable('gc_enrolment')) {
+            $enrolment = $schema->getTable('gc_enrolment');
+            $indexes = $enrolment->getIndexes();
+            foreach ($indexes as $index) {
+                if (
+                    $index->isUnique()
+                    && !$index->isPrimary()
+                    && (['profile_id', 'parent_lo_id', 'lo_id', 'taken_instance_id'] == $index->getColumns())
+                ) {
+                    $enrolment->dropIndex($index->getName());
+                    $enrolment->addUniqueIndex(['user_id', 'parent_enrolment_id', 'lo_id', 'taken_instance_id']);
+                }
             }
         }
     }
