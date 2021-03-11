@@ -130,21 +130,21 @@ class PortalCheckerTest extends UtilCoreTestCase
     {
         $id = $this->createPortal($this->go1, [
             'title' => 'portal1.mygo1.com',
-            'data' => ['configuration' => ['discussion' => 0]],
+            'data'  => ['configuration' => ['discussion' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowDiscussion($portal));
 
         $id = $this->createPortal($this->go1, [
             'title' => 'portal2.mygo1.com',
-            'data' => ['configuration' => ['discussion' => 1]],
+            'data'  => ['configuration' => ['discussion' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowDiscussion($portal));
 
         $id = $this->createPortal($this->go1, [
             'title' => 'portal3.mygo1.com',
-            'data' => ['configuration' => ['discussionEnabled' => 0]],
+            'data'  => ['configuration' => ['discussionEnabled' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowDiscussion($portal));
@@ -158,14 +158,14 @@ class PortalCheckerTest extends UtilCoreTestCase
     {
         $id = $this->createPortal($this->go1, [
             'title' => 'portal1.mygo1.com',
-            'data' => ['configuration' => ['user_invite' => 0]],
+            'data'  => ['configuration' => ['user_invite' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowUserInvite($portal));
 
         $id = $this->createPortal($this->go1, [
             'title' => 'portal2.mygo1.com',
-            'data' => ['configuration' => ['user_invite' => 1]],
+            'data'  => ['configuration' => ['user_invite' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowUserInvite($portal));
@@ -179,14 +179,14 @@ class PortalCheckerTest extends UtilCoreTestCase
     {
         $id = $this->createPortal($this->go1, [
             'title' => 'portal1.mygo1.com',
-            'data' => ['configuration' => ['public_profiles' => 0]],
+            'data'  => ['configuration' => ['public_profiles' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowPublicProfile($portal));
 
         $id = $this->createPortal($this->go1, [
             'title' => 'portal2.mygo1.com',
-            'data' => ['configuration' => ['public_profiles' => 1]],
+            'data'  => ['configuration' => ['public_profiles' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowPublicProfile($portal));
@@ -200,14 +200,14 @@ class PortalCheckerTest extends UtilCoreTestCase
     {
         $id = $this->createPortal($this->go1, [
             'title' => 'portal1.mygo1.com',
-            'data' => ['configuration' => ['user_payment' => 0]],
+            'data'  => ['configuration' => ['user_payment' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowUserPayment($portal));
 
         $id = $this->createPortal($this->go1, [
             'title' => 'portal2.mygo1.com',
-            'data' => ['configuration' => ['user_payment' => 1]],
+            'data'  => ['configuration' => ['user_payment' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowUserPayment($portal));
@@ -221,14 +221,14 @@ class PortalCheckerTest extends UtilCoreTestCase
     {
         $id = $this->createPortal($this->go1, [
             'title' => 'portal1.mygo1.com',
-            'data' => ['features' => ['marketplace' => 0]],
+            'data'  => ['features' => ['marketplace' => 0]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertFalse(PortalChecker::allowMarketplace($portal));
 
         $id = $this->createPortal($this->go1, [
             'title' => 'portal2.mygo1.com',
-            'data' => ['features' => ['marketplace' => 1]],
+            'data'  => ['features' => ['marketplace' => 1]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         $this->assertTrue(PortalChecker::allowMarketplace($portal));
@@ -275,7 +275,7 @@ class PortalCheckerTest extends UtilCoreTestCase
     {
         $id = $this->createPortal($this->go1, [
             'title' => 'qa.mygo1.com',
-            'data' => ['configuration' => [PortalHelper::FEATURE_NOTIFY_REMIND_MAJOR_EVENT => $data]],
+            'data'  => ['configuration' => [PortalHelper::FEATURE_NOTIFY_REMIND_MAJOR_EVENT => $data]],
         ]);
         $portal = PortalHelper::load($this->go1, $id);
         foreach ($expected as $role => $assert) {
@@ -487,22 +487,9 @@ class PortalCheckerTest extends UtilCoreTestCase
     public function dataBuildLinkQA()
     {
         return [
-            ['ENV_HOSTNAME_QA=qa.go1.cloud', 'https://qa.go1.cloud/p/#/'],
-            ['ENV_HOSTNAME_QA', 'https://qa.go1.cloud/p/#/'],
+            ['ENV_HOSTNAME=qa.go1.cloud', 'https://qa.go1.cloud/p/#/'],
+            ['ENV_HOSTNAME', 'https://qa.go1.cloud/p/#/'],
         ];
-    }
-
-    /**
-     * @dataProvider dataBuildLinkQA
-     */
-    public function testBuildLinkForQA($env, $expect)
-    {
-        putenv("ENV=qa");
-        putenv($env);
-        $portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
-        $portal = PortalHelper::load($this->go1, $portalId);
-
-        $this->assertEquals($expect, (new PortalChecker)->buildLink($portal, '', 'p/#'));
     }
 
     public function testBuildLinkDefaultPrefix()
@@ -534,26 +521,5 @@ class PortalCheckerTest extends UtilCoreTestCase
         ]);
         $portal = PortalHelper::load($this->go1, $portalId);
         $this->assertEquals('https://az.mygo1.com/webapp/#/app/course-overview/123', (new PortalChecker)->buildLink($portal, 'app/course-overview/123'));
-    }
-
-    public function dataBuildLinkHostNameQA()
-    {
-        return [
-            ['ENV=qa', 'ENV_HOSTNAME_QA=qa.go1.cloud', 'https://qa.go1.cloud/p/#/'],
-            ['ENV=staging', 'ENV_HOSTNAME_QA=qa.mygo1.com', 'https://qa.mygo1.com/p/#/'],
-        ];
-    }
-
-    /**
-     * @dataProvider dataBuildLinkHostNameQA
-     */
-    public function testBuildLinkForHostNameQA($env, $hostName, $expected)
-    {
-        putenv($env);
-        putenv($hostName);
-        $portalId = $this->createPortal($this->go1, ['title' => 'staging.mygo1.com']);
-        $portal = PortalHelper::load($this->go1, $portalId);
-
-        $this->assertEquals($expected, (new PortalChecker)->buildLink($portal, '', 'p/#'));
     }
 }
