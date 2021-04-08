@@ -5,6 +5,7 @@ namespace go1\util\plan;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use go1\clients\MqClient;
 use go1\util\DB;
 use go1\util\plan\event_publishing\PlanCreateEventEmbedder;
@@ -49,6 +50,7 @@ class PlanRepository
             $plan->addColumn('entity_id', Type::INTEGER, ['unsigned' => true]);
             $plan->addColumn('status', Type::INTEGER);
             $plan->addColumn('created_date', Type::DATETIME);
+            $plan->addColumn('updated_at', Types::DATETIME_MUTABLE, ['notnull' => false, 'default' => 'CURRENT_TIMESTAMP']);
             $plan->addColumn('due_date', Type::DATETIME, ['notnull' => false]);
             $plan->addColumn('data', 'blob', ['notnull' => false]);
             $plan->setPrimaryKey(['id']);
