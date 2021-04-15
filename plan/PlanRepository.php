@@ -316,4 +316,21 @@ class PlanRepository
 
         return $plan ? Plan::create($plan) : null;
     }
+
+    public function loadUserPlanByEntity(int $portalId, int $userId, int $entityId, string $entityType = 'lo'): array
+    {
+        return $this->db->createQueryBuilder()
+            ->select('id')
+            ->from('gc_plan')
+            ->where('entity_type = :entityType')
+            ->andWhere('entity_id = :entityId')
+            ->andWhere('user_id = :userId')
+            ->andWhere('instance_id = :portalId')
+            ->setParameter(':entityType', $entityType, DB::STRING)
+            ->setParameter(':entityId', $entityId, DB::INTEGER)
+            ->setParameter(':portalId', $portalId, DB::INTEGER)
+            ->setParameter(':userId', $userId, DB::INTEGER)
+            ->execute()
+            ->fetchAll(DB::OBJ);
+    }
 }
