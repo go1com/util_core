@@ -104,4 +104,11 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $this->rPlan->delete($this->planId);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_DELETE][0]);
     }
+
+    public function testLoadUserPlanByEntity()
+    {
+        $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+        $plans = $this->rPlan->loadUserPlanByEntity($this->portalId, $this->userId, $this->entityId);
+        $this->assertCount(1, $plans);
+    }
 }
