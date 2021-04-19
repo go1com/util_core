@@ -273,7 +273,7 @@ class EnrolmentHelper
     public static function create(
         Connection $db,
         MqClient $queue,
-        Enrolment $enrolment,
+        Enrolment &$enrolment,
         stdClass $lo,
         EnrolmentEventsEmbedder $enrolmentEventsEmbedder,
         $assignerId = null,
@@ -304,6 +304,7 @@ class EnrolmentHelper
 
         $db->insert('gc_enrolment', $data);
         $enrolment->id = $db->lastInsertId('gc_enrolment');
+        $data['id'] = $enrolment->id;
 
         $rMqClient = new ReflectionClass(MqClient::class);
         $actorIdKey = $rMqClient->hasConstant('CONTEXT_ACTOR_ID') ? $rMqClient->getConstant('CONTEXT_ACTOR_ID') : 'actor_id';
