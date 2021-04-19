@@ -285,7 +285,6 @@ class EnrolmentHelper
         }
 
         $data = [
-            'id'                  => $enrolment->id,
             'profile_id'          => $enrolment->profileId,
             'user_id'             => $enrolment->userId,
             'parent_lo_id'        => $enrolment->parentLoId,
@@ -304,6 +303,7 @@ class EnrolmentHelper
         ];
 
         $db->insert('gc_enrolment', $data);
+        $enrolment->id = $db->lastInsertId('gc_enrolment');
 
         $rMqClient = new ReflectionClass(MqClient::class);
         $actorIdKey = $rMqClient->hasConstant('CONTEXT_ACTOR_ID') ? $rMqClient->getConstant('CONTEXT_ACTOR_ID') : 'actor_id';
