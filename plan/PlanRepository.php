@@ -277,10 +277,15 @@ class PlanRepository
         return $planId;
     }
 
-    public function archive(int $planId, array $embedded = [])
+    public function archive(int $planId, array $embedded = [], int $actorId = null)
     {
         if (!$plan = $this->load($planId)) {
             return false;
+        }
+
+        if ($actorId) {
+            $plan->data = empty($plan->data) ? (object) [] : (is_scalar($plan->data) ? json_decode($plan->data) : $plan->data);
+            $plan->data->deleted_by = $actorId;
         }
 
         $this->db->transactional(function () use ($plan, $embedded) {

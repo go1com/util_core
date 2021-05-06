@@ -33,7 +33,7 @@ class PlanRepositoryTest extends UtilCoreTestCase
     /** @var MqClient */
     protected $queue;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -65,9 +65,10 @@ class PlanRepositoryTest extends UtilCoreTestCase
             [false, ['notify' => true], true],
             [true, ['notify' => false], true],
             [false, [], false],
-            [true, [], true]
+            [true, [], true],
         ];
     }
+
     /**
      * @dataProvider planNotifyStatus
      */
@@ -110,5 +111,29 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
         $plans = $this->rPlan->loadUserPlanByEntity($this->portalId, $this->userId, $this->entityId);
         $this->assertCount(1, $plans);
+    }
+
+    public function testArchive()
+    {
+        {
+            $this->rPlan->archive($this->planId, [], 10);
+            $message = $this->queueMessages[Queue::PLAN_DELETE][0];
+            $this->assertEquals((object) ['deleted_by' => 10], $message['data']);
+            $this->assertArrayHasKey('embedded', $message);
+        }
+
+        {
+            $planId = $this->createPlan($this->go1, [
+                'entity_id' => 33,
+                'user_id'   => $this->userId,
+                'type'      => PlanTypes::ASSIGN,
+                'data'      => [
+                    'created_by' => 11,
+                ],
+            ]);
+            $this->rPlan->archive($planId, [], 12);
+            $message = $this->queueMessages[Queue::PLAN_DELETE][1];
+            $this->assertEquals((object) ['created_by' => 11, 'deleted_by' => 12], $message['data']);
+        }
     }
 }
