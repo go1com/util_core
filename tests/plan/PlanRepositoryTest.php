@@ -33,7 +33,7 @@ class PlanRepositoryTest extends UtilCoreTestCase
     /** @var MqClient */
     protected $queue;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -65,9 +65,10 @@ class PlanRepositoryTest extends UtilCoreTestCase
             [false, ['notify' => true], true],
             [true, ['notify' => false], true],
             [false, [], false],
-            [true, [], true]
+            [true, [], true],
         ];
     }
+
     /**
      * @dataProvider planNotifyStatus
      */
@@ -97,6 +98,17 @@ class PlanRepositoryTest extends UtilCoreTestCase
 
         $this->rPlan->update($original, $plan);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_UPDATE][0]);
+    }
+
+    public function testUpdatedAt()
+    {
+        $plan = $this->rPlan->load($this->planId);
+        $original = clone $plan;
+        $plan->status = 0;
+
+        $this->rPlan->update($original, $plan);
+        $updatedAt = $this->go1->fetchColumn('SELECT updated_at FROM gc_plan WHERE id = ?', [$this->planId]);
+        $this->assertTrue($original->created->getTimestamp() - 1 < strtotime($updatedAt));
     }
 
     public function testDelete()
