@@ -284,6 +284,7 @@ class MailTemplate
             '!new_manager_full_name'      => 'New manager full name',
             '!course_name'                => 'Course name',
             '!course_url'                 => 'Course URL',
+            '!learner_first_name'         => 'Learner first name',
             '!learner_full_name'          => 'Learner full name',
             '!previous_due_date'          => 'Previous due date',
             '!updated_due_date'           => 'Updated due date',
