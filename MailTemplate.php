@@ -276,21 +276,22 @@ class MailTemplate
         ],
     ];
 
-    const MANAGER_UPDATE_ASSIGNMENT = [
-        'key'    => 'manager.update.assignment',
+    const ASSIGNER_UPDATE_ASSIGNMENT = [
+        'key'    => 'assigner.update.assignment',
         'tokens' => [
-            '!current_manager_first_name' => 'Current manager first name',
-            '!current_manager_email'      => 'Current manager email',
-            '!new_manager_full_name'      => 'New manager full name',
-            '!course_name'                => 'Course name',
-            '!course_url'                 => 'Course URL',
-            '!learner_full_name'          => 'Learner full name',
-            '!previous_due_date'          => 'Previous due date',
-            '!updated_due_date'           => 'Updated due date',
-            '!remaining_days'             => 'Remaining days',
-            '!portal_name'                => 'Portal name',
-            '!portal_image'               => 'Portal image',
-            '!portal_url'                 => 'Portal URL',
+            '!original_assigner_first_name' => 'Original assigner first name',
+            '!original_assigner_email'      => 'Original assigner email',
+            '!new_assigner_full_name'       => 'New assigner full name',
+            '!course_name'                  => 'Course name',
+            '!course_url'                   => 'Course URL',
+            '!learner_first_name'           => 'Learner first name',
+            '!learner_full_name'            => 'Learner full name',
+            '!previous_due_date'            => 'Previous due date',
+            '!updated_due_date'             => 'Updated due date',
+            '!remaining_days'               => 'Remaining days',
+            '!portal_name'                  => 'Portal name',
+            '!portal_image'                 => 'Portal image',
+            '!portal_url'                   => 'Portal URL',
         ],
     ];
 
@@ -301,7 +302,7 @@ class MailTemplate
             '!learner_email'      => 'Learner email',
             '!course_name'        => 'Course name',
             '!course_url'         => 'Course URL',
-            '!manager_full_name'  => 'Manager full name',
+            '!assigner_full_name' => 'Assigner full name',
             '!previous_due_date'  => 'Previous due date',
             '!updated_due_date'   => 'Updated due date',
             '!remaining_days'     => 'Remaining days',
@@ -311,8 +312,8 @@ class MailTemplate
         ],
     ];
 
-    const MANAGER_DELETE_ASSIGNMENT = [
-        'key'    => 'manager.delete.assignment',
+    const ASSIGNER_DELETE_ASSIGNMENT = [
+        'key'    => 'assigner.delete.assignment',
         'tokens' => [/* @TODO */],
     ];
 
