@@ -314,12 +314,32 @@ class MailTemplate
 
     const ASSIGNER_DELETE_ASSIGNMENT = [
         'key'    => 'assigner.delete.assignment',
-        'tokens' => [/* @TODO */],
+        'tokens' => [
+            '!assigner_first_name' => 'Assigner first name',
+            '!assigner_full_name'  => 'Assigner full name',
+            '!assigner_email'      => 'Assigner email',
+            '!course_name'         => 'Course name',
+            '!course_url'          => 'Course URL',
+            '!learner_first_name'  => 'Learner first name',
+            '!learner_full_name'   => 'Learner full name',
+            '!portal_name'         => 'Portal name',
+            '!portal_image'        => 'Portal image',
+            '!portal_url'          => 'Portal URL',
+        ],
     ];
 
     const LEARNER_DELETE_ASSIGNMENT = [
         'key'    => 'learner.delete.assignment',
-        'tokens' => [/* @TODO */],
+        'tokens' => [
+            '!learner_first_name' => 'Learner first name',
+            '!learner_email'      => 'Learner email',
+            '!course_name'        => 'Course name',
+            '!course_url'         => 'Course URL',
+            '!assigner_full_name' => 'Assigner full name',
+            '!portal_name'        => 'Portal name',
+            '!portal_image'       => 'Portal image',
+            '!portal_url'         => 'Portal URL',
+        ],
     ];
 
     const LEARNER_ENROLMENT_EVENT = [
