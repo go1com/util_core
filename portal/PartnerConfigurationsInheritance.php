@@ -2,9 +2,9 @@
 
 namespace go1\util\portal;
 
-class PortalConfigGroup
+class PartnerConfigurationsInheritance
 {
-    public const APPLY_CONFIG_KEY = 'settings_apply_to_child';
+    public const APPLY_CONFIG_KEY = 'partner_prescribed_configurations';
 
     protected const DEFAULT_MAPPING = [
         'signup' => [

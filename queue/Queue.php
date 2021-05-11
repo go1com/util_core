@@ -31,8 +31,34 @@ class Queue
     const PORTAL_CONFIG_CREATE              = 'portal-config.create';
     const PORTAL_CONFIG_UPDATE              = 'portal-config.update';
     const PORTAL_CONFIG_DELETE              = 'portal-config.delete';
-    const PORTAL_CONFIG_PUBLISH_TO_CHILREN  = 'portal-config.publish-to-children';
+
+    /**
+     * This event indicates a partner portal has requested its child portals to
+     * inherit a subset of the partner portal's config based on groups in the event body
+     *
+     * Body:
+     * {
+     *   id: int|string # partner portal id or instance
+     *   groups: string[] # list of config groups to be inherited by child portals
+     * }
+     * @see go1\util\portal\PartnerConfigurationsInheritance
+     */
+    const PORTAL_CONFIG_PUBLISH_TO_CHILDREN  = 'portal-config.publish-to-children';
+
+    /**
+     * This event is published when a child portal needs to override a subset
+     * of its config with its parent portal's config based on groups in the event body
+     *
+     * Body:
+     * {
+     *   id: int|string # child portal id or instance
+     *   parent_portal_id: int|string # partner portal id or instance
+     *   groups: string[] # list of config groups to be inherited by the child portal
+     * }
+     * @see go1\util\portal\PartnerConfigurationsInheritance
+     */
     const PORTAL_CONFIG_APPLY_FROM_PARENT   = 'portal-config.apply-from-parent';
+
     const PORTAL_REQUEST_CREATE             = 'portal-request.create';
     const CONTRACT_CREATE                   = 'contract.create';
     const CONTRACT_UPDATE                   = 'contract.update';
