@@ -57,7 +57,7 @@ class Queue
      * }
      * @see go1\util\portal\PartnerConfigurationsInheritance
      */
-    const PORTAL_CONFIG_APPLY_FROM_PARENT   = 'portal-config.apply-from-parent';
+    const PORTAL_CONFIG_INHERIT_FROM_PARENT   = 'portal-config.inherit-from-parent';
 
     const PORTAL_REQUEST_CREATE             = 'portal-request.create';
     const CONTRACT_CREATE                   = 'contract.create';
