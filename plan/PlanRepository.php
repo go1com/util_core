@@ -2,6 +2,8 @@
 
 namespace go1\util\plan;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
@@ -217,6 +219,9 @@ class PlanRepository
         }
 
         $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded) {
+            $diff['updated_at'] = (new DateTimeImmutable('now'))
+                ->setTimezone(new DateTimeZone('UTC'))
+                ->format('Y-m-d H:i:s');
             $this->createRevision($original);
             $this->db->update('gc_plan', $diff, ['id' => $original->id]);
             $plan->id = $original->id;

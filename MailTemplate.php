@@ -4,9 +4,9 @@ namespace go1\util;
 
 use go1\util\content_import\ContentImportCompleteCreate;
 use go1\util\content_job\ContentJobContentDownloadCompleteCreate;
+use go1\util\queue\Queue;
 use InvalidArgumentException;
 use ReflectionClass;
-use go1\util\queue\Queue;
 
 class MailTemplate
 {
@@ -274,6 +274,52 @@ class MailTemplate
             '!group_title'        => 'Group title',
             '!group_url'          => 'Group url',
         ],
+    ];
+
+    const ASSIGNER_UPDATE_ASSIGNMENT = [
+        'key'    => 'assigner.update.assignment',
+        'tokens' => [
+            '!original_assigner_first_name' => 'Original assigner first name',
+            '!original_assigner_email'      => 'Original assigner email',
+            '!new_assigner_full_name'       => 'New assigner full name',
+            '!course_name'                  => 'Course name',
+            '!course_url'                   => 'Course URL',
+            '!learner_first_name'           => 'Learner first name',
+            '!learner_full_name'            => 'Learner full name',
+            '!previous_due_date'            => 'Previous due date',
+            '!updated_due_date'             => 'Updated due date',
+            '!remaining_days'               => 'Remaining days',
+            '!portal_name'                  => 'Portal name',
+            '!portal_image'                 => 'Portal image',
+            '!portal_url'                   => 'Portal URL',
+        ],
+    ];
+
+    const LEARNER_UPDATE_ASSIGNMENT = [
+        'key'    => 'learner.update.assignment',
+        'tokens' => [
+            '!learner_first_name' => 'Learner first name',
+            '!learner_email'      => 'Learner email',
+            '!course_name'        => 'Course name',
+            '!course_url'         => 'Course URL',
+            '!assigner_full_name' => 'Assigner full name',
+            '!previous_due_date'  => 'Previous due date',
+            '!updated_due_date'   => 'Updated due date',
+            '!remaining_days'     => 'Remaining days',
+            '!portal_name'        => 'Portal name',
+            '!portal_image'       => 'Portal image',
+            '!portal_url'         => 'Portal URL',
+        ],
+    ];
+
+    const ASSIGNER_DELETE_ASSIGNMENT = [
+        'key'    => 'assigner.delete.assignment',
+        'tokens' => [/* @TODO */],
+    ];
+
+    const LEARNER_DELETE_ASSIGNMENT = [
+        'key'    => 'learner.delete.assignment',
+        'tokens' => [/* @TODO */],
     ];
 
     const LEARNER_ENROLMENT_EVENT = [
@@ -1369,13 +1415,13 @@ class MailTemplate
     public const USER_BULK_NOTIFY = [
         'key'    => Queue::USER_BULK_NOTIFY,
         'tokens' => [
-            '@user_name'       => 'User name.', //deprecated
-            '!user_name'       => 'Machine name of user name, this maybe the email address.', //deprecated
-            '!site_name'       => 'Human name of the portal.', //deprecated
-            '!portal_url'      => 'Portal URL',
-            '!primary_domain'  => 'Primary domain of portal.',
-            '!onetime_url'     => 'Onetime login link.',
-        ]
+            '@user_name'      => 'User name.', //deprecated
+            '!user_name'      => 'Machine name of user name, this maybe the email address.', //deprecated
+            '!site_name'      => 'Human name of the portal.', //deprecated
+            '!portal_url'     => 'Portal URL',
+            '!primary_domain' => 'Primary domain of portal.',
+            '!onetime_url'    => 'Onetime login link.',
+        ],
     ];
 
     const LEARNER_RECOMMENDATION_FORTNIGHTLY = [
@@ -1386,30 +1432,29 @@ class MailTemplate
     public const CONTENT_IMPORT_COMPLETE = [
         'key'    => ContentImportCompleteCreate::ROUTING_KEY,
         'tokens' => [
-            '!user_first_name'   => 'User first name',
+            '!user_first_name'       => 'User first name',
             '!content_import_status' => 'Content job import status',
-            '!processed_count' => 'Total processed count, which is successCount + failedCount',
-            '!success_count' => 'Success Count',
-            '!failed_count' => 'Failed count',
-            '!portal' => "Portal name",
-            '!user_mail' => 'User email',
-        ]
+            '!processed_count'       => 'Total processed count, which is successCount + failedCount',
+            '!success_count'         => 'Success Count',
+            '!failed_count'          => 'Failed count',
+            '!portal'                => 'Portal name',
+            '!user_mail'             => 'User email',
+        ],
     ];
 
     public const CONTENT_JOB_CONTENT_DOWNLOAD_COMPLETE = [
         'key'    => ContentJobContentDownloadCompleteCreate::ROUTING_KEY,
         'tokens' => [
-            '!user_first_name'   => 'User first name',
+            '!user_first_name'    => 'User first name',
             '!content_job_status' => 'Content job status',
-            '!processed_count' => 'Total processed count, which is successCount + failedCount',
-            '!success_count' => 'Success Count',
-            '!failed_count' => 'Failed count',
-            '!portal' => "Portal name",
-            '!csv_download_link' => 'Csv download link',
-            '!user_mail' => 'User email',
-        ]
+            '!processed_count'    => 'Total processed count, which is successCount + failedCount',
+            '!success_count'      => 'Success Count',
+            '!failed_count'       => 'Failed count',
+            '!portal'             => 'Portal name',
+            '!csv_download_link'  => 'Csv download link',
+            '!user_mail'          => 'User email',
+        ],
     ];
-
 
     public static function has(string $key): bool
     {
