@@ -4,7 +4,7 @@ namespace go1\util\portal;
 
 class PartnerConfigurationsInheritance
 {
-    public const APPLY_CONFIG_KEY = 'partner_prescribed_configurations';
+    public const PARTNER_PRESCRIBED_CONFIG_KEY = 'partner_prescribed_configurations';
 
     protected const DEFAULT_MAPPING = [
         'signup' => [
@@ -59,7 +59,7 @@ class PartnerConfigurationsInheritance
     /**
      * @return string[]
      */
-    public function getFieldsForGroup(string $group): array
+    public function getConfigurationsForGroup(string $group): array
     {
         return $this->mapping[$group] ?? [];
     }
