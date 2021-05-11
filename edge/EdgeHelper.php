@@ -4,6 +4,7 @@ namespace go1\util\edge;
 
 use BadFunctionCallException;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use go1\clients\MqClient;
 use go1\util\DB;
 use go1\util\model\Edge;
@@ -63,18 +64,22 @@ class EdgeHelper
         int $targetId,
         int $weight = 0, $data = null, array $payload = []): int
     {
-        $db->insert('gc_ro', $edge = [
-            'type'      => $type,
-            'source_id' => $sourceId,
-            'target_id' => $targetId,
-            'weight'    => $weight,
-            'data'      => is_scalar($data) ? $data : json_encode($data),
-        ]);
+        try {
+            $db->insert('gc_ro', $edge = [
+                'type'      => $type,
+                'source_id' => $sourceId,
+                'target_id' => $targetId,
+                'weight'    => $weight,
+                'data'      => is_scalar($data) ? $data : json_encode($data),
+            ]);
 
-        $edge['id'] = $db->lastInsertId('gc_ro');
-        $queue->publish(array_merge($edge, $payload), Queue::RO_CREATE);
+            $edge['id'] = $db->lastInsertId('gc_ro');
+            $queue->publish(array_merge($edge, $payload), Queue::RO_CREATE);
 
-        return $edge['id'];
+            return $edge['id'];
+        } catch (UniqueConstraintViolationException $e) {
+            // Ignore
+        }
     }
 
     public static function hasLink(Connection $db, $type, $sourceId, $targetId)
