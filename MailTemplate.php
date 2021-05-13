@@ -2,7 +2,6 @@
 
 namespace go1\util;
 
-use go1\util\content_import\ContentImportCompleteCreate;
 use go1\util\content_job\ContentJobContentDownloadCompleteCreate;
 use go1\util\queue\Queue;
 use InvalidArgumentException;
@@ -1481,19 +1480,6 @@ class MailTemplate
     const LEARNER_RECOMMENDATION_FORTNIGHTLY = [
         'key'    => 'learner.recommendation.fortnightly',
         'tokens' => [/* @TODO */],
-    ];
-
-    public const CONTENT_IMPORT_COMPLETE = [
-        'key'    => ContentImportCompleteCreate::ROUTING_KEY,
-        'tokens' => [
-            '!user_first_name'       => 'User first name',
-            '!content_import_status' => 'Content job import status',
-            '!processed_count'       => 'Total processed count, which is successCount + failedCount',
-            '!success_count'         => 'Success Count',
-            '!failed_count'          => 'Failed count',
-            '!portal'                => 'Portal name',
-            '!user_mail'             => 'User email',
-        ],
     ];
 
     public const CONTENT_JOB_CONTENT_DOWNLOAD_COMPLETE = [
