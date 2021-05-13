@@ -276,8 +276,8 @@ class MailTemplate
         ],
     ];
 
-    const ASSIGNER_UPDATE_ASSIGNMENT = [
-        'key'    => 'assigner.update.assignment',
+    const ASSIGNER_UPDATE_ASSIGNMENT_WITH_DUE_DATE = [
+        'key'    => 'assigner.update.assignment.with.due-date',
         'tokens' => [
             '!original_assigner_first_name' => 'Original assigner first name',
             '!original_assigner_email'      => 'Original assigner email',
@@ -295,8 +295,26 @@ class MailTemplate
         ],
     ];
 
-    const LEARNER_UPDATE_ASSIGNMENT = [
-        'key'    => 'learner.update.assignment',
+    const ASSIGNER_UPDATE_ASSIGNMENT_WITHOUT_DUE_DATE = [
+        'key'    => 'assigner.update.assignment.without-due-date',
+        'tokens' => [
+            '!original_assigner_first_name' => 'Original assigner first name',
+            '!original_assigner_email'      => 'Original assigner email',
+            '!new_assigner_full_name'       => 'New assigner full name',
+            '!course_name'                  => 'Course name',
+            '!manage_url'                   => 'Manage report URL',
+            '!learner_first_name'           => 'Learner first name',
+            '!learner_full_name'            => 'Learner full name',
+            '!updated_due_date'             => 'Updated due date',
+            '!remaining_days'               => 'Remaining days',
+            '!portal_name'                  => 'Portal name',
+            '!portal_image'                 => 'Portal image',
+            '!portal_url'                   => 'Portal URL',
+        ],
+    ];
+
+    const LEARNER_UPDATE_ASSIGNMENT_WITH_DUE_DATE = [
+        'key'    => 'learner.update.assignment.with-due-date',
         'tokens' => [
             '!learner_first_name' => 'Learner first name',
             '!learner_email'      => 'Learner email',
@@ -304,6 +322,22 @@ class MailTemplate
             '!course_url'         => 'Course URL',
             '!assigner_full_name' => 'Assigner full name',
             '!previous_due_date'  => 'Previous due date',
+            '!updated_due_date'   => 'Updated due date',
+            '!remaining_days'     => 'Remaining days',
+            '!portal_name'        => 'Portal name',
+            '!portal_image'       => 'Portal image',
+            '!portal_url'         => 'Portal URL',
+        ],
+    ];
+
+    const LEARNER_UPDATE_ASSIGNMENT_WITHOUT_DUE_DATE = [
+        'key'    => 'learner.update.assignment.without-due-date',
+        'tokens' => [
+            '!learner_first_name' => 'Learner first name',
+            '!learner_email'      => 'Learner email',
+            '!course_name'        => 'Course name',
+            '!course_url'         => 'Course URL',
+            '!assigner_full_name' => 'Assigner full name',
             '!updated_due_date'   => 'Updated due date',
             '!remaining_days'     => 'Remaining days',
             '!portal_name'        => 'Portal name',
