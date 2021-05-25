@@ -215,6 +215,11 @@ class MailTemplate
         ],
     ];
 
+    const LEARNER_ASSIGN_COURSE_EVENT_WITH_DUE_DATE = [
+        'key'    => 'learner.assign.course.event.with-due-date',
+        'tokens' => [/* @TODO */],
+    ];
+
     const LEARNER_ASSIGN_COURSE_WITHOUT_DUE_DATE = [
         'key'    => 'learner.assign.course.without-due-date',
         'tokens' => [
@@ -231,6 +236,11 @@ class MailTemplate
         ],
     ];
 
+    const LEARNER_ASSIGN_COURSE_EVENT_WITHOUT_DUE_DATE = [
+        'key'    => 'learner.assign.course.event.without-due-date',
+        'tokens' => [/* @TODO */],
+    ];
+
     const LEARNER_ASSIGN_COURSE_THEMSELVES_WITH_DUE_DATE = [
         'key'    => 'learner.assign.course.themselves.with-due-date',
         'tokens' => [
@@ -245,6 +255,11 @@ class MailTemplate
         ],
     ];
 
+    const LEARNER_ASSIGN_COURSE_EVENT_THEMSELVES_WITH_DUE_DATE = [
+        'key'    => 'learner.assign.course.event.themselves.with-due-date',
+        'tokens' => [/* @TODO */],
+    ];
+
     const LEARNER_ASSIGN_COURSE_THEMSELVES_WITHOUT_DUE_DATE = [
         'key'    => 'learner.assign.course.themselves.without-due-date',
         'tokens' => [
@@ -257,6 +272,11 @@ class MailTemplate
             '!portal_name'        => 'Portal name',
             '!portal_image'       => 'Portal image',
         ],
+    ];
+
+    const LEARNER_ASSIGN_COURSE_EVENT_THEMSELVES_WITHOUT_DUE_DATE = [
+        'key'    => 'learner.assign.course.event.themselves.without-due-date',
+        'tokens' => [/* @TODO */],
     ];
 
     const LEARNER_ASSIGN_COURSE_THROUGH_GROUP = [
