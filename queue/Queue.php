@@ -106,7 +106,7 @@ class Queue
     const PLAN_CREATE                       = 'plan.create';
     const PLAN_UPDATE                       = 'plan.update';
     const PLAN_DELETE                       = 'plan.delete';
-    const PLAN_REASSIGN                     = 'plan.re-assign';
+    const PLAN_REASSIGN                     = 'plan.re-assign'; # Body: {type: STRING,user_id: INT,assigner_id: INT,instance_id: INT,entity_type: STRING,entity_id: INT,status: INT,created_date: INT,due_date: INT,data: STRING[]}
     const ENROLMENT_CREATE                  = 'enrolment.create';
     const ENROLMENT_UPDATE                  = 'enrolment.update';
     const ENROLMENT_DELETE                  = 'enrolment.delete';
