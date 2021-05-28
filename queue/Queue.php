@@ -106,6 +106,7 @@ class Queue
     const PLAN_CREATE                       = 'plan.create';
     const PLAN_UPDATE                       = 'plan.update';
     const PLAN_DELETE                       = 'plan.delete';
+    const PLAN_REASSIGN                     = 'plan.re-assign';
     const ENROLMENT_CREATE                  = 'enrolment.create';
     const ENROLMENT_UPDATE                  = 'enrolment.update';
     const ENROLMENT_DELETE                  = 'enrolment.delete';
