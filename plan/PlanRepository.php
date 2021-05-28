@@ -167,7 +167,7 @@ class PlanRepository
         return $revisions;
     }
 
-    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [])
+    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [], bool $reAssign = false)
     {
         $this->db->insert('gc_plan', [
             'type'         => $plan->type,
@@ -190,7 +190,7 @@ class PlanRepository
         $payload = $plan->jsonSerialize();
         $payload['embedded'] = $embedded + $this->planCreateEventEmbedder->embedded($plan);
 
-        $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
+        $this->queue->publish($payload, $reAssign ? Queue::PLAN_REASSIGN : Queue::PLAN_CREATE, $queueContext);
 
         return $plan->id;
     }
@@ -244,7 +244,9 @@ class PlanRepository
 
         $payload = $plan->jsonSerialize();
         $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
-        $this->queue->publish($payload, Queue::PLAN_DELETE);
+        $queueContext['notify'] = $plan->notify ?? true;
+
+        $this->queue->publish($payload, Queue::PLAN_DELETE, $queueContext);
     }
 
     public function merge(Plan $plan, bool $notify = false, array $queueContext = [], array $embedded = [])
@@ -294,7 +296,9 @@ class PlanRepository
 
             $payload = $plan->jsonSerialize();
             $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
-            $this->queue->publish($payload, Queue::PLAN_DELETE);
+            $queueContext['notify'] = $plan->notify ?? true;
+
+            $this->queue->publish($payload, Queue::PLAN_DELETE, $queueContext);
         });
 
         return true;
