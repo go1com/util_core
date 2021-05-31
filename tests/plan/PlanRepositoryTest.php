@@ -88,6 +88,24 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
         $this->assertEquals($msg->notify, $expectedNotify);
         $this->assertNotEmpty($msg->_context['sessionId']);
+        $this->assertFalse($msg->_context['reAssign']);
+    }
+
+    public function testReAssignPlan()
+    {
+        $plan = Plan::create((object) [
+            'instance_id' => $this->portalId,
+            'entity_type' => $this->entityType,
+            'entity_id'   => $this->entityId,
+            'user_id'     => $this->userId,
+            'assigner_id' => $this->assignerId,
+            'type'        => PlanTypes::SUGGESTED,
+            'status'      => PlanStatuses::ASSIGNED,
+        ]);
+        $this->rPlan->create($plan, false, ['reAssign' => true]);
+        $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
+        $this->assertNotEmpty($msg->_context['sessionId']);
+        $this->assertTrue($msg->_context['reAssign']);
     }
 
     public function testUpdate()
@@ -122,5 +140,26 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
         $plans = $this->rPlan->loadUserPlanByEntity($this->portalId, $this->userId, $this->entityId);
         $this->assertCount(1, $plans);
+    }
+
+    public function archiveNotifyStatus()
+    {
+        return [
+            [['notify' => true], true],
+            [['notify' => false], false],
+            [[], false],
+        ];
+    }
+
+    /**
+     * @dataProvider archiveNotifyStatus
+     */
+    public function testArchiveNotify($dataContext, $expectedNotify)
+    {
+        $this->rPlan->archive($this->planId, [], $dataContext);
+        $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_DELETE][0]);
+        $msg = (object) $this->queueMessages[Queue::PLAN_DELETE][0];
+        $this->assertEquals($expectedNotify, $msg->_context['notify']);
+        $this->assertNotEmpty($msg->_context['sessionId']);
     }
 }
