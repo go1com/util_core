@@ -185,6 +185,7 @@ class PlanRepository
         $plan->id = $this->db->lastInsertId('gc_plan');
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
         $queueContext['notify'] = $plan->notify;
+        $queueContext['reAssign'] = $queueContext['reAssign'] ?? false;
         $queueContext['sessionId'] = Uuid::uuid4()->toString();
 
         $payload = $plan->jsonSerialize();
@@ -282,19 +283,20 @@ class PlanRepository
         return $planId;
     }
 
-    public function archive(int $planId, array $embedded = [])
+    public function archive(int $planId, array $embedded = [], array $queueContext = [])
     {
         if (!$plan = $this->load($planId)) {
             return false;
         }
 
-        $this->db->transactional(function () use ($plan, $embedded) {
+        $this->db->transactional(function () use ($plan, $embedded, $queueContext) {
             $this->db->delete('gc_plan', ['id' => $plan->id]);
             $this->createRevision($plan);
 
             $payload = $plan->jsonSerialize();
+            $queueContext['sessionId'] = Uuid::uuid4()->toString();
             $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
-            $this->queue->publish($payload, Queue::PLAN_DELETE);
+            $this->queue->publish($payload, Queue::PLAN_DELETE, $queueContext);
         });
 
         return true;
