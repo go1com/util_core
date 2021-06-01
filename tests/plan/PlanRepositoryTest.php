@@ -88,10 +88,10 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
         $this->assertEquals($msg->notify, $expectedNotify);
         $this->assertNotEmpty($msg->_context['sessionId']);
-        $this->assertFalse($msg->_context['reAssign']);
+        $this->assertFalse($msg->_context['reassign']);
     }
 
-    public function testReAssignPlan()
+    public function testReassignPlan()
     {
         $plan = Plan::create((object) [
             'instance_id' => $this->portalId,
@@ -102,10 +102,10 @@ class PlanRepositoryTest extends UtilCoreTestCase
             'type'        => PlanTypes::SUGGESTED,
             'status'      => PlanStatuses::ASSIGNED,
         ]);
-        $this->rPlan->create($plan, false, ['reAssign' => true]);
+        $this->rPlan->create($plan, false, ['reassign' => true]);
         $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
         $this->assertNotEmpty($msg->_context['sessionId']);
-        $this->assertTrue($msg->_context['reAssign']);
+        $this->assertTrue($msg->_context['reassign']);
     }
 
     public function testUpdate()

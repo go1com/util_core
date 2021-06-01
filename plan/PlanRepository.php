@@ -185,7 +185,7 @@ class PlanRepository
         $plan->id = $this->db->lastInsertId('gc_plan');
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
         $queueContext['notify'] = $plan->notify;
-        $queueContext['reAssign'] = $queueContext['reAssign'] ?? false;
+        $queueContext['reassign'] = $queueContext['reassign'] ?? false;
         $queueContext['sessionId'] = Uuid::uuid4()->toString();
 
         $payload = $plan->jsonSerialize();
