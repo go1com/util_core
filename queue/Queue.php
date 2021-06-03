@@ -239,6 +239,10 @@ class Queue
     const EVENT_LOCATION_DELETE             = 'event.location.delete';
     const LI_VIDEO_PROCESS_S3               = 'li_video.process.s3';
     const LI_AUDIO_PROCESS_S3               = 'li_audio.process.s3';
+    const MICROSOFT_MEDIA_JOB_PROGRESS      = 'Microsoft.Media.JobOutputProgress';
+    const MICROSOFT_MEDIA_JOB_FINISHED      = 'Microsoft.Media.JobFinished';
+    const MICROSOFT_MEDIA_JOB_CANCELED      = 'Microsoft.Media.JobCanceled';
+    const MICROSOFT_MEDIA_JOB_ERRORED       = 'Microsoft.Media.JobErrored';
     const LO_UPDATE_ATTRIBUTES              = 'lo.update.attributes';
     const CONTENT_IMPORT_PROCESS_IMPORT     = 'content_import.process.import';
     const CONTENT_IMPORT_PROCESS_IMPORT_JOB = 'content_import_job.process.import';
