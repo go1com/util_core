@@ -90,6 +90,6 @@ trait EnrolmentMockTrait
             'plan_id'      => $planId,
         ]);
 
-        return $db->lastInsertId('gc_enrolment_revision');
+        return $db->lastInsertId('gc_enrolment_plans');
     }
 }
