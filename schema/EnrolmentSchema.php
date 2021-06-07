@@ -4,6 +4,7 @@ namespace go1\util\schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 
 class EnrolmentSchema
 {
@@ -103,6 +104,20 @@ class EnrolmentSchema
             $stream->addIndex(['portal_id']);
             $stream->addIndex(['actor_id']);
             $stream->addIndex(['created']);
+        }
+
+        if (!$schema->hasTable('gc_enrolment_plans')) {
+            // create table `gc_enrolment_plans`
+            $table = $schema->createTable('gc_enrolment_plans');
+            $table->addColumn('id', Type::INTEGER, ['unsigned' => true, 'autoincrement' => true]);
+            $table->addColumn('enrolment_id', Type::INTEGER, ['unsigned' => true]);
+            $table->addColumn('plan_id', Type::INTEGER, ['unsigned' => true]);
+            $table->addColumn('created_at', Types::DATETIME_MUTABLE, ['length' => 6, 'default' => 'CURRENT_TIMESTAMP']);
+            $table->addColumn('updated_at', Types::DATETIME_MUTABLE, ['length' => 6, 'default' => 'CURRENT_TIMESTAMP', 'notnull' => false]);
+            $table->setPrimaryKey(['id']);
+            $table->addForeignKeyConstraint('gc_enrolment', ['enrolment_id'], ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'NO ACTION']);
+            $table->addForeignKeyConstraint('gc_plan', ['plan_id'], ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'NO ACTION']);
+            $table->addUniqueIndex(['plan_id', 'enrolment_id']);
         }
 
         static::update01($schema);
