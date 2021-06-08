@@ -417,20 +417,21 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
         # Plan does not have due date
         $planId = $this->createPlan($this->go1, []);
-        $this->link($this->go1, EdgeTypes::HAS_PLAN, $enrolmentId, $planId);
+        $this->linkPlan($this->go1, $enrolmentId, $planId);
         $this->assertNull(EnrolmentHelper::dueDate($this->go1, $enrolmentId));
 
         # Plan does have due date
         $planId = $this->createPlan($this->go1, ['due_date' => '4 days']);
-        $this->link($this->go1, EdgeTypes::HAS_PLAN, $enrolmentId, $planId);
+        $this->linkPlan($this->go1, $enrolmentId, $planId);
         $this->assertTrue(EnrolmentHelper::dueDate($this->go1, $enrolmentId)->getTimestamp() > 0);
 
         # Enrolment has multiple plans
-        $planId = $this->createPlan($this->go1, ['due_date' => '5 days', 'type' => PlanTypes::SUGGESTED]);
+        $planId2 = $this->createPlan($this->go1, ['due_date' => '5 days', 'type' => PlanTypes::SUGGESTED]);
+        $this->linkPlan($this->go1, $enrolmentId, $planId2);
         $plan = PlanHelper::load($this->go1, $planId);
-        $this->link($this->go1, EdgeTypes::HAS_PLAN, $enrolmentId, $planId);
-        $this->assertTrue(EnrolmentHelper::dueDate($this->go1, $enrolmentId)->getTimestamp() > 0);
-        $this->assertEquals(EnrolmentHelper::dueDate($this->go1, $enrolmentId), DateTime::create($plan->due_date));
+        $duedate = EnrolmentHelper::dueDate($this->go1, $enrolmentId);
+        $this->assertTrue($duedate->getTimestamp() > 0);
+        $this->assertEquals($duedate, DateTime::create($plan->due_date));
     }
 
     public function testDueDateAndPlanType()
