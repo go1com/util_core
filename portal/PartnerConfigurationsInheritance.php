@@ -22,7 +22,7 @@ class PartnerConfigurationsInheritance
             'files.login_background',
         ],
         'portal_color' => [
-            'data.theme.primary',
+            'theme.primary',
         ],
         'dashboard' => [
             'files.feature_image',
