@@ -82,13 +82,13 @@ class UserSchema
 
         if (!$schema->hasTable('gc_user_managers')) {
             $tbl = $schema->createTable('gc_user_managers');
-            $tbl->addColumn('user_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
-            $tbl->addColumn('manager_user_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addColumn('account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addColumn('manager_account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
             $tbl->addColumn('portal_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
-            $tbl->addForeignKeyConstraint('gc_user', ['user_id'], ['id']);
-            $tbl->addForeignKeyConstraint('gc_user', ['manager_user_id'], ['id']);
+            $tbl->addForeignKeyConstraint('gc_user', ['account_id'], ['id']);
+            $tbl->addForeignKeyConstraint('gc_user', ['manager_account_id'], ['id']);
             $tbl->addForeignKeyConstraint('gc_instance', ['portal_id'], ['id']);
-            $tbl->addUniqueIndex(['portal_id', 'user_id', 'manager_user_id']);
+            $tbl->addUniqueIndex(['portal_id', 'account_id', 'manager_account_id']);
         }
 
         if (!$schema->hasTable('gc_flood')) {
