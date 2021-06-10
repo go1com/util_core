@@ -6,6 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\View;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use go1\flood\Flood;
 
 class UserSchema
@@ -79,6 +80,17 @@ class UserSchema
             $user->addForeignKeyConstraint('gc_user', ['user_id'], ['id']);
         }
 
+        if (!$schema->hasTable('gc_user_managers')) {
+            $tbl = $schema->createTable('gc_user_managers');
+            $tbl->addColumn('user_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addColumn('manager_user_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addColumn('portal_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addForeignKeyConstraint('gc_user', ['user_id'], ['id']);
+            $tbl->addForeignKeyConstraint('gc_user', ['manager_user_id'], ['id']);
+            $tbl->addForeignKeyConstraint('gc_instance', ['portal_id'], ['id']);
+            $tbl->addUniqueIndex(['portal_id', 'user_id', 'manager_user_id']);
+        }
+
         if (!$schema->hasTable('gc_flood')) {
             if (class_exists(Flood::class)) {
                 Flood::migrate($schema, 'gc_flood');
@@ -127,11 +139,13 @@ class UserSchema
         }
     }
 
-    public static function update02(Schema $schema) {
+    public static function update02(Schema $schema)
+    {
         $schema->hasTable('gc_user_locale') && $schema->dropTable('gc_user_locale');
     }
 
-    public static function update03(Schema $schema) {
+    public static function update03(Schema $schema)
+    {
         $table = $schema->getTable('gc_user_mail');
         if (!$table->hasColumn('user_id')) {
             $table->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
