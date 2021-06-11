@@ -80,15 +80,13 @@ class UserSchema
             $user->addForeignKeyConstraint('gc_user', ['user_id'], ['id']);
         }
 
-        if (!$schema->hasTable('gc_user_managers')) {
-            $tbl = $schema->createTable('gc_user_managers');
+        if (!$schema->hasTable('gc_account_managers')) {
+            $tbl = $schema->createTable('gc_account_managers');
             $tbl->addColumn('account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
             $tbl->addColumn('manager_account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
-            $tbl->addColumn('portal_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
-            $tbl->addForeignKeyConstraint('gc_user', ['account_id'], ['id']);
-            $tbl->addForeignKeyConstraint('gc_user', ['manager_account_id'], ['id']);
-            $tbl->addForeignKeyConstraint('gc_instance', ['portal_id'], ['id']);
-            $tbl->addUniqueIndex(['portal_id', 'account_id', 'manager_account_id']);
+            $tbl->addForeignKeyConstraint('gc_user', ['account_id'], ['id'], ['onDelete' => 'CASCADE']);
+            $tbl->addForeignKeyConstraint('gc_user', ['manager_account_id'], ['id'], ['onDelete' => 'CASCADE']);
+            $tbl->addUniqueIndex(['account_id', 'manager_account_id']);
         }
 
         if (!$schema->hasTable('gc_flood')) {
