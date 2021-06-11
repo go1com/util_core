@@ -82,8 +82,11 @@ class UserSchema
 
         if (!$schema->hasTable('gc_account_managers')) {
             $tbl = $schema->createTable('gc_account_managers');
+            $tbl->addColumn('id', Types::INTEGER, ['unsigned' => true, 'autoincrement' => true]);
             $tbl->addColumn('account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
             $tbl->addColumn('manager_account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addColumn('timestamp', Types::INTEGER);
+            $tbl->setPrimaryKey(['id']);
             $tbl->addForeignKeyConstraint('gc_user', ['account_id'], ['id'], ['onDelete' => 'CASCADE']);
             $tbl->addForeignKeyConstraint('gc_user', ['manager_account_id'], ['id'], ['onDelete' => 'CASCADE']);
             $tbl->addUniqueIndex(['account_id', 'manager_account_id']);
