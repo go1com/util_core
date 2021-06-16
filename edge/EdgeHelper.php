@@ -55,6 +55,19 @@ class EdgeHelper
         return $helper;
     }
 
+    /**
+     * @param Connection $db
+     * @param MqClient $queue
+     * @param int $type
+     * @param int $sourceId
+     * @param int $targetId
+     * @param int $weight
+     * @param null $data
+     * @param array $payload
+     * @param bool $batchPublishing If true, make sure that $queue->batchDone() called in caller.
+     * @return int
+     * @throws \Doctrine\DBAL\Exception
+     */
     public static function link(
         Connection $db,
         MqClient $queue,
