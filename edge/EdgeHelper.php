@@ -61,7 +61,11 @@ class EdgeHelper
         int $type,
         int $sourceId,
         int $targetId,
-        int $weight = 0, $data = null, array $payload = []): int
+        int $weight = 0,
+        $data = null,
+        array $payload = [],
+        bool $batchPublishing = false
+    ): int
     {
         $db->insert('gc_ro', $edge = [
             'type'      => $type,
@@ -72,7 +76,11 @@ class EdgeHelper
         ]);
 
         $edge['id'] = $db->lastInsertId('gc_ro');
-        $queue->publish(array_merge($edge, $payload), Queue::RO_CREATE);
+        if ($batchPublishing) {
+            $queue->batchAdd(array_merge($edge, $payload), Queue::RO_CREATE);
+        } else {
+            $queue->publish(array_merge($edge, $payload), Queue::RO_CREATE);
+        }
 
         return $edge['id'];
     }
