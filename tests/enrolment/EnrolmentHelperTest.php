@@ -46,7 +46,8 @@ class EnrolmentHelperTest extends UtilCoreTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->enrolmentEventsEmbedder = new EnrolmentEventsEmbedder($this->go1, new AccessChecker);
+        $c = $this->getContainer();
+        $this->enrolmentEventsEmbedder = new EnrolmentEventsEmbedder($this->go1, new AccessChecker, $c['go1.client.user-domain-helper']);
 
         // Create instance
         $this->portalId = $this->createPortal($this->go1, ['title' => $this->portalName]);
@@ -401,7 +402,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $assessor1Id, $enrolmentId);
         $this->link($this->go1, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $assessor2Id, $enrolmentId);
 
-        $c = $this->getContainer(false);
+        $c = $this->getContainer(true);
         $helper = $c['go1.client.user-domain-helper'];
         $assessors = EnrolmentHelper::assessors($this->go1, $helper, $enrolmentId);
 
