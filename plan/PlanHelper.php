@@ -8,13 +8,13 @@ use PDO;
 
 class PlanHelper
 {
-    public static function loadByEntityAndUser(Connection $db, string $entityType, int $entityId, int $userId, array $statuses = [PlanStatuses::ASSIGNED, PlanStatuses::SCHEDULED], $type = PlanTypes::ASSIGN)
+    public static function loadByEntityAndUser(Connection $db, string $entityType, int $entityId, int $instanceId, int $userId, array $statuses = [PlanStatuses::ASSIGNED, PlanStatuses::SCHEDULED], $type = PlanTypes::ASSIGN)
     {
         return $db
             ->executeQuery(
-                'SELECT * FROM gc_plan WHERE `type` = ? AND entity_type = ? AND entity_id = ? AND user_id = ? AND status IN (?)',
-                [$type, $entityType, $entityId, $userId, $statuses],
-                [DB::INTEGER, DB::STRING, DB::INTEGER, DB::INTEGER, DB::INTEGERS]
+                'SELECT * FROM gc_plan WHERE `type` = ? AND entity_type = ? AND entity_id = ? AND instance_id = ? AND user_id = ? AND status IN (?)',
+                [$type, $entityType, $entityId, $instanceId, $userId, $statuses],
+                [DB::INTEGER, DB::STRING, DB::INTEGER, DB::INTEGER, DB::INTEGER, DB::INTEGERS]
             )
             ->fetch(DB::OBJ);
     }

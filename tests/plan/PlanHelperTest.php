@@ -14,18 +14,19 @@ class PlanHelperTest extends UtilCoreTestCase
     protected $entityType = 'award';
     protected $entityId   = 111;
     protected $userId     = 222;
+    protected $instanceId = 1;
 
     public function testLoadByEntityAndUser()
     {
-        $plan = PlanHelper::loadByEntityAndUser($this->go1, $this->entityType, $this->entityId, $this->userId);
+        $plan = PlanHelper::loadByEntityAndUser($this->go1, $this->entityType, $this->entityId, $this->instanceId, $this->userId);
         $this->assertFalse($plan);
 
-        $this->createPlan($this->go1, ['entity_type' => $this->entityType, 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'status' => PlanStatuses::EXPIRED]);
-        $plan = PlanHelper::loadByEntityAndUser($this->go1, $this->entityType, $this->entityId, $this->userId);
+        $this->createPlan($this->go1, ['entity_type' => $this->entityType, 'entity_id' => $this->entityId, 'instance_id' => $this->instanceId, 'user_id' => $this->userId, 'status' => PlanStatuses::EXPIRED]);
+        $plan = PlanHelper::loadByEntityAndUser($this->go1, $this->entityType, $this->entityId, $this->instanceId, $this->userId);
         $this->assertFalse($plan);
 
-        $this->createPlan($this->go1, ['entity_type' => $this->entityType, 'entity_id' => $this->entityId, 'user_id' => $this->userId]);
-        $plan = PlanHelper::loadByEntityAndUser($this->go1, $this->entityType, $this->entityId, $this->userId);
+        $this->createPlan($this->go1, ['entity_type' => $this->entityType, 'entity_id' => $this->entityId, 'instance_id' => $this->instanceId, 'user_id' => $this->userId]);
+        $plan = PlanHelper::loadByEntityAndUser($this->go1, $this->entityType, $this->entityId, $this->instanceId, $this->userId);
         $this->assertNotFalse($plan);
     }
 
