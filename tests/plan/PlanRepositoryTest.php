@@ -137,9 +137,14 @@ class PlanRepositoryTest extends UtilCoreTestCase
 
     public function testLoadUserPlanByEntity()
     {
-        $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+        $planId = $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
         $plans = $this->rPlan->loadUserPlanByEntity($this->portalId, $this->userId, $this->entityId);
         $this->assertCount(1, $plans);
+        $plan = $plans[0];
+        $this->assertEquals($planId, $plan->id);
+        $this->assertEquals($this->portalId, $plan->instance_id);
+        $this->assertEquals($this->userId, $plan->user_id);
+        $this->assertEquals($this->entityId, $plan->entity_id);
     }
 
     public function archiveNotifyStatus()
