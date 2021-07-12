@@ -164,7 +164,8 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $this->rPlan->archive($this->planId, [], $dataContext);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_DELETE][0]);
         $msg = (object) $this->queueMessages[Queue::PLAN_DELETE][0];
-        $this->assertEquals($expectedNotify, $msg->_context['notify']);
+        # @TODO need to review this logic
+        $this->assertEquals($expectedNotify, $msg->_context['notify'] ?? false);
         $this->assertNotEmpty($msg->_context['sessionId']);
     }
 }
