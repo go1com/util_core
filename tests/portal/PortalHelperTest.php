@@ -106,10 +106,23 @@ class PortalHelperTest extends UtilCoreTestCase
 
     public function testTimeZone()
     {
-        $instanceId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com', 'data' => ['configuration' => ['timezone' => "Australia/Canberra"]]]);
+        {
+            $portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com', 'data' => ['configuration' => ['timezone' => "Australia/Canberra"]]]);
+            $portal = PortalHelper::load($this->go1, $portalId);
+            $this->assertEquals("Australia/Canberra", PortalHelper::timezone($portal));
+        }
 
-        $portal = PortalHelper::load($this->go1, $instanceId);
-        $this->assertEquals("Australia/Canberra", PortalHelper::timezone($portal));
+        {
+            $portalId = $this->createPortal($this->go1, ['title' => 'foo.mygo1.com']);
+            $portal = PortalHelper::load($this->go1, $portalId);
+            $this->assertEquals('Australia/Brisbane', PortalHelper::timezone($portal));
+        }
+
+        {
+            $portalId = $this->createPortal($this->go1, ['title' => 'bar.mygo1.com']);
+            $portal = PortalHelper::load($this->go1, $portalId);
+            $this->assertEquals('Etc/UTC', PortalHelper::timezone($portal, 'Etc/UTC'));
+        }
     }
 
     public function testLocale()

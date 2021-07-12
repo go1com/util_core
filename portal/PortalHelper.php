@@ -182,11 +182,19 @@ class PortalHelper
         return array_combine(array_column($roles, 'id'), array_column($roles, 'name'));
     }
 
-    public static function timezone(stdClass $portal)
+    /**
+     * Static method to get timezone of portal
+     * portal predefined properties GET /portal/properties/timezones endpoint
+     *
+     * @param stdClass    $portal
+     * @param string|null $defaultTimezone
+     * @return string
+     */
+    public static function timezone(stdClass $portal, string $defaultTimezone = null): string
     {
         self::parseConfig($portal);
 
-        return $portal->configuration->timezone ?? self::TIMEZONE_DEFAULT;
+        return $portal->configuration->timezone ?? ($defaultTimezone ?: self::TIMEZONE_DEFAULT);
     }
 
     public static function portalAdminIds(UserClient $userClient, string $portalName): array
