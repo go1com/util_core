@@ -8,7 +8,7 @@ use PDO;
 
 class PlanHelper
 {
-    public static function loadByEntityAndUserAndInstanc(Connection $db, string $entityType, int $entityId, int $instanceId, int $userId, array $statuses = [PlanStatuses::ASSIGNED, PlanStatuses::SCHEDULED], $type = PlanTypes::ASSIGN)
+    public static function loadByEntityAndUserAndPortal(Connection $db, string $entityType, int $entityId, int $instanceId, int $userId, array $statuses = [PlanStatuses::ASSIGNED, PlanStatuses::SCHEDULED], $type = PlanTypes::ASSIGN)
     {
         return $db
             ->executeQuery(
