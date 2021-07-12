@@ -17,7 +17,7 @@ class PlanHelperTest extends UtilCoreTestCase
     protected $instanceId = 1;
 
 
-    public function testloadByEntityAndUserAndPortal()
+    public function testLoadByEntityAndUserAndPortal()
     {
         $plan = PlanHelper::loadByEntityAndUserAndPortal($this->go1, $this->entityType, $this->entityId, $this->instanceId, $this->userId);
         $this->assertFalse($plan);
