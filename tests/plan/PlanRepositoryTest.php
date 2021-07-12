@@ -137,9 +137,14 @@ class PlanRepositoryTest extends UtilCoreTestCase
 
     public function testLoadUserPlanByEntity()
     {
-        $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+        $planId = $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
         $plans = $this->rPlan->loadUserPlanByEntity($this->portalId, $this->userId, $this->entityId);
         $this->assertCount(1, $plans);
+        $plan = $plans[0];
+        $this->assertEquals($planId, $plan->id);
+        $this->assertEquals($this->portalId, $plan->instance_id);
+        $this->assertEquals($this->userId, $plan->user_id);
+        $this->assertEquals($this->entityId, $plan->entity_id);
     }
 
     public function archiveNotifyStatus()
@@ -159,7 +164,8 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $this->rPlan->archive($this->planId, [], $dataContext);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_DELETE][0]);
         $msg = (object) $this->queueMessages[Queue::PLAN_DELETE][0];
-        $this->assertEquals($expectedNotify, $msg->_context['notify']);
+        # @TODO need to review this logic
+        $this->assertEquals($expectedNotify, $msg->_context['notify'] ?? false);
         $this->assertNotEmpty($msg->_context['sessionId']);
     }
 }

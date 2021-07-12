@@ -335,7 +335,7 @@ class PlanRepository
     public function loadUserPlanByEntity(int $portalId, int $userId, int $entityId, string $entityType = 'lo'): array
     {
         return $this->db->createQueryBuilder()
-            ->select('id')
+            ->select('*')
             ->from('gc_plan')
             ->where('entity_type = :entityType')
             ->andWhere('entity_id = :entityId')
