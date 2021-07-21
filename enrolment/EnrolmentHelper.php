@@ -340,25 +340,23 @@ class EnrolmentHelper
 
     public static function dueDate(Connection $db, int $enrolmentId): ?DefaultDateTime
     {
-        $edges = EdgeHelper::edgesFromSources($db, [$enrolmentId], [EdgeTypes::HAS_PLAN]);
-        if ($edges) {
-            $dueDate = null;
-            foreach ($edges as $edge) {
-                if ($edge && ($plan = PlanHelper::load($db, $edge->target_id))) {
-                    if ($plan->due_date && (PlanTypes::SUGGESTED == $plan->type)) {
-                        return DateTime::create($plan->due_date);
-                    }
+        $edges = $db
+            ->executeQuery('SELECT * FROM gc_enrolment_plans WHERE enrolment_id = ?', [$enrolmentId]);
 
-                    if ($plan->due_date) {
-                        $dueDate = DateTime::create($plan->due_date);
-                    }
+        $dueDate = null;
+        while ($edge = $edges->fetch(PDO::FETCH_OBJ)) {
+            if ($edge && ($plan = PlanHelper::load($db, $edge->plan_id))) {
+                if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
+                    return DateTime::create($plan->due_date);
+                }
+
+                if ($plan->due_date) {
+                    $dueDate = DateTime::create($plan->due_date);
                 }
             }
-
-            return $dueDate;
         }
 
-        return null;
+        return $dueDate;
     }
 
     /**
@@ -372,23 +370,21 @@ class EnrolmentHelper
      */
     public static function getDueDateAndPlanType(Connection $db, int $enrolmentId): array
     {
-        $edges = EdgeHelper::edgesFromSources($db, [$enrolmentId], [EdgeTypes::HAS_PLAN]);
+        $edges = $db
+            ->executeQuery('SELECT * FROM gc_enrolment_plans WHERE enrolment_id = ?', [$enrolmentId]);
         $dueDate = null;
         $planType = null;
-        if ($edges) {
-            foreach ($edges as $edge) {
-                if ($edge && ($plan = PlanHelper::load($db, $edge->target_id))) {
-                    if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
-                        $dueDate = DateTime::create($plan->due_date);
-                        $planType = $plan->type;
-                        break;
-                    }
+        while ($edge = $edges->fetch(PDO::FETCH_OBJ)) {
+            $plan = PlanHelper::load($db, $edge->plan_id);
+            if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
+                $dueDate = DateTime::create($plan->due_date);
+                $planType = $plan->type;
+                break;
+            }
 
-                    if ($plan->due_date) {
-                        $dueDate = DateTime::create($plan->due_date);
-                        $planType = $plan->type;
-                    }
-                }
+            if ($plan->due_date) {
+                $dueDate = DateTime::create($plan->due_date);
+                $planType = $plan->type;
             }
         }
 

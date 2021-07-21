@@ -55,13 +55,30 @@ class EdgeHelper
         return $helper;
     }
 
+    /**
+     * @param Connection $db
+     * @param MqClient $queue
+     * @param int $type
+     * @param int $sourceId
+     * @param int $targetId
+     * @param int $weight
+     * @param null $data
+     * @param array $payload
+     * @param bool $batchPublishing If true, make sure that $queue->batchDone() called in caller.
+     * @return int
+     * @throws \Doctrine\DBAL\Exception
+     */
     public static function link(
         Connection $db,
         MqClient $queue,
         int $type,
         int $sourceId,
         int $targetId,
-        int $weight = 0, $data = null, array $payload = []): int
+        int $weight = 0,
+        $data = null,
+        array $payload = [],
+        bool $batchPublishing = false
+    ): int
     {
         $db->insert('gc_ro', $edge = [
             'type'      => $type,
@@ -72,7 +89,11 @@ class EdgeHelper
         ]);
 
         $edge['id'] = $db->lastInsertId('gc_ro');
-        $queue->publish(array_merge($edge, $payload), Queue::RO_CREATE);
+        if ($batchPublishing) {
+            $queue->batchAdd(array_merge($edge, $payload), Queue::RO_CREATE);
+        } else {
+            $queue->publish(array_merge($edge, $payload), Queue::RO_CREATE);
+        }
 
         return $edge['id'];
     }

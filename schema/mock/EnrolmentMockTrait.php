@@ -82,4 +82,14 @@ trait EnrolmentMockTrait
 
         return $id = $options['id'] ?? $db->lastInsertId('gc_enrolment_revision');
     }
+
+    public function linkPlan(Connection $db, int $enrolmentId, int $planId)
+    {
+        $db->insert('gc_enrolment_plans', [
+            'enrolment_id' => $enrolmentId,
+            'plan_id'      => $planId,
+        ]);
+
+        return $db->lastInsertId('gc_enrolment_plans');
+    }
 }

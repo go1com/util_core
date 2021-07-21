@@ -167,7 +167,7 @@ class PlanRepository
         return $revisions;
     }
 
-    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [])
+    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [], $isBatch = false)
     {
         $this->db->insert('gc_plan', [
             'type'         => $plan->type,
@@ -190,8 +190,12 @@ class PlanRepository
 
         $payload = $plan->jsonSerialize();
         $payload['embedded'] = $embedded + $this->planCreateEventEmbedder->embedded($plan);
+        if ($isBatch) {
+            $this->queue->batchAdd($payload, Queue::PLAN_CREATE, $queueContext);
+        } else {
+            $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
+        }
 
-        $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
 
         return $plan->id;
     }
@@ -283,20 +287,24 @@ class PlanRepository
         return $planId;
     }
 
-    public function archive(int $planId, array $embedded = [], array $queueContext = [])
+    public function archive(int $planId, array $embedded = [], array $queueContext = [], $isBatch = false)
     {
         if (!$plan = $this->load($planId)) {
             return false;
         }
 
-        $this->db->transactional(function () use ($plan, $embedded, $queueContext) {
+        $this->db->transactional(function () use ($plan, $embedded, $queueContext, $isBatch) {
             $this->db->delete('gc_plan', ['id' => $plan->id]);
             $this->createRevision($plan);
 
             $payload = $plan->jsonSerialize();
             $queueContext['sessionId'] = Uuid::uuid4()->toString();
             $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
-            $this->queue->publish($payload, Queue::PLAN_DELETE, $queueContext);
+            if ($isBatch) {
+                $this->queue->batchAdd($payload, Queue::PLAN_DELETE, $queueContext);
+            } else {
+                $this->queue->publish($payload, Queue::PLAN_DELETE, $queueContext);
+            }
         });
 
         return true;
@@ -327,7 +335,7 @@ class PlanRepository
     public function loadUserPlanByEntity(int $portalId, int $userId, int $entityId, string $entityType = 'lo'): array
     {
         return $this->db->createQueryBuilder()
-            ->select('id')
+            ->select('*')
             ->from('gc_plan')
             ->where('entity_type = :entityType')
             ->andWhere('entity_id = :entityId')
