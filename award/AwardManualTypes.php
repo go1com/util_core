@@ -12,7 +12,7 @@ class AwardManualTypes
     const F2F        = 'face to face';
     const ONLINE     = 'online';
     const OTHER      = 'other';
-    const ON_THE_JOB = 'on-the-job';
+    const ON_THE_JOB = 'on the job';
 
     public static function all()
     {
