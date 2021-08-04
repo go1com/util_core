@@ -376,13 +376,13 @@ class EnrolmentHelper
         $planType = null;
         while ($edge = $edges->fetch(PDO::FETCH_OBJ)) {
             $plan = PlanHelper::load($db, $edge->plan_id);
-            if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
+            if ($plan && $plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
                 $dueDate = DateTime::create($plan->due_date);
                 $planType = $plan->type;
                 break;
             }
 
-            if ($plan->due_date) {
+            if ($plan && $plan->due_date) {
                 $dueDate = DateTime::create($plan->due_date);
                 $planType = $plan->type;
             }
