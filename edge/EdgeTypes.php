@@ -105,7 +105,7 @@ class EdgeTypes
     const HAS_LO_LOCATION             = 41; # T: gc_location.id       | S: gc_lo.id
     const HAS_LO_CUSTOMISATION        = 42; # T: gc_instance.id       | S: gc_lo.id              | data: { KEY: VALUE }
     const HAS_AWARD_LOCATION          = 43; # T: gc_location.id       | S: award_award.id
-    const HAS_SUGGESTED_COMPLETION    = 44; # T: 0                    | S: gc_ro.id              | data: { KEY: VALUE }
+    const HAS_SUGGESTED_COMPLETION    = 44; # T: 0 or gc_ro.id        | S: gc_lo.id              | data: { KEY: VALUE } | target_id is 0 unless lo is reused, then target_id is gc_ro.id (of parent lo's)
     const AWARD_ASSESSOR              = 45; # T: Account              | S: award.id
     const GROUP_HAS_ITEM              = 46; # T: Learning object      | S: Learning object (group lo only)
     const PLAYLIST_HAS_ITEM           = 47; # T: LO                   | S: playlist.
