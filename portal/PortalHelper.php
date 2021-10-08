@@ -267,10 +267,13 @@ class PortalHelper
         try {
             $streamContext = stream_context_create(["ssl" => ["capture_peer_cert" => true]]);
             $read = @fopen("https://" . $domain, "rb", false, $streamContext);
-            $response = stream_context_get_params($read);
-            $enabled = !!$response["options"]["ssl"]["peer_certificate"];
+            if (false !== $read) {
+                $response = stream_context_get_params($read);
 
-            return $enabled;
+                return !!$response["options"]["ssl"]["peer_certificate"];
+            }
+
+            return false;
         } catch (Exception $e) {
             return false;
         }
