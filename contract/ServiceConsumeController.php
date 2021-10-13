@@ -61,7 +61,7 @@ class ServiceConsumeController
                 try {
                     $consumer->consume($routingKey, $body, $context);
                     $headers['X-CONSUMERS'][] = get_class($consumer);
-                } catch (IgnoreMessageException $e)  {
+                } catch (IgnoreMessageException $e) {
                     $this->logger->error('Message is ignored', [
                         'message'    => $e->getMessage(),
                         'routingKey' => $routingKey,
@@ -71,21 +71,30 @@ class ServiceConsumeController
                 } catch (NotifyException $e) {
                     $this->logger->log($e->getNotifyExceptionType(), sprintf('Failed to consume [%s] with %s %s: %s', $routingKey, json_encode($body), json_encode($context), json_encode($e->getNotifyExceptionMessage())));
                 } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
+                    $errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace'   => $e->getTraceAsString(),
+                    ];
 
                     if (class_exists(TestCase::class, false)) {
                         throw $e;
                     }
                 } catch (SystemError $e) {
-                    $errors[] = $e->getMessage();
+                    $errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace'   => $e->getTraceAsString(),
+                    ];
                 }
             }
         }
 
         if (!empty($errors)) {
-            $err = 'failed to consume [%s] [%s] %s %s';
-            $err = sprintf($err, $routingKey, json_encode($errors), json_encode($body), json_encode($context));
-            $this->logger->error($err);
+            $this->logger->error('failed to consume', [
+                'routingKey'  => '',
+                'errors'      => $errors,
+                'msg.payload' => $body,
+                'msg.context' => $context,
+            ]);
 
             return new JsonResponse(null, 500);
         }
