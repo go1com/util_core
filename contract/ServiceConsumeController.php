@@ -90,7 +90,7 @@ class ServiceConsumeController
 
         if (!empty($errors)) {
             $this->logger->error('failed to consume', [
-                'routingKey'  => '',
+                'routingKey'  => $routingKey,
                 'errors'      => $errors,
                 'msg.payload' => $body,
                 'msg.context' => $context,
