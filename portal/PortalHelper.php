@@ -140,13 +140,7 @@ class PortalHelper
 
     public static function loadFromLoId(Connection $db, int $loId)
     {
-        $portal = &DB::cache(__METHOD__, []);
-
-        if (isset($portal[$loId])) {
-            return $portal[$loId];
-        }
-
-        return $portal[$loId] = $db->executeQuery(
+        return $db->executeQuery(
             'SELECT gc_instance.* FROM gc_instance'
             . ' INNER JOIN gc_lo ON gc_instance.id = gc_lo.instance_id'
             . ' WHERE gc_lo.id = ?',
