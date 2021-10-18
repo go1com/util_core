@@ -52,6 +52,10 @@ class ServiceConsumeController
         $context = is_scalar($context) ? json_decode($context) : json_decode(json_encode($context, JSON_FORCE_OBJECT));
 
         if ($user = $this->accessChecker->validUser($req)) {
+            if (!$context) {
+                $context = (object) [];
+            }
+            
             $context->activeUserId = $user->id;
         }
 
