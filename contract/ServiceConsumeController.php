@@ -56,7 +56,9 @@ class ServiceConsumeController
                 $context = (object) [];
             }
             
-            $context->activeUserId = $user->id;
+            if (!isset($context->activeUserId)) {
+                $context->activeUserId = $user->id;
+            }
         }
 
         return $body
