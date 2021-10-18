@@ -13,17 +13,22 @@ use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Exception;
+use function func_get_args;
+use function print_r;
+use function var_dump;
 
 class ServiceConsumeController
 {
     /** @var ServiceConsumerInterface[] */
-    private $consumers;
-    private $logger;
+    private array           $consumers;
+    private LoggerInterface $logger;
+    private AccessChecker   $accessChecker;
 
     public function __construct(array $consumers, LoggerInterface $logger)
     {
         $this->consumers = $consumers;
         $this->logger = $logger;
+        $this->accessChecker = new AccessChecker();
     }
 
     public function get(): JsonResponse
@@ -39,7 +44,7 @@ class ServiceConsumeController
 
     public function post(Request $req): JsonResponse
     {
-        if (!(new AccessChecker)->isAccountsAdmin($req)) {
+        if (!$this->accessChecker->isAccountsAdmin($req)) {
             return Error::simpleErrorJsonResponse('Internal resource', 403);
         }
 
@@ -48,6 +53,16 @@ class ServiceConsumeController
         $body = is_scalar($body) ? json_decode($body) : json_decode(json_encode($body));
         $context = $req->get('context');
         $context = is_scalar($context) ? json_decode($context) : json_decode(json_encode($context, JSON_FORCE_OBJECT));
+
+        if ($user = $this->accessChecker->validUser($req)) {
+            if (!$context) {
+                $context = (object) [];
+            }
+
+            if (!isset($context->activeUserId)) {
+                $context->activeUserId = $user->id;
+            }
+        }
 
         return $body
             ? $this->consume($routingKey, $body, $context)
