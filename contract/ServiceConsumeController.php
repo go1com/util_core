@@ -17,13 +17,15 @@ use Exception;
 class ServiceConsumeController
 {
     /** @var ServiceConsumerInterface[] */
-    private $consumers;
-    private $logger;
+    private array           $consumers;
+    private LoggerInterface $logger;
+    private AccessChecker   $accessChecker;
 
     public function __construct(array $consumers, LoggerInterface $logger)
     {
         $this->consumers = $consumers;
         $this->logger = $logger;
+        $this->accessChecker = new AccessChecker();
     }
 
     public function get(): JsonResponse
@@ -48,6 +50,10 @@ class ServiceConsumeController
         $body = is_scalar($body) ? json_decode($body) : json_decode(json_encode($body));
         $context = $req->get('context');
         $context = is_scalar($context) ? json_decode($context) : json_decode(json_encode($context, JSON_FORCE_OBJECT));
+
+        if ($user = $this->accessChecker->validUser($req)) {
+            $context->activeUserId = $user->id;
+        }
 
         return $body
             ? $this->consume($routingKey, $body, $context)
