@@ -13,6 +13,9 @@ use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Exception;
+use function func_get_args;
+use function print_r;
+use function var_dump;
 
 class ServiceConsumeController
 {
@@ -41,7 +44,7 @@ class ServiceConsumeController
 
     public function post(Request $req): JsonResponse
     {
-        if (!(new AccessChecker)->isAccountsAdmin($req)) {
+        if (!$this->accessChecker->isAccountsAdmin($req)) {
             return Error::simpleErrorJsonResponse('Internal resource', 403);
         }
 
@@ -55,7 +58,7 @@ class ServiceConsumeController
             if (!$context) {
                 $context = (object) [];
             }
-            
+
             if (!isset($context->activeUserId)) {
                 $context->activeUserId = $user->id;
             }
