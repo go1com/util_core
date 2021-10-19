@@ -13,9 +13,6 @@ use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Exception;
-use function func_get_args;
-use function print_r;
-use function var_dump;
 
 class ServiceConsumeController
 {
