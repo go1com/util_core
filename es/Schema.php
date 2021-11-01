@@ -610,9 +610,10 @@ class Schema
             ],
             'metadata'      => [
                 'properties' => [
-                    'li_id'     => ['type' => self::T_INT],
-                    'course_id' => ['type' => self::T_INT],
-                    'user_id'   => ['type' => self::T_INT],
+                    'li_id'      => ['type' => self::T_INT],
+                    'course_id'  => ['type' => self::T_INT],
+                    'user_id'    => ['type' => self::T_INT],
+                    'instance_id'=> ['type' => self::T_INT],
                 ],
             ],
             'title'         => ['type' => self::T_KEYWORD] + self::ANALYZED,
