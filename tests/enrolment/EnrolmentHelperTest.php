@@ -307,6 +307,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $enrolment = Enrolment::create();
         $enrolment->id = 1;
         $enrolment->profileId = 1;
+        $enrolment->userId = 3;
         $enrolment->parentLoId = 2;
         $enrolment->parentEnrolmentId = 3;
         $enrolment->takenPortalId = 4;
@@ -548,5 +549,23 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->expectException(\LengthException::class);
         $this->expectExceptionMessage('More than one enrolment return.');
         $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId));
+    }
+
+    public function testLoadUserPlanIdByEntity()
+    {
+        $planId = $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_id' => $this->courseId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+        $this->assertEquals(
+            $planId,
+            EnrolmentHelper::loadUserPlanIdByEntity($this->go1, $this->portalId, $this->userId, $this->courseId)
+        );
+    }
+
+    public function testEnrolmentPlan()
+    {
+        $planId = $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_id' => $this->courseId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+        $enrolmentId = $this->createEnrolment($this->go1, ['user_id' => $this->userId, 'taken_instance_id' => $this->portalId, 'lo_id' => $this->courseId, 'status' => EnrolmentStatuses::IN_PROGRESS]);
+
+        EnrolmentHelper::createEnrolmentPlan($this->go1, $enrolmentId, $planId);
+        $this->assertTrue(EnrolmentHelper::hasEnrolmentPlan($this->go1, $enrolmentId, $planId));
     }
 }
