@@ -348,4 +348,33 @@ class PlanRepository
             ->execute()
             ->fetchAll(DB::OBJ);
     }
+
+    /**
+     * Returns the value of a single column of the first row of the result
+     *
+     * @param int    $portalId
+     * @param int    $userId
+     * @param int    $entityId
+     * @param string $entityType
+     * @return mixed|false False is returned if no rows are found.
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function loadUserPlanIdByEntity(int $portalId, int $userId, int $entityId, string $entityType = 'lo')
+    {
+        return $this->db
+            ->createQueryBuilder()
+            ->select('id')
+            ->from('gc_plan')
+            ->where('entity_type = :entityType')
+            ->andWhere('entity_id = :entityId')
+            ->andWhere('user_id = :userId')
+            ->andWhere('instance_id = :portalId')
+            ->setParameter(':entityType', $entityType, DB::STRING)
+            ->setParameter(':entityId', $entityId, DB::INTEGER)
+            ->setParameter(':portalId', $portalId, DB::INTEGER)
+            ->setParameter(':userId', $userId, DB::INTEGER)
+            ->execute()
+            ->fetchOne();
+    }
 }

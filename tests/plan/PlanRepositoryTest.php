@@ -168,4 +168,19 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $this->assertEquals($expectedNotify, $msg->_context['notify'] ?? false);
         $this->assertNotEmpty($msg->_context['sessionId']);
     }
+
+    public function testLoadUserPlanIdByEntity()
+    {
+        $planId = $this->createPlan($this->go1, [
+            'instance_id' => $this->portalId,
+            'entity_type' => 'lo',
+            'entity_id'   => $this->entityId,
+            'user_id'     => $this->userId,
+            'type'        => PlanTypes::ASSIGN,
+        ]);
+        $this->assertEquals(
+            $planId,
+            $this->rPlan->loadUserPlanIdByEntity($this->portalId, $this->userId, $this->entityId)
+        );
+    }
 }
