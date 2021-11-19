@@ -271,11 +271,10 @@ class EnrolmentHelper
     }
 
     /**
-     * Currently only used in #exim service, only create enrollement for LO
+     * Currently only used in #exim service, only create enrollement for LO and insert directly to Db
      * #account-report service
      *     -> trait Enroll
      *         -> #exim service
-     *             -> #enrolment service
      * Need to implement unified with enrolment service
      */
     public static function create(
@@ -319,10 +318,19 @@ class EnrolmentHelper
 
         $data['embedded'] = $enrolmentEventsEmbedder->embedded((object) $data);
         $queue->publish($data, Queue::ENROLMENT_CREATE, ['notify_email' => $notify, $actorIdKey => $assignerId]);
-        $planId = self::loadUserPlanIdByEntity($db, $enrolment->takenPortalId, $enrolment->userId, $lo->id);
+        # Only care on course & standalone learning item enrolment
+        if (empty($enrolment->parentEnrolmentId)) {
+            $enrolment->loId = $lo->id;
+            self::loadAndLinkEnrolmentPlan($db, $enrolment);
+        }
+    }
+
+    public static function loadAndLinkEnrolmentPlan(Connection $go1, Enrolment $enrolment)
+    {
+        $planId = self::loadUserPlanIdByEntity($go1, $enrolment->takenPortalId, $enrolment->userId, $enrolment->loId);
         if ($planId) {
-            if (!self::hasEnrolmentPlan($db, $enrolment->id, $planId)) {
-                self::createEnrolmentPlan($db, $enrolment->id, $planId);
+            if (!self::hasEnrolmentPlan($go1, $enrolment->id, $planId)) {
+                self::createEnrolmentPlan($go1, $enrolment->id, $planId);
             }
         }
     }

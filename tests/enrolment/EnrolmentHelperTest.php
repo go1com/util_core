@@ -296,6 +296,32 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertTrue($message[0]['_context']['notify_email']);
         $this->assertNull($message[0]['_context']['actor_id']);
         $this->assertArrayHasKey('lo', $message[0]['embedded']);
+
+        { # course enrolment
+            $planId = $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_id' => $this->courseId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+            $enrolment = Enrolment::create();
+            $enrolment->id = $courseEnrolmentId = 2;
+            $enrolment->profileId = 2;
+            $enrolment->userId = $this->userId;
+            $enrolment->parentEnrolmentId = 0;
+            $enrolment->takenPortalId = $this->portalId;
+            $enrolment->status = EnrolmentStatuses::IN_PROGRESS;
+            EnrolmentHelper::create($this->go1, $this->queue, $enrolment, $lo, $this->enrolmentEventsEmbedder, null, true);
+            $this->assertTrue(EnrolmentHelper::hasEnrolmentPlan($this->go1, $courseEnrolmentId, $planId));
+        }
+
+        { # module, li inside... enrolment
+            $planId = $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_id' => $this->moduleId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+            $enrolment = Enrolment::create();
+            $enrolment->id = $moduleEnrolmentId = 3;
+            $enrolment->profileId = 2;
+            $enrolment->userId = $this->userId;
+            $enrolment->parentEnrolmentId = 2;
+            $enrolment->takenPortalId = $this->portalId;
+            $enrolment->status = EnrolmentStatuses::IN_PROGRESS;
+            EnrolmentHelper::create($this->go1, $this->queue, $enrolment, $lo, $this->enrolmentEventsEmbedder, null, true);
+            $this->assertFalse(EnrolmentHelper::hasEnrolmentPlan($this->go1, $moduleEnrolmentId, $planId));
+        }
     }
 
     public function testCreateWithMarketplaceLO()
