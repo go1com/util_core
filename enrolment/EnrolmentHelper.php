@@ -270,6 +270,14 @@ class EnrolmentHelper
         return $progress;
     }
 
+    /**
+     * Currently only used in #exim service, only create enrollement for LO
+     * #account-report service
+     *     -> trait Enroll
+     *         -> #exim service
+     *             -> #enrolment service
+     * Need to implement unified with enrolment service
+     */
     public static function create(
         Connection $db,
         MqClient $queue,
@@ -311,6 +319,65 @@ class EnrolmentHelper
 
         $data['embedded'] = $enrolmentEventsEmbedder->embedded((object) $data);
         $queue->publish($data, Queue::ENROLMENT_CREATE, ['notify_email' => $notify, $actorIdKey => $assignerId]);
+        $planId = self::loadUserPlanIdByEntity($db, $enrolment->takenPortalId, $enrolment->userId, $lo->id);
+        if ($planId) {
+            if (!self::hasEnrolmentPlan($db, $enrolment->id, $planId)) {
+                self::createEnrolmentPlan($db, $enrolment->id, $planId);
+            }
+        }
+    }
+
+    /**
+     * Returns the value of a single column of the first row of the result
+     *
+     * @param int    $portalId
+     * @param int    $userId
+     * @param int    $entityId
+     * @param string $entityType
+     * @return mixed|false False is returned if no rows are found.
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public static function loadUserPlanIdByEntity(Connection $go1, int $portalId, int $userId, int $entityId, string $entityType = 'lo')
+    {
+        return $go1
+            ->createQueryBuilder()
+            ->select('id')
+            ->from('gc_plan')
+            ->where('entity_type = :entityType')
+            ->andWhere('entity_id = :entityId')
+            ->andWhere('instance_id = :portalId')
+            ->andWhere('user_id = :userId')
+            ->setParameter(':entityType', $entityType, DB::STRING)
+            ->setParameter(':entityId', $entityId, DB::INTEGER)
+            ->setParameter(':portalId', $portalId, DB::INTEGER)
+            ->setParameter(':userId', $userId, DB::INTEGER)
+            ->execute()
+            ->fetchOne();
+    }
+
+    public static function hasEnrolmentPlan(Connection $go1, int $enrolmentId, int $planId): bool
+    {
+        $ok = $go1
+            ->createQueryBuilder()
+            ->select('1')
+            ->from('gc_enrolment_plans')
+            ->where('enrolment_id = :enrolmentId')
+            ->andWhere('plan_id = :planId')
+            ->setParameter(':enrolmentId', $enrolmentId)
+            ->setParameter(':planId', $planId)
+            ->execute()
+            ->fetchOne();
+
+        return boolval($ok);
+    }
+
+    public static function createEnrolmentPlan(Connection $go1, int $enrolmentId, int $planId)
+    {
+        $go1->insert('gc_enrolment_plans', [
+            'enrolment_id' => $enrolmentId,
+            'plan_id'      => $planId,
+        ]);
     }
 
     public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
