@@ -114,8 +114,9 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $original = clone $plan;
         $plan->status = 0;
 
-        $this->rPlan->update($original, $plan);
+        $this->rPlan->update($original, $plan, true, [], ['unified_assign_flow' => true]);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_UPDATE][0]);
+        $this->assertTrue($this->queueMessages[Queue::PLAN_UPDATE][0]['_context']['unified_assign_flow']);
     }
 
     public function testUpdatedAt()
