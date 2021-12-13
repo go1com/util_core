@@ -217,13 +217,13 @@ class PlanRepository
         ]);
     }
 
-    public function update(Plan $original, Plan $plan, bool $notify = false, array $embedded = [])
+    public function update(Plan $original, Plan $plan, bool $notify = false, array $embedded = [], array $queueContext = [])
     {
         if (!$diff = $original->diff($plan)) {
             return null;
         }
 
-        $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded) {
+        $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded, $queueContext) {
             $diff['updated_at'] = (new DateTimeImmutable('now'))
                 ->setTimezone(new DateTimeZone('UTC'))
                 ->format('Y-m-d H:i:s');
@@ -235,7 +235,7 @@ class PlanRepository
 
             $payload = $plan->jsonSerialize();
             $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
-            $this->queue->publish($payload, Queue::PLAN_UPDATE);
+            $this->queue->publish($payload, Queue::PLAN_UPDATE, $queueContext);
         });
     }
 
@@ -278,7 +278,7 @@ class PlanRepository
             if (false === $plan->due) {
                 $plan->due = $original->due;
             }
-            $this->update($original, $plan, $notify, $embedded);
+            $this->update($original, $plan, $notify, $embedded, $queueContext);
             $planId = $original->id;
         } else {
             $planId = $this->create($plan, $notify, $queueContext, $embedded);
