@@ -1,6 +1,11 @@
 <?php
 namespace go1\util\k8s;
 
+/**
+ * Class K8SBridgeHelper
+ * @package go1\util\k8s
+ * Class to help simplify dealing with Bridge to Azure ENV variables, rewriting ENV names to be compatible with our apps
+ */
 class K8SBridgeHelper {
     public function init()
     {
