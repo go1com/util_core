@@ -204,7 +204,7 @@ class UtilCoreTestCase extends TestCase
             $helper
                 ->method('loadUser')
                 ->willReturnCallback(
-                    function (int $userId, ?string $portalName) use ($c) {
+                    function ($userId, ?string $portalName) use ($c) {
                         $legacyUser = $this
                             ->go1
                             ->executeQuery('SELECT * FROM gc_user WHERE id = ?', [$userId])

@@ -49,7 +49,7 @@ class AccessChecker
         $accounts = isset($user->accounts) ? $user->accounts : [];
         foreach ($accounts as &$account) {
             $actual = is_numeric($portalIdOrName) ? $account->portal_id : $account->instance;
-            if ($portalIdOrName === $actual) {
+            if ($portalIdOrName == $actual) {
                 if (!empty($account->roles) && in_array($role, $account->roles)) {
                     return $account;
                 }
@@ -99,6 +99,21 @@ class AccessChecker
     public function hasAccountsAdminRole($user)
     {
         return in_array(Roles::ROOT, isset($user->roles) ? $user->roles : []);
+    }
+
+    public function contextPortal(Request $req): ?stdClass
+    {
+        $user = $this->validUser($req);
+        if (!$user) {
+            return null;
+        }
+
+        $account = $user->accounts[0] ?? null;
+        if (!$account) {
+            return null;
+        }
+
+        return (object) ['id' => $account->portal_id, 'title' => $account->instance];
     }
 
     public function validAccount(Request $req, $portalIdOrName)
@@ -202,7 +217,7 @@ class AccessChecker
         if (!$user = $this->validUser($req)) {
             return false;
         }
-        
+
         return $db->fetchColumn(
             'SELECT 1 FROM gc_ro'
             . ' WHERE type = ?'
@@ -256,10 +271,10 @@ class AccessChecker
 
     public static function isAssessor(
         Connection $db,
-        int $courseId,
-        int $assessorId,
-        int $studentProfileId = null,
-        Request $req = null): bool
+        int        $courseId,
+        int        $assessorId,
+        int        $studentProfileId = null,
+        Request    $req = null): bool
     {
         $checker = new self;
 
@@ -291,10 +306,10 @@ class AccessChecker
     public function isAwardAssessor(
         Connection $go1,
         Connection $awardDb,
-        int $awardId,
-        int $assessorId,
-        bool $checkParent = true,
-        Request $req = null
+        int        $awardId,
+        int        $assessorId,
+        bool       $checkParent = true,
+        Request    $req = null
     ): bool {
         if ($req && $this->isAccountsAdmin($req)) {
             return true;

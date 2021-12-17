@@ -41,13 +41,14 @@ class EnrolmentEventsEmbedderTest extends UtilCoreTestCase
             'lo_id'             => $this->courseId,
             'taken_instance_id' => $this->portalId,
             'profile_id'        => $this->profileId,
+            'user_id'           => $this->userId
         ]);
     }
 
     public function test()
     {
         $c = $this->getContainer();
-        $embedder = new EnrolmentEventsEmbedder($this->go1, $c['access_checker']);
+        $embedder = new EnrolmentEventsEmbedder($this->go1, $c['access_checker'], $c['go1.client.user-domain-helper']);
         $enrolment = EnrolmentHelper::load($this->go1, $this->enrolmentId);
         $req = Request::create('/', 'POST');
         $req->attributes->set('jwt.payload', Text::jwtContent($this->jwt));
@@ -55,5 +56,6 @@ class EnrolmentEventsEmbedderTest extends UtilCoreTestCase
 
         $this->assertEquals('qa.mygo1.com', $embedded['portal']->title);
         $this->assertEquals('course', $embedded['lo']->type);
+        $this->assertEquals($this->accountId, $embedded['account']['id']);
     }
 }

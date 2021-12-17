@@ -8,13 +8,14 @@ use InvalidArgumentException;
 
 class AwardEnrolmentStatuses
 {
-    const IN_PROGRESS = 1;
-    const COMPLETED   = 2;
-    const EXPIRED     = 3;
+    const IN_PROGRESS   = 1;
+    const COMPLETED     = 2;
+    const EXPIRED       = 3;
+    const NOT_STARTED   = 4;
 
-    const S_IN_PROGRESS = 'in-progress';
-    const S_COMPLETED   = 'completed';
-    const S_EXPIRED     = 'expired';
+    const S_IN_PROGRESS     = 'in-progress';
+    const S_COMPLETED       = 'completed';
+    const S_EXPIRED         = 'expired';
 
     public static function all()
     {
@@ -22,6 +23,7 @@ class AwardEnrolmentStatuses
             static::IN_PROGRESS,
             static::COMPLETED,
             static::EXPIRED,
+            static::NOT_STARTED
         ];
     }
 
@@ -36,6 +38,9 @@ class AwardEnrolmentStatuses
 
             case self::EXPIRED:
                 return self::S_EXPIRED;
+
+            case self::NOT_STARTED:
+                return EnrolmentStatuses::NOT_STARTED;
 
             default:
                 throw new InvalidArgumentException('Unknown enrolment status: ' . $status);
@@ -56,6 +61,9 @@ class AwardEnrolmentStatuses
 
             case PlanStatuses::ASSIGNED:
                 return PlanStatuses::ASSIGNED;
+
+            case self::NOT_STARTED:
+                return EnrolmentStatuses::I_NOT_STARTED;
 
             default:
                 throw new InvalidArgumentException('Unknown enrolment status: ' . $status);

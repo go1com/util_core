@@ -212,7 +212,7 @@ class EnrolmentHelper
         return $parentLo && ($parentLo->type == $parentLoType) ? $parentEnrolment : false;
     }
 
-    public static function sequenceEnrolmentCompleted(Connection $db, int $loId, int $parentLoId, string $parentLoType = LoTypes::COURSE, int $profileId)
+    public static function sequenceEnrolmentCompleted(Connection $db, int $loId, int $parentLoId, string $parentLoType = LoTypes::COURSE, int $profileId = 0)
     {
         $edgeType = ($parentLoType == LoTypes::COURSE) ? EdgeTypes::LearningObjectTree['course'] : EdgeTypes::LearningObjectTree['module'];
         $requiredEdgeType = ($parentLoType == LoTypes::COURSE) ? EdgeTypes::HAS_MODULE : EdgeTypes::HAS_LI;
@@ -270,10 +270,17 @@ class EnrolmentHelper
         return $progress;
     }
 
+    /**
+     * Currently only used in #exim service, only create enrollement for LO and insert directly to Db
+     * #account-report service
+     *     -> trait Enroll
+     *         -> #exim service
+     * Need to implement unified with enrolment service
+     */
     public static function create(
         Connection $db,
         MqClient $queue,
-        Enrolment $enrolment,
+        Enrolment &$enrolment,
         stdClass $lo,
         EnrolmentEventsEmbedder $enrolmentEventsEmbedder,
         $assignerId = null,
@@ -285,7 +292,6 @@ class EnrolmentHelper
         }
 
         $data = [
-            'id'                  => $enrolment->id,
             'profile_id'          => $enrolment->profileId,
             'user_id'             => $enrolment->userId,
             'parent_lo_id'        => $enrolment->parentLoId,
@@ -304,12 +310,82 @@ class EnrolmentHelper
         ];
 
         $db->insert('gc_enrolment', $data);
+        $enrolment->id = $db->lastInsertId('gc_enrolment');
+        $data['id'] = $enrolment->id;
 
         $rMqClient = new ReflectionClass(MqClient::class);
         $actorIdKey = $rMqClient->hasConstant('CONTEXT_ACTOR_ID') ? $rMqClient->getConstant('CONTEXT_ACTOR_ID') : 'actor_id';
 
         $data['embedded'] = $enrolmentEventsEmbedder->embedded((object) $data);
         $queue->publish($data, Queue::ENROLMENT_CREATE, ['notify_email' => $notify, $actorIdKey => $assignerId]);
+        # Only care on course & standalone learning item enrolment
+        if (empty($enrolment->parentEnrolmentId)) {
+            $enrolment->loId = $lo->id;
+            self::loadAndLinkEnrolmentPlan($db, $enrolment);
+        }
+    }
+
+    public static function loadAndLinkEnrolmentPlan(Connection $go1, Enrolment $enrolment)
+    {
+        $planId = self::loadUserPlanIdByEntity($go1, $enrolment->takenPortalId, $enrolment->userId, $enrolment->loId);
+        if ($planId) {
+            if (!self::hasEnrolmentPlan($go1, $enrolment->id, $planId)) {
+                self::createEnrolmentPlan($go1, $enrolment->id, $planId);
+            }
+        }
+    }
+
+    /**
+     * Returns the value of a single column of the first row of the result
+     *
+     * @param int    $portalId
+     * @param int    $userId
+     * @param int    $entityId
+     * @param string $entityType
+     * @return mixed|false False is returned if no rows are found.
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public static function loadUserPlanIdByEntity(Connection $go1, int $portalId, int $userId, int $entityId, string $entityType = 'lo')
+    {
+        return $go1
+            ->createQueryBuilder()
+            ->select('id')
+            ->from('gc_plan')
+            ->where('entity_type = :entityType')
+            ->andWhere('entity_id = :entityId')
+            ->andWhere('instance_id = :portalId')
+            ->andWhere('user_id = :userId')
+            ->setParameter(':entityType', $entityType, DB::STRING)
+            ->setParameter(':entityId', $entityId, DB::INTEGER)
+            ->setParameter(':portalId', $portalId, DB::INTEGER)
+            ->setParameter(':userId', $userId, DB::INTEGER)
+            ->execute()
+            ->fetchOne();
+    }
+
+    public static function hasEnrolmentPlan(Connection $go1, int $enrolmentId, int $planId): bool
+    {
+        $ok = $go1
+            ->createQueryBuilder()
+            ->select('1')
+            ->from('gc_enrolment_plans')
+            ->where('enrolment_id = :enrolmentId')
+            ->andWhere('plan_id = :planId')
+            ->setParameter(':enrolmentId', $enrolmentId)
+            ->setParameter(':planId', $planId)
+            ->execute()
+            ->fetchOne();
+
+        return boolval($ok);
+    }
+
+    public static function createEnrolmentPlan(Connection $go1, int $enrolmentId, int $planId)
+    {
+        $go1->insert('gc_enrolment_plans', [
+            'enrolment_id' => $enrolmentId,
+            'plan_id'      => $planId,
+        ]);
     }
 
     public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
@@ -339,25 +415,23 @@ class EnrolmentHelper
 
     public static function dueDate(Connection $db, int $enrolmentId): ?DefaultDateTime
     {
-        $edges = EdgeHelper::edgesFromSources($db, [$enrolmentId], [EdgeTypes::HAS_PLAN]);
-        if ($edges) {
-            $dueDate = null;
-            foreach ($edges as $edge) {
-                if ($edge && ($plan = PlanHelper::load($db, $edge->target_id))) {
-                    if ($plan->due_date && (PlanTypes::SUGGESTED == $plan->type)) {
-                        return DateTime::create($plan->due_date);
-                    }
+        $edges = $db
+            ->executeQuery('SELECT * FROM gc_enrolment_plans WHERE enrolment_id = ?', [$enrolmentId]);
 
-                    if ($plan->due_date) {
-                        $dueDate = DateTime::create($plan->due_date);
-                    }
+        $dueDate = null;
+        while ($edge = $edges->fetch(PDO::FETCH_OBJ)) {
+            if ($edge && ($plan = PlanHelper::load($db, $edge->plan_id))) {
+                if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
+                    return DateTime::create($plan->due_date);
+                }
+
+                if ($plan->due_date) {
+                    $dueDate = DateTime::create($plan->due_date);
                 }
             }
-
-            return $dueDate;
         }
 
-        return null;
+        return $dueDate;
     }
 
     /**
@@ -371,23 +445,21 @@ class EnrolmentHelper
      */
     public static function getDueDateAndPlanType(Connection $db, int $enrolmentId): array
     {
-        $edges = EdgeHelper::edgesFromSources($db, [$enrolmentId], [EdgeTypes::HAS_PLAN]);
+        $edges = $db
+            ->executeQuery('SELECT * FROM gc_enrolment_plans WHERE enrolment_id = ?', [$enrolmentId]);
         $dueDate = null;
         $planType = null;
-        if ($edges) {
-            foreach ($edges as $edge) {
-                if ($edge && ($plan = PlanHelper::load($db, $edge->target_id))) {
-                    if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
-                        $dueDate = DateTime::create($plan->due_date);
-                        $planType = $plan->type;
-                        break;
-                    }
+        while ($edge = $edges->fetch(PDO::FETCH_OBJ)) {
+            $plan = PlanHelper::load($db, $edge->plan_id);
+            if ($plan && $plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
+                $dueDate = DateTime::create($plan->due_date);
+                $planType = $plan->type;
+                break;
+            }
 
-                    if ($plan->due_date) {
-                        $dueDate = DateTime::create($plan->due_date);
-                        $planType = $plan->type;
-                    }
-                }
+            if ($plan && $plan->due_date) {
+                $dueDate = DateTime::create($plan->due_date);
+                $planType = $plan->type;
             }
         }
 

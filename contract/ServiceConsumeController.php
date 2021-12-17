@@ -17,13 +17,15 @@ use Exception;
 class ServiceConsumeController
 {
     /** @var ServiceConsumerInterface[] */
-    private $consumers;
-    private $logger;
+    private array           $consumers;
+    private LoggerInterface $logger;
+    private AccessChecker   $accessChecker;
 
     public function __construct(array $consumers, LoggerInterface $logger)
     {
         $this->consumers = $consumers;
         $this->logger = $logger;
+        $this->accessChecker = new AccessChecker();
     }
 
     public function get(): JsonResponse
@@ -39,7 +41,7 @@ class ServiceConsumeController
 
     public function post(Request $req): JsonResponse
     {
-        if (!(new AccessChecker)->isAccountsAdmin($req)) {
+        if (!$this->accessChecker->isAccountsAdmin($req)) {
             return Error::simpleErrorJsonResponse('Internal resource', 403);
         }
 
@@ -48,6 +50,16 @@ class ServiceConsumeController
         $body = is_scalar($body) ? json_decode($body) : json_decode(json_encode($body));
         $context = $req->get('context');
         $context = is_scalar($context) ? json_decode($context) : json_decode(json_encode($context, JSON_FORCE_OBJECT));
+
+        if ($user = $this->accessChecker->validUser($req)) {
+            if (!$context) {
+                $context = (object) [];
+            }
+
+            if (!isset($context->activeUserId)) {
+                $context->activeUserId = $user->id;
+            }
+        }
 
         return $body
             ? $this->consume($routingKey, $body, $context)
@@ -61,7 +73,7 @@ class ServiceConsumeController
                 try {
                     $consumer->consume($routingKey, $body, $context);
                     $headers['X-CONSUMERS'][] = get_class($consumer);
-                } catch (IgnoreMessageException $e)  {
+                } catch (IgnoreMessageException $e) {
                     $this->logger->error('Message is ignored', [
                         'message'    => $e->getMessage(),
                         'routingKey' => $routingKey,
@@ -71,21 +83,30 @@ class ServiceConsumeController
                 } catch (NotifyException $e) {
                     $this->logger->log($e->getNotifyExceptionType(), sprintf('Failed to consume [%s] with %s %s: %s', $routingKey, json_encode($body), json_encode($context), json_encode($e->getNotifyExceptionMessage())));
                 } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
+                    $errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace'   => $e->getTraceAsString(),
+                    ];
 
                     if (class_exists(TestCase::class, false)) {
                         throw $e;
                     }
                 } catch (SystemError $e) {
-                    $errors[] = $e->getMessage();
+                    $errors[] = [
+                        'message' => $e->getMessage(),
+                        'trace'   => $e->getTraceAsString(),
+                    ];
                 }
             }
         }
 
         if (!empty($errors)) {
-            $err = 'failed to consume [%s] [%s] %s %s';
-            $err = sprintf($err, $routingKey, json_encode($errors), json_encode($body), json_encode($context));
-            $this->logger->error($err);
+            $this->logger->error('failed to consume', [
+                'routingKey'  => $routingKey,
+                'errors'      => $errors,
+                'msg.payload' => $body,
+                'msg.context' => $context,
+            ]);
 
             return new JsonResponse(null, 500);
         }

@@ -6,6 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\View;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use go1\flood\Flood;
 
 class UserSchema
@@ -32,6 +33,7 @@ class UserSchema
             $user->addColumn('timestamp', 'integer');
             $user->addColumn('locale', 'string', ['length' => 12, 'notnull' => false]);
             $user->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
+            $user->addColumn('job_role', 'string', ['notnull' => false]);
 
             $user->setPrimaryKey(['id']);
             $user->addIndex(['uuid']);
@@ -76,6 +78,18 @@ class UserSchema
             $mail->addIndex(['user_id']);
             $mail->addUniqueIndex(['user_id', 'title']);
             $user->addForeignKeyConstraint('gc_user', ['user_id'], ['id']);
+        }
+
+        if (!$schema->hasTable('gc_account_managers')) {
+            $tbl = $schema->createTable('gc_account_managers');
+            $tbl->addColumn('id', Types::INTEGER, ['unsigned' => true, 'autoincrement' => true]);
+            $tbl->addColumn('account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addColumn('manager_account_id', Types::INTEGER, ['unsigned' => true, 'length' => 10]);
+            $tbl->addColumn('created_at', Types::INTEGER);
+            $tbl->setPrimaryKey(['id']);
+            $tbl->addForeignKeyConstraint('gc_user', ['account_id'], ['id'], ['onDelete' => 'CASCADE']);
+            $tbl->addForeignKeyConstraint('gc_user', ['manager_account_id'], ['id'], ['onDelete' => 'CASCADE']);
+            $tbl->addUniqueIndex(['account_id', 'manager_account_id']);
         }
 
         if (!$schema->hasTable('gc_flood')) {
@@ -126,11 +140,13 @@ class UserSchema
         }
     }
 
-    public static function update02(Schema $schema) {
+    public static function update02(Schema $schema)
+    {
         $schema->hasTable('gc_user_locale') && $schema->dropTable('gc_user_locale');
     }
 
-    public static function update03(Schema $schema) {
+    public static function update03(Schema $schema)
+    {
         $table = $schema->getTable('gc_user_mail');
         if (!$table->hasColumn('user_id')) {
             $table->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);

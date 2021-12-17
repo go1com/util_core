@@ -21,6 +21,8 @@ class PortalHelper
     const STABLE_VERSION = 'v3.0.0';
 
     const WEBSITE_DOMAIN             = 'www.go1.com';
+    const WEBSITE_DEV_DOMAIN         = 'website.dev.go1.cloud';
+    const WEBSITE_QA_DOMAIN          = 'website.qa.go1.cloud';
     const WEBSITE_PUBLIC_INSTANCE    = 'public.mygo1.com';
     const WEBSITE_STAGING_INSTANCE   = 'staging.mygo1.com';
     const WEBSITE_QA_INSTANCE        = 'qa.go1.cloud';
@@ -180,11 +182,19 @@ class PortalHelper
         return array_combine(array_column($roles, 'id'), array_column($roles, 'name'));
     }
 
-    public static function timezone(stdClass $portal)
+    /**
+     * Static method to get timezone of portal
+     * portal predefined properties GET /portal/properties/timezones endpoint
+     *
+     * @param stdClass    $portal
+     * @param string|null $defaultTimezone
+     * @return string
+     */
+    public static function timezone(stdClass $portal, string $defaultTimezone = null): string
     {
         self::parseConfig($portal);
 
-        return $portal->configuration->timezone ?? self::TIMEZONE_DEFAULT;
+        return $portal->configuration->timezone ?? ($defaultTimezone ?: self::TIMEZONE_DEFAULT);
     }
 
     public static function portalAdminIds(UserClient $userClient, string $portalName): array
@@ -256,14 +266,30 @@ class PortalHelper
     {
         try {
             $streamContext = stream_context_create(["ssl" => ["capture_peer_cert" => true]]);
-            $read = fopen("https://" . $domain, "rb", false, $streamContext);
-            $response = stream_context_get_params($read);
-            $enabled = !!$response["options"]["ssl"]["peer_certificate"];
+            $read = @fopen("https://" . $domain, "rb", false, $streamContext);
+            if (false !== $read) {
+                $response = stream_context_get_params($read);
 
-            return $enabled;
+                return !!$response["options"]["ssl"]["peer_certificate"];
+            }
+
+            return false;
         } catch (Exception $e) {
             return false;
         }
     }
 
+    public static function getWebsiteDomain(string $uri = ''): string
+    {
+        $env = getenv('ENV') ?: 'production';
+        switch ($env) {
+            case 'dev':
+                return 'https://' . self::WEBSITE_DEV_DOMAIN . $uri;
+            case 'staging':
+            case 'qa':
+                return 'https://' . self::WEBSITE_QA_DOMAIN . $uri;
+            default:
+                return 'https://' . self::WEBSITE_DOMAIN . $uri;
+        }
+    }
 }
