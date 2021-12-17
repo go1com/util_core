@@ -50,7 +50,7 @@ class DB
             'host'          => $dbHost,
             'user'          => $dbUser,
             'password'      => $dbPass,
-            'port'          => getenv("{$prefix}_PORT") ?: '3306',
+            'port'          => self::getEnvByPriority(["{$prefix}_PORT", 'RDS_DB_PORT']) ?: '3306',
             'driverOptions' => [1002 => 'SET NAMES utf8mb4'],
         ];
     }
