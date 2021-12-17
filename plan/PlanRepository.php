@@ -2,9 +2,12 @@
 
 namespace go1\util\plan;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use go1\clients\MqClient;
 use go1\util\DB;
 use go1\util\plan\event_publishing\PlanCreateEventEmbedder;
@@ -49,6 +52,7 @@ class PlanRepository
             $plan->addColumn('entity_id', Type::INTEGER, ['unsigned' => true]);
             $plan->addColumn('status', Type::INTEGER);
             $plan->addColumn('created_date', Type::DATETIME);
+            $plan->addColumn('updated_at', Types::DATETIME_MUTABLE, ['notnull' => false, 'default' => 'CURRENT_TIMESTAMP']);
             $plan->addColumn('due_date', Type::DATETIME, ['notnull' => false]);
             $plan->addColumn('data', 'blob', ['notnull' => false]);
             $plan->setPrimaryKey(['id']);
@@ -163,7 +167,7 @@ class PlanRepository
         return $revisions;
     }
 
-    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [])
+    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [], $isBatch = false)
     {
         $this->db->insert('gc_plan', [
             'type'         => $plan->type,
@@ -181,12 +185,17 @@ class PlanRepository
         $plan->id = $this->db->lastInsertId('gc_plan');
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
         $queueContext['notify'] = $plan->notify;
+        $queueContext['reassign'] = $queueContext['reassign'] ?? false;
         $queueContext['sessionId'] = Uuid::uuid4()->toString();
 
         $payload = $plan->jsonSerialize();
         $payload['embedded'] = $embedded + $this->planCreateEventEmbedder->embedded($plan);
+        if ($isBatch) {
+            $this->queue->batchAdd($payload, Queue::PLAN_CREATE, $queueContext);
+        } else {
+            $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
+        }
 
-        $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
 
         return $plan->id;
     }
@@ -208,13 +217,16 @@ class PlanRepository
         ]);
     }
 
-    public function update(Plan $original, Plan $plan, bool $notify = false, array $embedded = [])
+    public function update(Plan $original, Plan $plan, bool $notify = false, array $embedded = [], array $queueContext = [])
     {
         if (!$diff = $original->diff($plan)) {
             return null;
         }
 
-        $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded) {
+        $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded, $queueContext) {
+            $diff['updated_at'] = (new DateTimeImmutable('now'))
+                ->setTimezone(new DateTimeZone('UTC'))
+                ->format('Y-m-d H:i:s');
             $this->createRevision($original);
             $this->db->update('gc_plan', $diff, ['id' => $original->id]);
             $plan->id = $original->id;
@@ -223,7 +235,7 @@ class PlanRepository
 
             $payload = $plan->jsonSerialize();
             $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
-            $this->queue->publish($payload, Queue::PLAN_UPDATE);
+            $this->queue->publish($payload, Queue::PLAN_UPDATE, $queueContext);
         });
     }
 
@@ -266,7 +278,7 @@ class PlanRepository
             if (false === $plan->due) {
                 $plan->due = $original->due;
             }
-            $this->update($original, $plan, $notify, $embedded);
+            $this->update($original, $plan, $notify, $embedded, $queueContext);
             $planId = $original->id;
         } else {
             $planId = $this->create($plan, $notify, $queueContext, $embedded);
@@ -275,19 +287,24 @@ class PlanRepository
         return $planId;
     }
 
-    public function archive(int $planId, array $embedded = [])
+    public function archive(int $planId, array $embedded = [], array $queueContext = [], $isBatch = false)
     {
         if (!$plan = $this->load($planId)) {
             return false;
         }
 
-        $this->db->transactional(function () use ($plan, $embedded) {
+        $this->db->transactional(function () use ($plan, $embedded, $queueContext, $isBatch) {
             $this->db->delete('gc_plan', ['id' => $plan->id]);
             $this->createRevision($plan);
 
             $payload = $plan->jsonSerialize();
+            $queueContext['sessionId'] = Uuid::uuid4()->toString();
             $payload['embedded'] = $embedded + $this->planDeleteEventEmbedder->embedded($plan);
-            $this->queue->publish($payload, Queue::PLAN_DELETE);
+            if ($isBatch) {
+                $this->queue->batchAdd($payload, Queue::PLAN_DELETE, $queueContext);
+            } else {
+                $this->queue->publish($payload, Queue::PLAN_DELETE, $queueContext);
+            }
         });
 
         return true;
@@ -313,5 +330,22 @@ class PlanRepository
             ->fetch(DB::OBJ);
 
         return $plan ? Plan::create($plan) : null;
+    }
+
+    public function loadUserPlanByEntity(int $portalId, int $userId, int $entityId, string $entityType = 'lo'): array
+    {
+        return $this->db->createQueryBuilder()
+            ->select('*')
+            ->from('gc_plan')
+            ->where('entity_type = :entityType')
+            ->andWhere('entity_id = :entityId')
+            ->andWhere('user_id = :userId')
+            ->andWhere('instance_id = :portalId')
+            ->setParameter(':entityType', $entityType, DB::STRING)
+            ->setParameter(':entityId', $entityId, DB::INTEGER)
+            ->setParameter(':portalId', $portalId, DB::INTEGER)
+            ->setParameter(':userId', $userId, DB::INTEGER)
+            ->execute()
+            ->fetchAll(DB::OBJ);
     }
 }

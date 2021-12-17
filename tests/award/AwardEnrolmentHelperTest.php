@@ -3,7 +3,10 @@
 namespace go1\util\tests\award;
 
 use go1\util\award\AwardEnrolmentHelper;
+use go1\util\award\AwardEnrolmentStatuses;
+use go1\util\award\AwardStatuses;
 use go1\util\edge\EdgeTypes;
+use go1\util\enrolment\EnrolmentStatuses;
 use go1\util\schema\mock\AwardMockTrait;
 use go1\util\schema\mock\UserMockTrait;
 use go1\util\tests\UtilCoreTestCase;
@@ -64,5 +67,21 @@ class AwardEnrolmentHelperTest extends UtilCoreTestCase
 
         $this->assertEquals($enrolmentId, AwardEnrolmentHelper::find($this->go1, $awardId, $userId, $instanceId)->id);
         $this->assertFalse(AwardEnrolmentHelper::find($this->go1, $awardId, $userId, 99));
+    }
+
+    public function testAwardEnrolmentNotStarted()
+    {
+        $userId = $instanceId = 1;
+        $awardId = $this->createAward($this->go1);
+        $enrolmentId = $this->createAwardEnrolment($this->go1, [
+            'award_id' => $awardId,
+            'user_id' => $userId,
+            'instance_id' => $instanceId,
+            'status' => AwardEnrolmentStatuses::NOT_STARTED
+        ]);
+
+        $enrolment = AwardEnrolmentHelper::load($this->go1, $enrolmentId);
+        $this->assertEquals(EnrolmentStatuses::NOT_STARTED, AwardEnrolmentStatuses::toString($enrolment->status));
+        $this->assertEquals(EnrolmentStatuses::I_NOT_STARTED, AwardEnrolmentStatuses::toEsNumeric($enrolment->status));
     }
 }

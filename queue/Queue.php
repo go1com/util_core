@@ -31,6 +31,35 @@ class Queue
     const PORTAL_CONFIG_CREATE              = 'portal-config.create';
     const PORTAL_CONFIG_UPDATE              = 'portal-config.update';
     const PORTAL_CONFIG_DELETE              = 'portal-config.delete';
+
+    /**
+     * This event indicates a partner portal has requested its child portals to
+     * inherit a subset of the partner portal's config based on groups in the event body
+     *
+     * Body:
+     * {
+     *   id: int|string # partner portal id or instance
+     *   groups: string[] # list of config groups to be inherited by child portals
+     * }
+     * @see go1\util\portal\PartnerConfigurationsInheritance
+     */
+    const PORTAL_CONFIG_PUBLISH_TO_CHILDREN  = 'portal-config.publish-to-children';
+
+    /**
+     * This event is published when a child portal needs to override a subset
+     * of its config with its parent portal's config based on groups in the event body
+     *
+     * Body:
+     * {
+     *   id: int|string # child portal id or instance
+     *   parent_portal_id: int|string # partner portal id or instance
+     *   groups: string[] # list of config groups to be inherited by the child portal
+     * }
+     * @see go1\util\portal\PartnerConfigurationsInheritance
+     */
+    const PORTAL_CONFIG_INHERIT_FROM_PARENT   = 'portal-config.inherit-from-parent';
+
+    const PORTAL_REQUEST_CREATE             = 'portal-request.create';
     const CONTRACT_CREATE                   = 'contract.create';
     const CONTRACT_UPDATE                   = 'contract.update';
     const CONTRACT_DELETE                   = 'contract.delete';
@@ -42,13 +71,16 @@ class Queue
     const LO_CREATE                         = 'lo.create'; # Body: LO object, no lo.items should be expected.
     const LO_UPDATE                         = 'lo.update'; # Body: LO object with extra property: origin.
     const LO_DELETE                         = 'lo.delete'; # Body: LO object.
+    const LO_SHARE                          = 'lo.lo.share';
     const LO_SAVE_ASSESSORS                 = 'lo.save.assessors';          # Body: {body: [create: INT[], update: INT[], delete: INT[]], id: INT}
+    const USER_ACCOUNT_INVITE               = 'user.space-account.invite';
     const USER_CREATE                       = 'user.create';
     const USER_UPDATE                       = 'user.update';
     const USER_DELETE                       = 'user.delete';
     const USER_BULK_NOTIFY                  = 'user.bulk-notify';
     const USER_FORGET_PASSWORD              = 'user.forget-password';
     const USER_PASSWORD_CHANGE              = 'user.password.change';
+    const USER_PASSWORD_RESET               = 'user.password.reset';
     const USER_LOGIN_SUCCESS                = 'user.login-success';
     const USER_LOGIN_FAIL                   = 'user.login-fail';
     const USER_MASQUERADE                   = 'user.masquerade';
@@ -74,6 +106,7 @@ class Queue
     const PLAN_CREATE                       = 'plan.create';
     const PLAN_UPDATE                       = 'plan.update';
     const PLAN_DELETE                       = 'plan.delete';
+    const PLAN_REASSIGN                     = 'plan.re-assign'; # Body: {type: STRING,user_id: INT,assigner_id: INT,instance_id: INT,entity_type: STRING,entity_id: INT,status: INT,created_date: INT,due_date: INT}
     const ENROLMENT_CREATE                  = 'enrolment.create';
     const ENROLMENT_UPDATE                  = 'enrolment.update';
     const ENROLMENT_DELETE                  = 'enrolment.delete';
@@ -214,6 +247,7 @@ class Queue
     const MERGE_ACCOUNT_ENROLMENT_REVISION  = 'merge-account.enrolment-revision'; // Change profile_id of enrolment revisions, body: {profile_id, portal_id}
     const CONTENT_JOB_PROCESS_IMPORT        = 'content_job.process.import';
     const CONTENT_JOB_PROCESS_IMPORT_JOB    = 'content_job_job.process.import';
+    const ACCESS_SESSIONS_INVALIDATED       = 'access.sessions.invalidated';
 
     # user-domain events.
     const USER_DOMAIN_USER_CREATE           = 'user-domain.user.create';
@@ -221,6 +255,9 @@ class Queue
     const USER_DOMAIN_PORTAL_ACCOUNT_CREATE = 'user-domain.portal-account.create';
     const USER_DOMAIN_PORTAL_ACCOUNT_UPDATE = 'user-domain.portal-account.update';
     const USER_DOMAIN_PORTAL_ACCOUNT_DELETE = 'user-domain.portal-account.delete';
+    
+    # lrs events
+    const LRS_EVENT_NEW                     = 'lrs.event.new'; // Receive learning record from external parties, body: {"event":"lrs", instanceId, oauth2ClientId, userId, payload}
 
     /**
      * @deprecated

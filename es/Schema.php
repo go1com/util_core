@@ -421,6 +421,11 @@ class Schema
                     'instance_id'         => ['type' => self::T_INT],
                     'updated_at'          => ['type' => self::T_INT],
                     'event_details'       => ['type' => self::T_KEYWORD] + self::ANALYZED, # Ex: Induction training | 08 August 2018 - 09 August 2018 | Brisbane
+                    // Tracking metadata
+                    'utm_source'          => ['type' => self::T_KEYWORD] + self::ANALYZED,
+                    'utm_content'         => ['type' => self::T_KEYWORD] + self::ANALYZED,
+                    'utm_campaign'        => ['type' => self::T_KEYWORD] + self::ANALYZED,
+                    'utm_medium'          => ['type' => self::T_KEYWORD] + self::ANALYZED,
                 ],
             ],
         ],
@@ -605,9 +610,10 @@ class Schema
             ],
             'metadata'      => [
                 'properties' => [
-                    'li_id'     => ['type' => self::T_INT],
-                    'course_id' => ['type' => self::T_INT],
-                    'user_id'   => ['type' => self::T_INT],
+                    'li_id'      => ['type' => self::T_INT],
+                    'course_id'  => ['type' => self::T_INT],
+                    'user_id'    => ['type' => self::T_INT],
+                    'instance_id'=> ['type' => self::T_INT],
                 ],
             ],
             'title'         => ['type' => self::T_KEYWORD] + self::ANALYZED,

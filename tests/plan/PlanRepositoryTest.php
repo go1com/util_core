@@ -33,7 +33,7 @@ class PlanRepositoryTest extends UtilCoreTestCase
     /** @var MqClient */
     protected $queue;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -65,9 +65,10 @@ class PlanRepositoryTest extends UtilCoreTestCase
             [false, ['notify' => true], true],
             [true, ['notify' => false], true],
             [false, [], false],
-            [true, [], true]
+            [true, [], true],
         ];
     }
+
     /**
      * @dataProvider planNotifyStatus
      */
@@ -87,6 +88,24 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
         $this->assertEquals($msg->notify, $expectedNotify);
         $this->assertNotEmpty($msg->_context['sessionId']);
+        $this->assertFalse($msg->_context['reassign']);
+    }
+
+    public function testReassignPlan()
+    {
+        $plan = Plan::create((object) [
+            'instance_id' => $this->portalId,
+            'entity_type' => $this->entityType,
+            'entity_id'   => $this->entityId,
+            'user_id'     => $this->userId,
+            'assigner_id' => $this->assignerId,
+            'type'        => PlanTypes::SUGGESTED,
+            'status'      => PlanStatuses::ASSIGNED,
+        ]);
+        $this->rPlan->create($plan, false, ['reassign' => true]);
+        $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
+        $this->assertNotEmpty($msg->_context['sessionId']);
+        $this->assertTrue($msg->_context['reassign']);
     }
 
     public function testUpdate()
@@ -95,13 +114,59 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $original = clone $plan;
         $plan->status = 0;
 
-        $this->rPlan->update($original, $plan);
+        $this->rPlan->update($original, $plan, true, [], ['unified_assign_flow' => true]);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_UPDATE][0]);
+        $this->assertTrue($this->queueMessages[Queue::PLAN_UPDATE][0]['_context']['unified_assign_flow']);
+    }
+
+    public function testUpdatedAt()
+    {
+        $plan = $this->rPlan->load($this->planId);
+        $original = clone $plan;
+        $plan->status = 0;
+
+        $this->rPlan->update($original, $plan);
+        $updatedAt = $this->go1->fetchColumn('SELECT updated_at FROM gc_plan WHERE id = ?', [$this->planId]);
+        $this->assertTrue($original->created->getTimestamp() - 1 < strtotime($updatedAt));
     }
 
     public function testDelete()
     {
         $this->rPlan->delete($this->planId);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_DELETE][0]);
+    }
+
+    public function testLoadUserPlanByEntity()
+    {
+        $planId = $this->createPlan($this->go1, ['instance_id' => $this->portalId, 'entity_type' => 'lo', 'entity_id' => $this->entityId, 'user_id' => $this->userId, 'type' => PlanTypes::ASSIGN]);
+        $plans = $this->rPlan->loadUserPlanByEntity($this->portalId, $this->userId, $this->entityId);
+        $this->assertCount(1, $plans);
+        $plan = $plans[0];
+        $this->assertEquals($planId, $plan->id);
+        $this->assertEquals($this->portalId, $plan->instance_id);
+        $this->assertEquals($this->userId, $plan->user_id);
+        $this->assertEquals($this->entityId, $plan->entity_id);
+    }
+
+    public function archiveNotifyStatus()
+    {
+        return [
+            [['notify' => true], true],
+            [['notify' => false], false],
+            [[], false],
+        ];
+    }
+
+    /**
+     * @dataProvider archiveNotifyStatus
+     */
+    public function testArchiveNotify($dataContext, $expectedNotify)
+    {
+        $this->rPlan->archive($this->planId, [], $dataContext);
+        $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_DELETE][0]);
+        $msg = (object) $this->queueMessages[Queue::PLAN_DELETE][0];
+        # @TODO need to review this logic
+        $this->assertEquals($expectedNotify, $msg->_context['notify'] ?? false);
+        $this->assertNotEmpty($msg->_context['sessionId']);
     }
 }

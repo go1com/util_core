@@ -4,6 +4,7 @@ namespace go1\util\schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 
 class EnrolmentSchema
 {
@@ -105,9 +106,24 @@ class EnrolmentSchema
             $stream->addIndex(['created']);
         }
 
+        if (!$schema->hasTable('gc_enrolment_plans')) {
+            // create table `gc_enrolment_plans`
+            $table = $schema->createTable('gc_enrolment_plans');
+            $table->addColumn('id', Type::INTEGER, ['unsigned' => true, 'autoincrement' => true]);
+            $table->addColumn('enrolment_id', Type::INTEGER, ['unsigned' => true]);
+            $table->addColumn('plan_id', Type::INTEGER, ['unsigned' => true]);
+            $table->addColumn('created_at', Types::DATETIME_MUTABLE, ['length' => 6, 'default' => 'CURRENT_TIMESTAMP']);
+            $table->addColumn('updated_at', Types::DATETIME_MUTABLE, ['length' => 6, 'default' => 'CURRENT_TIMESTAMP', 'notnull' => false]);
+            $table->setPrimaryKey(['id']);
+            $table->addForeignKeyConstraint('gc_enrolment', ['enrolment_id'], ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'NO ACTION']);
+            $table->addForeignKeyConstraint('gc_plan', ['plan_id'], ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'NO ACTION']);
+            $table->addUniqueIndex(['plan_id', 'enrolment_id']);
+        }
+
         static::update01($schema);
         static::update02($schema);
         static::update03($schema);
+        static::update04($schema);
     }
 
     public static function installManualRecord(Schema $schema)
@@ -179,6 +195,24 @@ class EnrolmentSchema
             if (!$revision->hasColumn('user_id')) {
                 $revision->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
                 $revision->addIndex(['user_id']);
+            }
+        }
+    }
+
+    public static function update04(Schema $schema)
+    {
+        if ($schema->hasTable('gc_enrolment')) {
+            $enrolment = $schema->getTable('gc_enrolment');
+            $indexes = $enrolment->getIndexes();
+            foreach ($indexes as $index) {
+                if (
+                    $index->isUnique()
+                    && !$index->isPrimary()
+                    && (['profile_id', 'parent_lo_id', 'lo_id', 'taken_instance_id'] == $index->getColumns())
+                ) {
+                    $enrolment->dropIndex($index->getName());
+                    $enrolment->addUniqueIndex(['user_id', 'parent_enrolment_id', 'lo_id', 'taken_instance_id']);
+                }
             }
         }
     }
