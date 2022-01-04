@@ -6,6 +6,7 @@ use Doctrine\DBAL\Connection;
 use go1\core\util\client\federation_api\v1\schema\object\User;
 use go1\core\util\client\federation_api\v1\UserMapper;
 use go1\core\util\client\UserDomainHelper;
+use go1\util\Currency;
 use go1\util\DB;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
@@ -86,7 +87,7 @@ class LoHelper
 
             $lo->pricing = (object) [
                 'price'        => $lo->price ? (float) $lo->price : 0.00,
-                'currency'     => $lo->currency ?: 'USD',
+                'currency'     => $lo->currency ?: Currency::DEFAULT,
                 'tax'          => $lo->tax ? (float) $lo->tax : 0.00,
                 'tax_included' => $lo->tax_included ? true : false,
                 'recurring'    => $lo->recurring ? json_decode($lo->recurring) : null,
