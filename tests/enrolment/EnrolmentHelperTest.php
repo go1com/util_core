@@ -257,6 +257,9 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals(7, $progress['total']);
     }
 
+    /**
+     * @runInSeparateProcess 
+     */
     public function testCreate()
     {
         $lo = LoHelper::load($this->go1, $this->courseId);

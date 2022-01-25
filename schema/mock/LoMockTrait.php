@@ -3,6 +3,7 @@
 namespace go1\util\schema\mock;
 
 use Doctrine\DBAL\Connection;
+use go1\util\Currency;
 use go1\util\DB;
 use go1\util\edge\EdgeTypes;
 use go1\util\lo\LiTypes;
@@ -102,7 +103,7 @@ trait LoMockTrait
             $db->insert('gc_lo_pricing', [
                 'id'           => $courseId,
                 'price'        => (float) $options['price']['price'],
-                'currency'     => isset($options['price']['currency']) ? $options['price']['currency'] : 'USD',
+                'currency'     => isset($options['price']['currency']) ? $options['price']['currency'] : Currency::DEFAULT,
                 'tax'          => isset($options['price']['tax']) ? $options['price']['tax'] : 0.00,
                 'tax_included' => isset($options['price']['tax_included']) ? $options['price']['tax_included'] : 0,
             ]);

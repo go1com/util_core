@@ -66,7 +66,7 @@ class ServiceConsumeController
             : new JsonResponse(null, 204);
     }
 
-    private function consume(string $routingKey, stdClass $body, $context): JsonResponse
+    protected function consume(string $routingKey, stdClass $body, $context): JsonResponse
     {
         foreach ($this->consumers as $consumer) {
             if ($consumer->aware()[$routingKey] ?? false) {
