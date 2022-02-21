@@ -53,12 +53,14 @@ class Service
 
     public static function url(string $name, string $env, string $pattern = null): string
     {
-        // K8S Service discovery using ENV variables
-        $k8sName = strtoupper(str_replace(["-", "."], "_", $name));
-        $k8sHost = getenv("{$k8sName}_SERVICE_HOST");
-        $k8sPort = getenv("{$k8sName}_SERVICE_PORT");
-        if ($k8sHost && $k8sPort) {
-            return "http://{$k8sHost}:{$k8sPort}";
+        if (getenv('AZURE_BRIDGE_MODE')) {
+            // K8S Service discovery using ENV variables
+            $k8sName = strtoupper(str_replace(["-", "."], "_", $name));
+            $k8sHost = getenv("{$k8sName}_SERVICE_HOST");
+            $k8sPort = getenv("{$k8sName}_SERVICE_PORT");
+            if ($k8sHost && $k8sPort) {
+                return "http://{$k8sHost}:{$k8sPort}";
+            }
         }
 
         $pattern = $pattern ?: 'http://SERVICE.ENVIRONMENT.go1.service';
