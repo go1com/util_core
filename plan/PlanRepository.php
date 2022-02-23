@@ -186,7 +186,7 @@ class PlanRepository
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
         $queueContext['notify'] = $plan->notify;
         $queueContext['reassign'] = $queueContext['reassign'] ?? false;
-        $queueContext['sessionId'] = Uuid::uuid4()->toString();
+        $queueContext['sessionId'] = $queueContext['sessionId'] ?? Uuid::uuid4()->toString();
 
         $payload = $plan->jsonSerialize();
         $payload['embedded'] = $embedded + $this->planCreateEventEmbedder->embedded($plan);
