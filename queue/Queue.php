@@ -255,9 +255,6 @@ class Queue
     const USER_DOMAIN_PORTAL_ACCOUNT_CREATE = 'user-domain.portal-account.create';
     const USER_DOMAIN_PORTAL_ACCOUNT_UPDATE = 'user-domain.portal-account.update';
     const USER_DOMAIN_PORTAL_ACCOUNT_DELETE = 'user-domain.portal-account.delete';
-    
-    # lrs events
-    const LRS_EVENT_NEW                     = 'lrs.event.new'; // Receive learning record from external parties, body: {"event":"lrs", instanceId, oauth2ClientId, userId, payload}
 
     /**
      * @deprecated
