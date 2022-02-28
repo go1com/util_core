@@ -329,6 +329,9 @@ class Queue
     const DO_PAGEUP_UPLOAD_COURSE        = 'do.pageup.upload-couse'; # { $portal_id, $course_id }
     const REINDEX_PREFIX                 = 'go1-reindex.';
 
+    # Scorm
+    const SCORM_LEARNING_ACTIVITY = 'scorm.learning-activity';
+
     /**
      * TEMPORARY EVENT (will be removed when premium/region restriction propagation is removed
      *
