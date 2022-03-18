@@ -106,6 +106,7 @@ class LoSchema
             $group->addForeignKeyConstraint('gc_instance', ['instance_id'], ['id']);
         }
 
+        // @deprecated
         if (!$schema->hasTable('gc_event')) {
             $event = $schema->createTable('gc_event');
             $event->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
@@ -146,6 +147,7 @@ class LoSchema
             $event->addIndex(['updated']);
         }
 
+        // @deprecated
         if (!$schema->hasTable('gc_location')) {
             $location = $schema->createTable('gc_location');
             $location->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
