@@ -3,3 +3,4 @@ vendor/
 db.sqlite
 .idea/
 composer.lock
+.phpunit.result.cache

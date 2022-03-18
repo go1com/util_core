@@ -116,18 +116,6 @@ class LoHelperTest extends UtilCoreTestCase
         $this->assertEquals($expect, $result);
     }
 
-    public function testLoadEvent()
-    {
-        $courseId = $this->createCourse($this->go1, ['event' => [
-            'start' => $start = (new DateTime('+1 day'))->format(DATE_ISO8601),
-            'end'   => $end = (new DateTime('+2 days'))->format(DATE_ISO8601),
-        ]]);
-        $lo = LoHelper::load($this->go1, $courseId);
-        $this->assertNotEmpty($lo->event);
-        $this->assertEquals($start, $lo->event->start);
-        $this->assertEquals($end, $lo->event->end);
-    }
-
     public function testLoadNoEvent()
     {
         $courseId = $this->createCourse($this->go1);
