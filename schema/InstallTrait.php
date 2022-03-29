@@ -63,6 +63,9 @@ trait InstallTrait
 
                 // Added gc_user_email.user_id and gc_user_email.verified
                 UserSchema::update03($schema);
+
+                // Added actor_id into user_stream and account_stream
+                UserSchema::update04($schema);
             },
             function (Schema $schema) use ($coreOnly) {
                 if (!$coreOnly) {
