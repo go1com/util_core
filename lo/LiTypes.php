@@ -6,32 +6,51 @@ use ReflectionClass;
 
 class LiTypes
 {
-    const ACTIVITY    = 'activities';
-    const ATTENDANCE  = 'attendance';
     const ASSIGNMENT  = 'assignment';
+    const AUDIO       = 'audio';
     const DOCUMENT    = 'document';
-    const H5P         = 'h5p';
+    const EVENT       = 'event';
+    const INTEGRATION = 'integration';
+    const INTERACTIVE = 'interactive';
     const MANUAL      = 'manual';
+    const LINK        = 'link';
+    const LTI         = 'lti';
+    const QUESTION    = 'question';
+    const QUIZ        = 'quiz';
+    const TEXT        = 'text';
+    const VIDEO       = 'video';
+    const COMPLEX     = ['assignment', 'h5p', 'interactive', 'quiz', 'lti', 'event'];
+
+    // deprecated LI types
+    /**
+     * @deprecated use the ASSIGNMENT type instead
+     */
+    const ACTIVITY    = 'activities';
+
+    /**
+     * @deprecated
+     */
+    const H5P         = 'h5p';
+
+    /**
+     * @deprecated use the EVENT type instead
+     */
+    const ATTENDANCE  = 'attendance';
+
     /**
      * @deprecated use the LINK type instead
      */
     const IFRAME      = 'iframe';
-    const LINK        = 'link';
-    const INTERACTIVE = 'interactive';
-    const QUESTION    = 'question';
-    const QUIZ        = 'quiz';
+
     /**
-     * @deprecated use the TEXT type instead
+     * @deprecated use the TEXT or DOCUMENT type instead
      */
     const RESOURCE    = 'resource';
-    const TEXT        = 'text';
-    const VIDEO       = 'video';
-    const AUDIO       = 'audio';
+
+    /**
+     * @deprecated use the EVENT type instead
+     */
     const WORKSHOP    = 'workshop';
-    const LTI         = 'lti';
-    const EVENT       = 'event';
-    const INTEGRATION = 'integration';
-    const COMPLEX     = ['assignment', 'h5p', 'interactive', 'quiz', 'lti', 'event'];
 
     const PRIVATE_PROPERTIES = [
         self::DOCUMENT    => ['path'],

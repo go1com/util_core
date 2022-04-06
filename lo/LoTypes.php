@@ -4,13 +4,18 @@ namespace go1\util\lo;
 
 class LoTypes
 {
-    const LEANING_PATHWAY = 'learning_pathway';
     const COURSE          = 'course';
     const MODULE          = 'module';
     const AWARD           = 'award';
     const GROUP           = 'group';
     const ACHIEVEMENT     = 'achievement';
     const PLAYLIST        = 'playlist';
+
+    // deprecated LO types
+    /**
+     * @deprecated
+     */
+    const LEANING_PATHWAY = 'learning_pathway';
 
     public static function all()
     {
