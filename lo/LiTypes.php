@@ -10,9 +10,9 @@ class LiTypes
     const AUDIO       = 'audio';
     const DOCUMENT    = 'document';
     const EVENT       = 'event';
-    const H5P         = 'h5p';
     const INTEGRATION = 'integration';
     const INTERACTIVE = 'interactive';
+    const MANUAL      = 'manual';
     const LINK        = 'link';
     const LTI         = 'lti';
     const QUESTION    = 'question';
@@ -28,6 +28,11 @@ class LiTypes
     const ACTIVITY    = 'activities';
 
     /**
+     * @deprecated
+     */
+    const H5P         = 'h5p';
+
+    /**
      * @deprecated use the EVENT type instead
      */
     const ATTENDANCE  = 'attendance';
@@ -36,11 +41,6 @@ class LiTypes
      * @deprecated use the LINK type instead
      */
     const IFRAME      = 'iframe';
-
-    /**
-     * @deprecated
-     */
-    const MANUAL      = 'manual';
 
     /**
      * @deprecated use the TEXT or DOCUMENT type instead
