@@ -168,6 +168,7 @@ class LoExploreSchema
                             'key'       => ['type' => Schema::T_KEYWORD],
                         ],
                     ],
+                    'streamable'      => ['type' => Schema::T_INT],
                 ],
             ],
             'custom_fields' => [

@@ -40,6 +40,7 @@ class LoAttributes
     const SUBSCRIPTION_RENEWAL_DATE     = 29;
     const PLAYLIST_TYPE                 = 30;
     const PLAYBACK_TARGET               = 31;
+    const STREAMABLE                    = 32;
 
     public static function machineName(int $attribute): ?string
     {
@@ -75,6 +76,7 @@ class LoAttributes
             self::SUBSCRIPTION_RENEWAL_DATE => 'subscription_renewal_date',
             self::PLAYLIST_TYPE             => 'playlist_type',
             self::PLAYBACK_TARGET           => 'playback_target',
+            self::STREAMABLE                => 'streamable',
         ];
 
         return $map[$attribute] ?? null;
