@@ -166,18 +166,16 @@ class UserSchema
     public static function update04(Schema $schema)
     {
         if ($schema->hasTable('user_stream')) {
-            $stream = $schema->getTable('user_stream');
-            if (!$stream->hasColumn('actor_id')) {
-                $stream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'default' => 0]);
-                $stream->addIndex(['actor_id']);
+            $userStream = $schema->getTable('user_stream');
+            if (!$userStream->hasColumn('actor_id')) {
+                $userStream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'notnull' => false]);
             }
         }
 
         if ($schema->hasTable('account_stream')) {
-            $stream = $schema->getTable('account_stream');
-            if (!$stream->hasColumn('actor_id')) {
-                $stream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'default' => 0]);
-                $stream->addIndex(['actor_id']);
+            $accountStream = $schema->getTable('account_stream');
+            if (!$accountStream->hasColumn('actor_id')) {
+                $accountStream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'notnull' => false]);
             }
         }
     }
