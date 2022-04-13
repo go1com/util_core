@@ -34,6 +34,7 @@ class UserSchema
             $user->addColumn('locale', 'string', ['length' => 12, 'notnull' => false]);
             $user->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
             $user->addColumn('job_role', 'string', ['notnull' => false]);
+            $user->addColumn('migrated', Types::BOOLEAN, ['notnull' => true, 'default' => false]);
 
             $user->setPrimaryKey(['id']);
             $user->addIndex(['uuid']);
@@ -176,6 +177,16 @@ class UserSchema
             $accountStream = $schema->getTable('account_stream');
             if (!$accountStream->hasColumn('actor_id')) {
                 $accountStream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'notnull' => false]);
+            }
+        }
+    }
+
+    public static function update05(Schema $schema)
+    {
+        if($schema->hasTable('gc_user')) {
+            $userTable = $schema->getTable('gc_user');
+            if (!$userTable->hasColumn('migrated')) {
+                $userTable->addColumn('migrated', Types::BOOLEAN, ['notnull' => true, 'default' => false]);
             }
         }
     }
