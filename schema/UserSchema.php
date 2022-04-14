@@ -17,6 +17,7 @@ class UserSchema
             $user = $schema->createTable('gc_user');
             $user->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $user->addColumn('uuid', 'string');
+            $user->addColumn('ulid', Types::STRING, ['length' => 30, 'notnull' => true]);
             $user->addColumn('user_uuid', 'string', ['notnull' => false]);
             $user->addColumn('instance', 'string');
             $user->addColumn('profile_id', 'integer', ['notnull' => false]);
@@ -38,6 +39,7 @@ class UserSchema
 
             $user->setPrimaryKey(['id']);
             $user->addIndex(['uuid']);
+            $user->addIndex(['ulid']);
             $user->addIndex(['mail']);
             $user->addIndex(['created']);
             $user->addIndex(['login']);
@@ -45,6 +47,7 @@ class UserSchema
             $user->addIndex(['instance']);
             $user->addIndex(['user_uuid']);
             $user->addUniqueIndex(['uuid']);
+            $user->addUniqueIndex(['ulid']);
             $user->addUniqueIndex(['instance', 'mail']);
             $user->addUniqueIndex(['instance', 'profile_id']);
             $user->addForeignKeyConstraint('gc_user', ['user_id'], ['id']);
@@ -161,6 +164,20 @@ class UserSchema
         }
         if ($table->hasColumn('user_id') && $table->hasColumn('verified')) {
             !$table->hasIndex('uniq_user_id_email') && $table->addUniqueIndex(['user_id', 'title'], 'uniq_user_id_email');
+        }
+    }
+
+    public static function update06(Schema $schema) {
+
+        if ($schema->hasTable('gc_user')) {
+            $userTable = $schema->getTable('gc_user');
+            if (!$userTable->hasColumn('ulid')) {
+                //Length needs to allow for prefix which consists of a 3-character abbreviation plus a dash (4 in total)
+                //ulid needs to be nullable until after we have generated and stored ulid's for all users, leave as false for now
+                $userTable->addColumn('ulid', Types::STRING, ['length' => 30, 'notnull' => false]);
+                $userTable->addUniqueIndex(['ulid']);
+                $userTable->addIndex(['ulid']);
+            }
         }
     }
 
