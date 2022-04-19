@@ -28,6 +28,7 @@ class Schema
 
     # Indices for explore
     const EXPLORE_INDEX             = ES_INDEX . '_explore';
+    const COD_EXPLORE_INDEX         = ES_INDEX . '_cod_explore';
     const EXPLORE_GROUP_INDEX       = ES_INDEX . '_explore_group';
     const EXPLORE_MARKETPLACE_INDEX = ES_INDEX . '_explore_marketplace';
 
