@@ -66,6 +66,9 @@ trait InstallTrait
 
                 // Added actor_id into user_stream and account_stream
                 UserSchema::update04($schema);
+
+                // Added migrated flag to gc_user table
+                UserSchema::update05($schema);
             },
             function (Schema $schema) use ($coreOnly) {
                 if (!$coreOnly) {
