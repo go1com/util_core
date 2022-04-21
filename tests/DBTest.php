@@ -197,9 +197,48 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals('foo_username', $o['pdo']->username);
         $this->assertEquals('foo_password', $o['pdo']->password);
         $this->assertEquals([
+            1002                 => 'SET NAMES utf8',
+            PDO::ATTR_PERSISTENT => true,
+        ], $o['pdo']->options);
+    }
+
+    public function testPoolConnectionWithSSL()
+    {
+        $_ENV = [];
+        putenv('FOO_DB_NAME=foo_db');
+        putenv('FOO_DB_USERNAME=foo_username');
+        putenv('FOO_DB_PASSWORD=foo_password');
+        putenv('FOO_DB_SLAVE=slave.foo.com');
+        putenv('FOO_DB_HOST=foo.com');
+        putenv('FOO_DB_ENABLE_SSL=true');
+
+        $o = DB::connectionPoolOptions('foo', false, true, MockPDO::class);
+        $this->assertEquals('mysql:host=foo.com;dbname=foo_db;port=3306', $o['pdo']->dsn);
+        $this->assertEquals('foo_username', $o['pdo']->username);
+        $this->assertEquals('foo_password', $o['pdo']->password);
+        $this->assertEquals([
             1002 => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT   => true,
+            PDO::MYSQL_ATTR_SSL_CA => '',
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
         ], $o['pdo']->options);
+    }
 
+    public function testEnableSSL()
+    {
+        $_ENV = [];
+        putenv('FOO_DB_NAME=foo_db');
+        putenv('FOO_DB_USERNAME=foo_username');
+        putenv('FOO_DB_PASSWORD=foo_password');
+        putenv('FOO_DB_SLAVE=slave.foo.com');
+        putenv('FOO_DB_HOST=foo.com');
+        putenv('RDS_DB_ENABLE_SSL=true');
+
+        $o = DB::connectionOptions('foo', false, true, MockPDO::class);
+        $this->assertEquals([
+            1002                                   => 'SET NAMES utf8mb4',
+            PDO::MYSQL_ATTR_SSL_CA                 => '',
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+        ], $o['driverOptions']);
     }
 }
