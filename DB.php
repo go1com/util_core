@@ -44,6 +44,16 @@ class DB
             $dbName = $isDevEnv ? 'dev_go1' : 'gc_go1';
         }
 
+        // Support SSL connection.
+        // Note: This only works with the provider who uses trusted CA like Azure.
+        $enabledSSL = self::getEnvByPriority(["{$prefix}_ENABLE_SSL", 'RDS_DB_ENABLE_SSL', 'DEV_DB_ENABLE_SSL']);
+        $driverOptions = $enabledSSL
+            ? [
+                PDO::MYSQL_ATTR_SSL_CA => '',
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+            ]
+            : [];
+
         return [
             'driver'        => 'pdo_mysql',
             'dbname'        => getenv("{$prefix}_NAME") ?: $dbName,
@@ -51,7 +61,9 @@ class DB
             'user'          => $dbUser,
             'password'      => $dbPass,
             'port'          => self::getEnvByPriority(["{$prefix}_PORT", 'RDS_DB_PORT']) ?: '3306',
-            'driverOptions' => [1002 => 'SET NAMES utf8mb4'],
+            'driverOptions' => [
+                1002 => 'SET NAMES utf8mb4'
+            ] + $driverOptions,
         ];
     }
 
@@ -62,7 +74,7 @@ class DB
         $pdoOpions = [
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT         => true
-        ];
+        ] + $o['driverOptions'];
         $o['pdo'] = new $pdo("mysql:host={$o['host']};dbname={$o['dbname']};port={$o['port']}", $o['user'], $o['password'], $pdoOpions);
 
         return $o;
