@@ -17,7 +17,7 @@ class UserSchema
             $user = $schema->createTable('gc_user');
             $user->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $user->addColumn('uuid', 'string');
-            $user->addColumn('ulid', Types::STRING, ['length' => 30, 'notnull' => true]);
+            $user->addColumn('ulid', Types::STRING, ['length' => 30, 'notnull' => false]);
             $user->addColumn('user_uuid', 'string', ['notnull' => false]);
             $user->addColumn('instance', 'string');
             $user->addColumn('profile_id', 'integer', ['notnull' => false]);
