@@ -175,7 +175,6 @@ class UserSchema
                 //ulid needs to be nullable until after we have generated and stored ulid's for all users, leave as false for now
                 $userTable->addColumn('ulid', Types::STRING, ['length' => 30, 'notnull' => false]);
                 $userTable->addUniqueIndex(['ulid']);
-                $userTable->addIndex(['ulid']);
             }
         }
     }
