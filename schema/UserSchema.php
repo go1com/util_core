@@ -39,7 +39,6 @@ class UserSchema
 
             $user->setPrimaryKey(['id']);
             $user->addIndex(['uuid']);
-            $user->addIndex(['ulid']);
             $user->addIndex(['mail']);
             $user->addIndex(['created']);
             $user->addIndex(['login']);
