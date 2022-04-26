@@ -46,7 +46,7 @@ class DB
 
         // Support SSL connection.
         // Note: This only works with the provider who uses trusted CA like Azure.
-        $enabledSSL = self::getEnvByPriority(["{$prefix}_ENABLE_SSL", 'RDS_DB_ENABLE_SSL', 'DEV_DB_ENABLE_SSL']);
+        $enabledSSL = filter_var(self::getEnvByPriority(["{$prefix}_ENABLE_SSL", 'RDS_DB_ENABLE_SSL', 'DEV_DB_ENABLE_SSL']), FILTER_VALIDATE_BOOLEAN);
         $driverOptions = $enabledSSL
             ? [
                 PDO::MYSQL_ATTR_SSL_CA => '',
