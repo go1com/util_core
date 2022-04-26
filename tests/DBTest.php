@@ -241,4 +241,20 @@ class DBTest extends UtilCoreTestCase
             PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
         ], $o['driverOptions']);
     }
+
+    public function testConnectionPoolOptionsException()
+    {
+        $connectionName = 'foo';
+        putenv("FOO_DB_USERNAME=${connectionName}_username");
+        putenv("FOO_DB_PASSWORD=${connectionName}_password");
+        // SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Temporary failure in name resolution
+        putenv("FOO_DB_HOST=:?$/");  
+
+        $this->expectException(\PDOException::class);
+        $this->expectExceptionMessage(
+            'SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo ' .
+            'failed: Temporary failure in name resolution'
+        );
+        $_ = DB::connectionPoolOptions($connectionName, false, true, \PDO::class);
+    }
 }
