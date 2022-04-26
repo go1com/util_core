@@ -240,6 +240,12 @@ class DBTest extends UtilCoreTestCase
             PDO::MYSQL_ATTR_SSL_CA                 => '',
             PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
         ], $o['driverOptions']);
+
+        putenv('RDS_DB_ENABLE_SSL=false');
+        $o = DB::connectionOptions('foo', false, true, MockPDO::class);
+        $this->assertEquals([
+            1002 => 'SET NAMES utf8mb4',
+        ], $o['driverOptions']);
     }
 
     public function testConnectionPoolOptionsException()
