@@ -75,9 +75,20 @@ class DB
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT         => true
         ] + $o['driverOptions'];
-        $o['pdo'] = new $pdo("mysql:host={$o['host']};dbname={$o['dbname']};port={$o['port']}", $o['user'], $o['password'], $pdoOpions);
 
-        return $o;
+        try {
+            $o['pdo'] = new $pdo(
+                "mysql:host={$o['host']};dbname={$o['dbname']};port={$o['port']}",
+                $o['user'],
+                $o['password'],
+                $pdoOpions
+            );
+            return $o;
+        } catch (\PDOException $e) {
+            // use zend.exception_ignore_args to prevent PDOException leaking credentials
+            ini_set("zend.exception_ignore_args", 1);  // PHP >= 7.4.0
+            throw $e;
+        }
     }
 
     private static function getEnvByPriority(array $names)
