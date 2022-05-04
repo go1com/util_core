@@ -74,7 +74,7 @@ class ServiceConsumeController
                     $consumer->consume($routingKey, $body, $context);
                     $headers['X-CONSUMERS'][] = get_class($consumer);
                 } catch (IgnoreMessageException $e) {
-                    $this->logger->error('Message is ignored', [
+                    $this->logger->warning('Message is ignored', [
                         'message'    => $e->getMessage(),
                         'routingKey' => $routingKey,
                         'body'       => $body,
