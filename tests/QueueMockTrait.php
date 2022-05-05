@@ -9,6 +9,7 @@ use Pimple\Container;
 trait QueueMockTrait
 {
     protected $queueMessages = [];
+    public bool $mockMqClientThrowException = false;
 
     protected function mockMqClient(Container $c, callable $callback = null)
     {
@@ -20,6 +21,9 @@ trait QueueMockTrait
                 ->getMock();
 
             $response = function ($body, string $routingKey, $context) use ($callback) {
+                if ($this->mockMqClientThrowException){
+                    throw new \Exception("MOCK EXCEPTION");
+                }
                 $callback && $callback($body, $routingKey, $context);
                 if ($context) {
                     is_array($body) && $body['_context'] = $context;
