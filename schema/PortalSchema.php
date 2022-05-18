@@ -151,4 +151,15 @@ class PortalSchema
             }
         }
     }
+
+    public static function update04(Schema $schema)
+    {
+        if ($schema->hasTable('portal_data')) {
+            $portalData = $schema->getTable('portal_data');
+            if (!$portalData->hasColumn('data_residency_region')) {
+                $portalData->addColumn('data_residency_region', Type::VARCHAR(30), ['notnull' => false]);
+                $portalData->addIndex(['data_residency_region']);
+            }
+        }
+    }
 }
