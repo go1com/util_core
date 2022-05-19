@@ -158,7 +158,6 @@ class PortalSchema
             $portalData = $schema->getTable('portal_data');
             if (!$portalData->hasColumn('data_residency_region')) {
                 $portalData->addColumn('data_residency_region', Type::VARCHAR(30), ['notnull' => false]);
-                $portalData->addIndex(['data_residency_region']);
             }
         }
     }
