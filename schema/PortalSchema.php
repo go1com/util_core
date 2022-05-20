@@ -53,7 +53,6 @@ class PortalSchema
             $data->addColumn('cancel_expiry_date', 'integer', ['unsigned' => true, 'notnull' => false]);
             $data->addColumn('partner_portal_id', 'integer', ['unsigned' => true, 'notnull' => false]);
             $data->addColumn('referrer', 'string', ['notnull' => false]);
-            $data->addColumn('data_residency_region', Type::VARCHAR(30), ['notnull' => false]);
 
             $data->setPrimaryKey(['id']);
             $data->addIndex(['state']);
@@ -88,6 +87,7 @@ class PortalSchema
         self::update01($schema);
         self::update02($schema);
         self::update03($schema);
+        self::update04($schema);
     }
 
     public static function installPortalConf(Schema $schema)
@@ -158,7 +158,7 @@ class PortalSchema
         if ($schema->hasTable('portal_data')) {
             $portalData = $schema->getTable('portal_data');
             if (!$portalData->hasColumn('data_residency_region')) {
-                $portalData->addColumn('data_residency_region', Type::VARCHAR(30), ['notnull' => false]);
+                $portalData->addColumn('data_residency_region', 'string', ['length' => 30], ['notnull' => false]);
             }
         }
     }
