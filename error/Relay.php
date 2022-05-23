@@ -10,11 +10,14 @@ trait Relay
      * Relay a 4xx or 5xx response received from a service to the API consumer.
      * Preserves the original status code, payload and Content-Type header.
      *
-     * @param \Exception $e
-     * @param int $overwriteErrorCode
+     * Ideally the exception param should be a BadResponseException, any other type of exception
+     * will return a 500 response
+     *
+     * @param \RuntimeException $e
+     * @param int|null $overwriteErrorCode
      * @return Response
      */
-    public function relayException(\Exception $e, ?int $overwriteErrorCode = null)
+    public function relayException(\RuntimeException $e, ?int $overwriteErrorCode = null)
     {
         if (!method_exists($e, 'getResponse')) {
             return new Response(json_encode([]),500,['Content-Type' => 'application/json']);

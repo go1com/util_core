@@ -38,7 +38,7 @@ class RelayTest extends UtilCoreTestCase
             }
         };
 
-        $this->exception = new Class () extends \Exception {
+        $this->exception = new Class () extends \RuntimeException {
             private $response;
 
             function getResponse() {
@@ -103,7 +103,7 @@ class RelayTest extends UtilCoreTestCase
      */
     public function testRelayExceptionWithNoDefaultException()
     {
-        $response = $this->relay->relayException(new \Exception());
+        $response = $this->relay->relayException(new \RuntimeException());
 
         $this->assertInstanceOf(\Symfony\Component\HttpFoundation\Response::class, $response);
         $this->assertEquals(500, $response->getStatusCode());
