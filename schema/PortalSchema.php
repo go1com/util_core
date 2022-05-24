@@ -85,7 +85,7 @@ class PortalSchema
 
         $installPortalConf && self::installPortalConf($schema);
         self::update01($schema);
-        self::update02($schema);
+        self::update02($schema);    
         self::update03($schema);
         self::update04($schema);
     }
@@ -158,7 +158,7 @@ class PortalSchema
         if ($schema->hasTable('portal_data')) {
             $portalData = $schema->getTable('portal_data');
             if (!$portalData->hasColumn('data_residency_region')) {
-                $portalData->addColumn('data_residency_region', 'string', ['length' => 30], ['notnull' => false]);
+                $portalData->addColumn('data_residency_region', 'string', ['length' => 30, 'notnull' => false]);
             }
         }
     }
