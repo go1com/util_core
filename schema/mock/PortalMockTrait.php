@@ -115,7 +115,6 @@ trait PortalMockTrait
             'go_live_date'      => $options['go_live_date'] ?? null,
             'expiry_date'       => $options['expiry_date'] ?? null,
             'industry'          => $options['industry'] ?? null,
-            'data_residency_region'  => $options['data_residency_region'] ?? null,
         ]);
 
         return $db->lastInsertId('portal_data');
