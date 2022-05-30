@@ -12,7 +12,7 @@
         "php":                     "^7.4",
         "ext-pdo":                 "*",
         "ext-json":                "*",
-        "doctrine/dbal":           "v2.10.1",
+        "doctrine/dbal":           "2.12.1",
         "firebase/php-jwt":        "^5.0",
         "go1/kv":                  "^0.2",
         "go1/flood":               "^0.6",
