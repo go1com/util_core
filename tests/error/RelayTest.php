@@ -8,14 +8,14 @@ use go1\util\tests\UtilCoreTestCase;
 class RelayTest extends UtilCoreTestCase
 {
     private \PHPUnit\Framework\MockObject\MockObject $relay;
-    private $response;
-    private $exception;
+    private                                          $response;
+    private                                          $exception;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->relay = $this->getMockForTrait(Relay::class);
 
-        $this->response = new Class () {
+        $this->response = new class () {
             private $body;
             private $statusCode;
             private $headers;
@@ -27,24 +27,32 @@ class RelayTest extends UtilCoreTestCase
                 $this->headers = $headers;
             }
 
-            function getBody () {
+            function getBody()
+            {
                 return $this->body;
             }
-            function getStatusCode () {
+
+            function getStatusCode()
+            {
                 return $this->statusCode;
             }
-            function getHeaders () {
+
+            function getHeaders()
+            {
                 return $this->headers;
             }
         };
 
-        $this->exception = new Class () extends \RuntimeException {
+        $this->exception = new class () extends \RuntimeException {
             private $response;
 
-            function getResponse() {
+            function getResponse()
+            {
                 return $this->response;
             }
-            function setResponse($response) {
+
+            function setResponse($response)
+            {
                 $this->response = $response;
             }
         };

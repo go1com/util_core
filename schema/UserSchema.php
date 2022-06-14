@@ -166,8 +166,8 @@ class UserSchema
         }
     }
 
-    public static function update06(Schema $schema) {
-
+    public static function update06(Schema $schema)
+    {
         if ($schema->hasTable('gc_user')) {
             $userTable = $schema->getTable('gc_user');
             if (!$userTable->hasColumn('ulid')) {
@@ -198,7 +198,7 @@ class UserSchema
 
     public static function update05(Schema $schema)
     {
-        if($schema->hasTable('gc_user')) {
+        if ($schema->hasTable('gc_user')) {
             $userTable = $schema->getTable('gc_user');
             if (!$userTable->hasColumn('migrated')) {
                 $userTable->addColumn('migrated', Types::BOOLEAN, ['notnull' => true, 'default' => false]);

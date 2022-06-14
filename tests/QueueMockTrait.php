@@ -21,7 +21,7 @@ trait QueueMockTrait
                 ->getMock();
 
             $response = function ($body, string $routingKey, $context) use ($callback) {
-                if ($this->mockMqClientThrowException){
+                if ($this->mockMqClientThrowException) {
                     throw new \Exception("MOCK EXCEPTION");
                 }
                 $callback && $callback($body, $routingKey, $context);

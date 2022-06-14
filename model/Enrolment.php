@@ -50,7 +50,7 @@ class Enrolment implements JsonSerializable
         $enrolment->parentEnrolmentId = $row->parent_enrolment_id ?? 0;
         $enrolment->loId = $row->lo_id ?? null;
         $enrolment->instanceId = $row->instance_id ?? 0;
-        $enrolment->takenPortalId = $row->taken_instance_id ?? null;;
+        $enrolment->takenPortalId = $row->taken_instance_id ?? null;
         $enrolment->startDate = $row->start_date ?? null;
         $enrolment->endDate = $row->end_date ?? null;
         $enrolment->dueDate = $row->due_date ?? null;

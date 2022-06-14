@@ -23,8 +23,7 @@ class RoleHelper
                 EdgeHelper::link($go1, $queue, EdgeTypes::HAS_ROLE, $userId, $roleId);
 
                 return $roleId;
-            }
-            catch (DBALException $e) {
+            } catch (DBALException $e) {
                 return false;
             }
         }

@@ -23,7 +23,8 @@ class DimensionHelper
         return $dimensions;
     }
 
-    public static function loadMultipleByTypes(Connection $db, array $types) {
+    public static function loadMultipleByTypes(Connection $db, array $types)
+    {
         return $db
             ->executeQuery('SELECT * FROM dimensions where type IN (?)', [$types], [DB::INTEGERS])
             ->fetchAll(DB::OBJ);
@@ -31,9 +32,9 @@ class DimensionHelper
 
     public static function loadAllForType(Connection $db, int $type)
     {
-            return $db
-                ->executeQuery('SELECT * FROM dimensions where type = ?', [$type], [DB::INTEGER])
-                ->fetchAll(DB::OBJ);
+        return $db
+            ->executeQuery('SELECT * FROM dimensions where type = ?', [$type], [DB::INTEGER])
+            ->fetchAll(DB::OBJ);
     }
 
     public static function loadAllForLevel(Connection $db, $level)
@@ -45,7 +46,7 @@ class DimensionHelper
         }
 
         return $db
-            ->executeQuery('SELECT *  FROM dimensions WHERE id in (select Level'.$level.' from dimensions_levels)')
+            ->executeQuery('SELECT *  FROM dimensions WHERE id in (select Level' . $level . ' from dimensions_levels)')
             ->fetchAll(DB::OBJ);
     }
 
@@ -56,8 +57,9 @@ class DimensionHelper
         if (!in_array($level, $validLevels)) {
             return;
         }
+
         return $db
-            ->executeQuery('SELECT *  FROM dimensions WHERE type = ? AND id in (select Level'.$level.' from dimensions_levels)', [$type], [DB::INTEGER])
+            ->executeQuery('SELECT *  FROM dimensions WHERE type = ? AND id in (select Level' . $level . ' from dimensions_levels)', [$type], [DB::INTEGER])
             ->fetchAll(DB::OBJ);
     }
 
@@ -75,8 +77,8 @@ class DimensionHelper
                 foreach ($dimensions as $dimension) {
                     if ($dimension->id == $newVal) {
                         $value = [
-                            "key" => strval($newVal),
-                            "value" => $dimension->name
+                            "key"   => strval($newVal),
+                            "value" => $dimension->name,
                         ];
                     }
                 }

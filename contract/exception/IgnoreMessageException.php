@@ -7,5 +7,4 @@ namespace go1\util\contract\exception;
  */
 class IgnoreMessageException extends \RuntimeException
 {
-
 }
