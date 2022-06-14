@@ -38,8 +38,7 @@ class UrlHelper
                     $uri = substr($uri, $colonpos + 1);
                 }
             }
-        }
-        while ($before != $uri);
+        } while ($before != $uri);
 
         return $uri;
     }

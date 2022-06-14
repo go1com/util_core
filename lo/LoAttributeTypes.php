@@ -6,7 +6,6 @@ use ReflectionClass;
 
 class LoAttributeTypes
 {
-
     const BOOLEAN   = "BOOLEAN";
     const INTEGER   = "INTEGER";
     const TEXT      = "TEXT";

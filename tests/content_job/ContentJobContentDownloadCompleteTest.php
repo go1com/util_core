@@ -10,24 +10,24 @@ class ContentJobContentDownloadCompleteTest extends UtilCoreTestCase
 {
     use PlanMockTrait;
 
-    public function testContentDownloadCompleteMessage() {
+    public function testContentDownloadCompleteMessage()
+    {
+        $payload = (object)[
+            'id'                => 1,
+            'type'              => 'Portal_Content_Download',
+            'instanceId'        => 1,
+            'configuration'     => '{ "collection": "custom" }',
+            'status'            => 'running',
+            'priority'          => 1,
+            'analytics'         => '{ "data": "data" }',
+            'reoccurringPeriod' => 'None',
+            'scheduleJobId'     => 1,
+            'createdDate'       => date("Y-m-d H:i:s"),
+            'modifiedDate'      => date("Y-m-d H:i:s"),
+            'message'           => 'heh',
+        ];
 
-      $payload = (object) [
-          'id' => 1,
-          'type' => 'Portal_Content_Download',
-          'instanceId'=> 1,
-          'configuration' => '{ "collection": "custom" }',
-          'status' => 'running',
-          'priority' => 1,
-          'analytics' => '{ "data": "data" }',
-          'reoccurringPeriod' => 'None',
-          'scheduleJobId' => 1,
-          'createdDate' => date("Y-m-d H:i:s"),
-          'modifiedDate' => date("Y-m-d H:i:s"),
-          'message' => 'heh'
-      ];
-
-      $message = ContentJobContentDownloadCompleteCreate::publish($payload);
+        $message = ContentJobContentDownloadCompleteCreate::publish($payload);
 
         $this->assertEquals($message->id, $payload->id);
         $this->assertEquals($message->type, $payload->type);

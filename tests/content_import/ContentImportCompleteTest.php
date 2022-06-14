@@ -10,24 +10,24 @@ class ContentImportCompleteTest extends UtilCoreTestCase
 {
     use PlanMockTrait;
 
-    public function testContentImportCompleteMessage() {
+    public function testContentImportCompleteMessage()
+    {
+        $payload = (object)[
+            'id'                => 1,
+            'type'              => 'CSV_Public',
+            'instanceId'        => 1,
+            'configuration'     => '{ "data": "data" }',
+            'status'            => 'running',
+            'priority'          => 1,
+            'analytics'         => '{ "data": "data" }',
+            'reoccurringPeriod' => 'weekly',
+            'scheduleJobId'     => 1,
+            'createdDate'       => date("Y-m-d H:i:s"),
+            'modifiedDate'      => date("Y-m-d H:i:s"),
+            'message'           => 'heh',
+        ];
 
-      $payload = (object) [
-          'id' => 1,
-          'type' => 'CSV_Public',
-          'instanceId'=> 1,
-          'configuration' => '{ "data": "data" }',
-          'status' => 'running',
-          'priority' => 1,
-          'analytics' => '{ "data": "data" }',
-          'reoccurringPeriod' => 'weekly',
-          'scheduleJobId' => 1,
-          'createdDate' => date("Y-m-d H:i:s"),
-          'modifiedDate' => date("Y-m-d H:i:s"),
-          'message' => 'heh'
-      ];
-
-      $message = ContentImportCompleteCreate::publish($payload);
+        $message = ContentImportCompleteCreate::publish($payload);
 
         $this->assertEquals($message->id, $payload->id);
         $this->assertEquals($message->type, $payload->type);

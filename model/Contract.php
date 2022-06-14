@@ -13,9 +13,9 @@ use InvalidArgumentException;
 
 class Contract implements JsonSerializable
 {
-    const STATUS_ACTIVE     = 1;
-    const STATUS_INACTIVE   = 0;
-    const STATUS_CANCELED   = -1;
+    const STATUS_ACTIVE   = 1;
+    const STATUS_INACTIVE = 0;
+    const STATUS_CANCELED = -1;
 
     public static $statuses = [-1, 0, 1];
 
@@ -74,8 +74,7 @@ class Contract implements JsonSerializable
         $data = null,
         int $created = null,
         int $updated = null
-    )
-    {
+    ) {
         $this->id = $id;
         $this->instanceId = $instanceId;
         $this->userId = $userId;
@@ -148,7 +147,7 @@ class Contract implements JsonSerializable
             }
         }
 
-        return (int) $this->status;
+        return (int)$this->status;
     }
 
     public static function statusToNumeric($status)
@@ -276,7 +275,7 @@ class Contract implements JsonSerializable
         if (!$this->startDate) {
             return null;
         }
-        list($intervalTerm, $frequencyTerm) = $this->getInitialTermParams($this->initialTerm);
+        [$intervalTerm, $frequencyTerm] = $this->getInitialTermParams($this->initialTerm);
         if (in_array($frequencyTerm, ['year', 'years'])) {
             $intervalTerm = $intervalTerm * 12;
         }
@@ -285,12 +284,12 @@ class Contract implements JsonSerializable
         $current = DateTime::create('now');
         $interval = $current->diff($start);
 
-        $intervalY = (int) $interval->format('%y');
-        $intervalM = (int) $interval->format('%m');
-        $intervalD = (int) $interval->format('%d');
+        $intervalY = (int)$interval->format('%y');
+        $intervalM = (int)$interval->format('%m');
+        $intervalD = (int)$interval->format('%d');
 
         $intervalMonths = ($intervalY * 12) + $intervalM + ($intervalD > 0 ? 1 : 0);
-        $intervalRenewal = ceil($intervalMonths/$intervalTerm) * $intervalTerm;
+        $intervalRenewal = ceil($intervalMonths / $intervalTerm) * $intervalTerm;
         $start->add(new DateInterval("P{$intervalRenewal}M"));
 
         return $start->format(DATE_ISO8601);
@@ -332,12 +331,12 @@ class Contract implements JsonSerializable
 
     public static function format(stdClass &$row)
     {
-        $row->status = (int) $row->status;
+        $row->status = (int)$row->status;
         $row->name = $row->name ?? '';
 
-        $row->start_date   = !empty($row->start_date) ? DateTime::create($row->start_date ? $row->start_date : time())->format(DATE_ISO8601) : null;
-        $row->signed_date  = !empty($row->signed_date)? DateTime::create($row->signed_date)->format(DATE_ISO8601) : null;
-        $row->cancel_date  = !empty($row->cancel_date) ? DateTime::create($row->cancel_date)->format(DATE_ISO8601) : null;
+        $row->start_date = !empty($row->start_date) ? DateTime::create($row->start_date ? $row->start_date : time())->format(DATE_ISO8601) : null;
+        $row->signed_date = !empty($row->signed_date) ? DateTime::create($row->signed_date)->format(DATE_ISO8601) : null;
+        $row->cancel_date = !empty($row->cancel_date) ? DateTime::create($row->cancel_date)->format(DATE_ISO8601) : null;
         $row->renewal_date = null;
 
         $row->price = number_format($row->price, 2, '.', '');
@@ -461,33 +460,33 @@ class Contract implements JsonSerializable
     function jsonSerialize()
     {
         return [
-            'id'                => $this->id,
-            'instance_id'       => $this->instanceId,
-            'user_id'           => $this->userId,
-            'staff_id'          => $this->staffId,
-            'parent_id'         => $this->parentId,
-            'name'              => $this->name,
-            'status'            => $this->getStatus(true),
-            'start_date'        => $this->startDate,
-            'signed_date'       => $this->signedDate,
-            'initial_term'      => $this->initialTerm,
-            'number_users'      => $this->numberUsers,
-            'price'             => $this->price,
-            'tax'               => $this->tax,
-            'tax_included'      => $this->taxIncluded,
-            'currency'          => $this->currency,
-            'aud_net_amount'    => $this->audNetAmount,
-            'frequency'         => $this->frequency,
-            'frequency_other'   => $this->frequencyOther,
-            'custom_term'       => $this->customTerm,
-            'payment_method'    => $this->paymentMethod,
-            'renewal_date'      => $this->getRenewalDate(),
-            'cancel_date'       => $this->cancelDate,
-            'data'              => $this->getData(true),
-            'created'           => $this->created,
-            'updated'           => $this->updated,
-            'user_name'         => $this->userName,
-            'default_terms'     => $this->defaultTerms
+            'id'              => $this->id,
+            'instance_id'     => $this->instanceId,
+            'user_id'         => $this->userId,
+            'staff_id'        => $this->staffId,
+            'parent_id'       => $this->parentId,
+            'name'            => $this->name,
+            'status'          => $this->getStatus(true),
+            'start_date'      => $this->startDate,
+            'signed_date'     => $this->signedDate,
+            'initial_term'    => $this->initialTerm,
+            'number_users'    => $this->numberUsers,
+            'price'           => $this->price,
+            'tax'             => $this->tax,
+            'tax_included'    => $this->taxIncluded,
+            'currency'        => $this->currency,
+            'aud_net_amount'  => $this->audNetAmount,
+            'frequency'       => $this->frequency,
+            'frequency_other' => $this->frequencyOther,
+            'custom_term'     => $this->customTerm,
+            'payment_method'  => $this->paymentMethod,
+            'renewal_date'    => $this->getRenewalDate(),
+            'cancel_date'     => $this->cancelDate,
+            'data'            => $this->getData(true),
+            'created'         => $this->created,
+            'updated'         => $this->updated,
+            'user_name'       => $this->userName,
+            'default_terms'   => $this->defaultTerms,
         ];
     }
 }

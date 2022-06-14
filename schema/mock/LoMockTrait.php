@@ -251,7 +251,7 @@ trait LoMockTrait
         if ($lookup['attribute_type'] === LoAttributeTypes::DIMENSION) {
             $oldValue = $value;
             $value = [];
-            foreach($oldValue as $val) {
+            foreach ($oldValue as $val) {
                 $value[] = is_array($val) ? $val['key'] : $val;
             }
         }

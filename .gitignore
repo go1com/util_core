@@ -2,5 +2,6 @@ config.php
 vendor/
 db.sqlite
 .idea/
-composer.lock
 .phpunit.result.cache
+.phpunit.cache
+auth.json

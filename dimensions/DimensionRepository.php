@@ -16,7 +16,8 @@ class DimensionRepository
 {
     private $db;
 
-    public function __construct(Connection $db) {
+    public function __construct(Connection $db)
+    {
         $this->db = $db;
     }
 

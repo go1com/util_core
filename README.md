@@ -1,5 +1,5 @@
-Core utilities [![Build Status](https://travis-ci.org/go1com/util_core.svg?branch=master)](https://travis-ci.org/go1com/util_core)
-====
+Core utilities
+===
 
 The core including:
 
@@ -15,4 +15,4 @@ The core including:
     - install
 
 ## Unit tests
-- Run all tests: `phpunit -c phpunit.xml.dist`
+- Run all tests: `phpunit -c phpunit.xml`

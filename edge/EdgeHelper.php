@@ -78,8 +78,7 @@ class EdgeHelper
         $data = null,
         array $payload = [],
         bool $batchPublishing = false
-    ): int
-    {
+    ): int {
         $db->insert('gc_ro', $edge = [
             'type'      => $type,
             'source_id' => $sourceId,

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        colors="true"
+        bootstrap="vendor/autoload.php"
+        stopOnFailure="false">
+    <testsuites>
+        <testsuite name="go1_util_core">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./</directory>
+            <exclude>
+                <directory suffix=".php">vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
