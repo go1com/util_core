@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9f1b926df9a913a83aa4901320189a3",
+    "content-hash": "b096bcba29a3a5396bce1fd7550206e9",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -404,16 +404,16 @@
         },
         {
             "name": "go1/flood",
-            "version": "0.6.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://code.go1.com.au/util/flood.git",
-                "reference": "7bedb959d791fc205ea143be2600b6390fed2f9d"
+                "reference": "67ba9ec3a62d8dbcb08497b0e8952076bf4982ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://code.go1.com.au/api/v4/projects/2790/packages/composer/archives/go1/flood.zip?sha=7bedb959d791fc205ea143be2600b6390fed2f9d",
-                "reference": "7bedb959d791fc205ea143be2600b6390fed2f9d",
+                "url": "https://code.go1.com.au/api/v4/projects/2790/packages/composer/archives/go1/flood.zip?sha=67ba9ec3a62d8dbcb08497b0e8952076bf4982ee",
+                "reference": "67ba9ec3a62d8dbcb08497b0e8952076bf4982ee",
                 "shasum": ""
             },
             "require": {
@@ -432,7 +432,7 @@
         },
         {
             "name": "go1/kv",
-            "version": "0.2.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://code.go1.com.au/util/kv.git",
@@ -1845,8 +1845,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
+        "go1/kv": 20,
+        "go1/flood": 20,
         "go1.core/util": 20
     },
     "prefer-stable": true,
