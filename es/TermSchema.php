@@ -3,7 +3,7 @@
 namespace go1\util\es;
 
 /**
- * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
+ * @see https://www.elastic.co/guide/en/elasticsearch/reference/8.2/mapping-types.html
  */
 class TermSchema
 {
@@ -17,11 +17,7 @@ class TermSchema
     ];
 
     const BODY = [
-        'mappings' => self::MAPPING,
-    ];
-
-    const MAPPING = [
-        self::O_TERM => self::TERM_MAPPING,
+        'mappings' => self::TERM_MAPPING,
     ];
 
     const TERM_MAPPING = [
