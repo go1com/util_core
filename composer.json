@@ -14,8 +14,8 @@
     "ext-json": "*",
     "doctrine/dbal": "2.12.1",
     "firebase/php-jwt": "^5.0",
-    "go1/kv": "dev-master",
     "go1/flood": "dev-master",
+    "go1/kv": "dev-master",
     "go1.core/util": "dev-master",
     "ramsey/uuid": "^3.4",
     "symfony/http-foundation": "^4.0 | ^3.4",
@@ -38,14 +38,6 @@
     "0": {
       "type": "vcs",
       "url": "https://code.go1.com.au/mirror/go1-core/util.git"
-    },
-    "1": {
-      "type": "vcs",
-      "url": "git@code.go1.com.au:util/flood.git"
-    },
-    "2": {
-      "type": "vcs",
-      "url": "git@code.go1.com.au:util/kv.git"
     }
   },
   "config": {
