@@ -9,7 +9,7 @@ use go1\util\event\AttendanceStatuses;
  */
 class EventAttendanceSchema
 {
-    const INDEX = Schema::INDEX . 'event_attendance';
+    const INDEX = Schema::INDEX . '_event_attendance';
 
     const O_EVENT_ATTENDANCE = 'event_attendance';
 
