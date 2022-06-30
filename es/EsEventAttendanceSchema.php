@@ -7,7 +7,7 @@ use go1\util\event\AttendanceStatuses;
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/8.2/mapping-types.html
  */
-class EventAttendanceSchema
+class EsEventAttendanceSchema
 {
     const INDEX = Schema::INDEX . '_event_attendance';
 
@@ -48,7 +48,7 @@ class EventAttendanceSchema
             'properties' => Schema::ACCOUNT_LITE_PROPERTIES,
         ],
         'event'        => [
-            'properties' => EventSchema::EVENT_PROPERTIES,
+            'properties' => EsEventSchema::EVENT_PROPERTIES,
         ],
     ];
 

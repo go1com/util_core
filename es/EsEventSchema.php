@@ -5,7 +5,7 @@ namespace go1\util\es;
 /**
  * @see https://www.elastic.co/guide/en/elasticsearch/reference/8.2/mapping-types.html
  */
-class EventSchema
+class EsEventSchema
 {
     const INDEX = Schema::INDEX . '_event';
 
