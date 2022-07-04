@@ -6,11 +6,25 @@ use go1\util\es\Schema;
 
 class CustomerEsSchema
 {
+    /**
+     * @deprecated `customer` index on ES version 5.6
+     */
     const INDEX     = ES_INDEX . '_customer';
+
+    /**
+     * `customer` indices on ES version 8
+     */
+    const INDEX_ES8_PORTAL  = ES_INDEX . '_customer_portal';
+    const INDEX_ES8_USER    = ES_INDEX . '_customer_user';
+    const INDEX_ES8_ACCOUNT = ES_INDEX . '_customer_account';
+
     const O_PORTAL  = 'portal';
     const O_USER    = 'user';
     const O_ACCOUNT = 'account';
 
+    /**
+     * @deprecated `customer` index's mappings on ES version 5.6
+     */
     const MAPPING = [
         self::O_PORTAL  => self::PORTAL_MAPPING,
         self::O_USER    => self::USER_MAPPING,
@@ -47,6 +61,7 @@ class CustomerEsSchema
             ],
         ],
     ];
+
     const USER_MAPPING = [
         'properties' => [
             'id'                     => ['type' => Schema::T_KEYWORD],
@@ -154,6 +169,33 @@ class CustomerEsSchema
                     'index.mapping.total_fields.limit' => getenv('ES_SCHEMA_LIMIT_TOTAL_FIELDS') ?: 5000,
                 ] + Schema::SETTINGS,
             'mappings' => self::MAPPING,
+        ];
+    }
+
+    public static function indexES8Schema(string $index): array
+    {
+        switch ($index) {
+            case self::INDEX_ES8_PORTAL:
+                $mapping = self::PORTAL_MAPPING;
+                break;
+
+            case self::INDEX_ES8_USER:
+                $mapping = self::USER_MAPPING;
+                break;
+
+            case self::INDEX_ES8_ACCOUNT:
+            default:
+                $mapping = self::ACCOUNT_MAPPING;
+                break;
+        }
+
+        return [
+            'settings' => [
+                'number_of_shards'                 => getenv('ES_SCHEMA_NUMBER_OF_SHARDS') ?: 3,
+                'number_of_replicas'               => getenv('ES_SCHEMA_NUMBER_OF_REPLICAS') ?: 1,
+                'index.mapping.total_fields.limit' => getenv('ES_SCHEMA_LIMIT_TOTAL_FIELDS') ?: 5000,
+            ],
+            'mappings' => $mapping,
         ];
     }
 }
