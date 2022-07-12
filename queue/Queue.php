@@ -83,6 +83,7 @@ class Queue
     const USER_PASSWORD_RESET               = 'user.password.reset';
     const USER_LOGIN_SUCCESS                = 'user.login-success';
     const USER_LOGIN_FAIL                   = 'user.login-fail';
+    const USER_LOGGED_IN                    = 'user.logged-in';
     const USER_MASQUERADE                   = 'user.masquerade';
     const USER_EMAIL_CREATE                 = 'user-email.create';
     const USER_EMAIL_UPDATE                 = 'user-email.update';
