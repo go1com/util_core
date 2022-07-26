@@ -26,19 +26,15 @@ class DB
 
         $prefix = strtoupper("{$name}_DB");
         $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
-
-        $enabledSSL = filter_var(self::getEnvByPriority(["{$prefix}_ENABLE_SSL", 'RDS_DB_ENABLE_SSL', 'DEV_DB_ENABLE_SSL']), FILTER_VALIDATE_BOOLEAN);
-        $sslString = $enabledSSL ? '_SSL' : '';
-
-        $dbHost = self::getEnvByPriority(["{$prefix}{$sslString}_HOST", "RDS{$sslString}_DB_HOST", "DEV{$sslString}_DB_HOST"]);
-        $dbUser = self::getEnvByPriority(["{$prefix}{$sslString}_USERNAME", "RDS{$sslString}_DB_USERNAME", "DEV{$sslString}_DB_USERNAME"]);
-        $dbPass = self::getEnvByPriority(["{$prefix}{$sslString}_PASSWORD", "RDS{$sslString}_DB_PASSWORD", "DEV{$sslString}_DB_PASSWORD"]);
+        $dbHost = self::getEnvByPriority(["{$prefix}_HOST", 'RDS_DB_HOST', 'DEV_DB_HOST']);
+        $dbUser = self::getEnvByPriority(["{$prefix}_USERNAME", 'RDS_DB_USERNAME', 'DEV_DB_USERNAME']);
+        $dbPass = self::getEnvByPriority(["{$prefix}_PASSWORD", 'RDS_DB_PASSWORD', 'DEV_DB_PASSWORD']);
 
         if (('GET' === $method) || $forceSlave) {
             if (!$forceMaster) {
-                $dbHost = self::getEnvByPriority(["{$prefix}{$sslString}_SLAVE", "RDS{$sslString}_DB_SLAVE", "DEV{$sslString}_DB_SLAVE"]) ?: $dbHost;
-                $dbUser = self::getEnvByPriority(["{$prefix}{$sslString}_USERNAME_SLAVE", "RDS{$sslString}_DB_USERNAME_SLAVE", "DEV{$sslString}_DB_USERNAME_SLAVE"]) ?: $dbUser;
-                $dbPass = self::getEnvByPriority(["{$prefix}{$sslString}_PASSWORD_SLAVE", "RDS{$sslString}_DB_PASSWORD_SLAVE", "DEV{$sslString}_DB_PASSWORD_SLAVE"]) ?: $dbPass;
+                $dbHost = self::getEnvByPriority(["{$prefix}_SLAVE", 'RDS_DB_SLAVE', 'DEV_DB_SLAVE']) ?: $dbHost;
+                $dbUser = self::getEnvByPriority(["{$prefix}_USERNAME_SLAVE", 'RDS_DB_USERNAME_SLAVE', 'DEV_DB_USERNAME_SLAVE']) ?: $dbUser;
+                $dbPass = self::getEnvByPriority(["{$prefix}_PASSWORD_SLAVE", 'RDS_DB_PASSWORD_SLAVE', 'DEV_DB_PASSWORD_SLAVE']) ?: $dbPass;
             }
         }
 
@@ -50,6 +46,7 @@ class DB
 
         // Support SSL connection.
         // Note: This only works with the provider who uses trusted CA like Azure.
+        $enabledSSL = filter_var(self::getEnvByPriority(["{$prefix}_ENABLE_SSL", 'RDS_DB_ENABLE_SSL', 'DEV_DB_ENABLE_SSL']), FILTER_VALIDATE_BOOLEAN);
         $driverOptions = $enabledSSL
             ? [
                 PDO::MYSQL_ATTR_SSL_CA => '',
@@ -63,7 +60,7 @@ class DB
             'host'          => $dbHost,
             'user'          => $dbUser,
             'password'      => $dbPass,
-            'port'          => self::getEnvByPriority(["{$prefix}{$sslString}_PORT", "RDS{$sslString}_DB_PORT"]) ?: '3306',
+            'port'          => self::getEnvByPriority(["{$prefix}_PORT", 'RDS_DB_PORT']) ?: '3306',
             'driverOptions' => [
                 1002 => 'SET NAMES utf8mb4'
             ] + $driverOptions,
