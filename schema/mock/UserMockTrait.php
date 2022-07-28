@@ -87,6 +87,7 @@ trait UserMockTrait
             'locale'       => isset($options['locale']) ? $options['locale'] : null,
             'user_id'      => $options['user_id'] ?? null,
             'job_role'     => $options['job_role'] ?? null,
+            'migrated'     => isset($options['migrated']) ? $options['migrated'] : 0,
         ]);
 
         return $db->lastInsertId('gc_user');
