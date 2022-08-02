@@ -2,13 +2,17 @@
 
 namespace go1\util\customer\mock;
 
-use Elasticsearch\Client;
 use go1\util\customer\CustomerEsSchema;
 use go1\util\DateTime;
 
 trait EsUserMockTrait
 {
-    public function createEsUser(Client $client, $options = [])
+    /**
+     * @param \Elasticsearch\Client|\Util\Elasticsearch8\Elasticsearch\Client $client
+     * @param $options
+     * @return mixed
+     */
+    public function createEsUser($client, $options = [])
     {
         static $autoId;
 
@@ -50,7 +54,12 @@ trait EsUserMockTrait
         return $user['id'];
     }
 
-    public function createEsAccount(Client $client, $options = [])
+    /**
+     * @param \Elasticsearch\Client|\Util\Elasticsearch8\Elasticsearch\Client $client
+     * @param $options
+     * @return mixed
+     */
+    public function createEsAccount($client, $options = [])
     {
         static $autoId;
 
