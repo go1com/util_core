@@ -2,13 +2,17 @@
 
 namespace go1\util\customer\mock;
 
-use Elasticsearch\Client;
 use go1\util\customer\CustomerEsSchema;
 use go1\util\DateTime;
 
 trait EsPortalMockTrait
 {
-    public function createEsPortal(Client $client, $options = [])
+    /**
+     * @param \Elasticsearch\Client|\Util\Elasticsearch8\Elasticsearch\Client $client
+     * @param $options
+     * @return mixed
+     */
+    public function createEsPortal($client, $options = [])
     {
         static $autoId;
 
