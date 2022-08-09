@@ -63,4 +63,16 @@ class EsEventAttendanceSchema
                 ],
             ],
     ];
+
+    public static function indexEsSchema(): array
+    {
+        return [
+            'settings' => [
+                'number_of_shards'                 => getenv('ES_SCHEMA_NUMBER_OF_SHARDS') ?: 2,
+                'number_of_replicas'               => getenv('ES_SCHEMA_NUMBER_OF_REPLICAS') ?: 1,
+                'index.mapping.total_fields.limit' => getenv('ES_SCHEMA_LIMIT_TOTAL_FIELDS') ?: 20000,
+            ],
+            'mappings' => EsEventAttendanceSchema::EVENT_ATTENDANCE_MAPPING,
+        ];
+    }
 }
