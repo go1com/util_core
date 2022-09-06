@@ -46,7 +46,7 @@ class EnrolmentHelper
 
     public static function enrolmentId(Connection $db, int $loId, int $profileId)
     {
-        return $db->fetchColumn('SElECT id FROM gc_enrolment WHERE lo_id = ? AND profile_id = ?', [$loId, $profileId]);
+        return $db->fetchColumn('SELECT id FROM gc_enrolment WHERE lo_id = ? AND profile_id = ?', [$loId, $profileId]);
     }
 
     public static function load(Connection $db, int $id, bool $loadEdges = false)
@@ -391,9 +391,9 @@ class EnrolmentHelper
     public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
     {
         return (boolean) (
-        $takenPortalId
-            ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
-            : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)
+            $takenPortalId
+                ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
+                : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)
         );
     }
 

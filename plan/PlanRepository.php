@@ -182,7 +182,7 @@ class PlanRepository
             'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
 
-        $plan->id = $this->db->lastInsertId('gc_plan');
+        $plan->id = (int) $this->db->lastInsertId('gc_plan');
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
         $queueContext['notify'] = $plan->notify;
         $queueContext['sessionId'] = Uuid::uuid4()->toString();

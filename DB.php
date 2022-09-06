@@ -202,7 +202,7 @@ class DB
             : $db->insert($table, $fields);
     }
 
-    public static function loadMultiple(Connection $db, string $tableName, array $ids, string $fetchMode = DB::OBJ)
+    public static function loadMultiple(Connection $db, string $tableName, array $ids, int $fetchMode = DB::OBJ)
     {
         $q = $db->createQueryBuilder();
         $q = $q
@@ -230,7 +230,7 @@ class DB
         return $entities;
     }
 
-    public static function load(Connection $db, $tableName, int $id, string $fetchMode = DB::OBJ)
+    public static function load(Connection $db, $tableName, int $id, int $fetchMode = DB::OBJ)
     {
         $entities = static::loadMultiple($db, $tableName, [$id], $fetchMode);
 

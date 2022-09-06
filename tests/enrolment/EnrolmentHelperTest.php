@@ -125,7 +125,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['text']));
         $this->assertEquals($this->courseId, $course->id);
 
-        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEANING_PATHWAY);
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEARNING_PATHWAY);
         $this->assertEquals($this->lpId, $lp->id);
     }
 
@@ -160,7 +160,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['text']));
         $this->assertEquals($this->courseId, $course->id);
 
-        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEANING_PATHWAY);
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEARNING_PATHWAY);
         $this->assertEquals($this->lpId, $lp->id);
     }
 

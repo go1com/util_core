@@ -43,7 +43,7 @@ class AccessChecker
         }
 
         if ($inheritance && $this->isAccountsAdmin($req)) {
-            return 1;
+            return true;
         }
 
         $accounts = isset($user->accounts) ? $user->accounts : [];
@@ -62,7 +62,7 @@ class AccessChecker
     public function isPortalTutor(Request $req, $portalIdOrName, $role = Roles::TUTOR, bool $strict = true)
     {
         if ($strict && $this->isPortalAdmin($req, $portalIdOrName)) {
-            return 1;
+            return true;
         }
 
         if (!$user = $this->validUser($req)) {
