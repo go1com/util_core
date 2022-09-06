@@ -120,11 +120,11 @@ class Service
     }
 
     /**
-     * @param      $env
+     * @param string $env
      * @param bool $public
      * @return string
      */
-    public static function gatewayUrl($env, $public = false)
+    public static function gatewayUrl(string $env, $public = false)
     {
         if (!empty($url = getenv('GATEWAY_URL'))) {
             return $url;

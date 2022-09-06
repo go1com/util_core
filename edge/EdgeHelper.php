@@ -94,7 +94,7 @@ class EdgeHelper
             $queue->publish(array_merge($edge, $payload), Queue::RO_CREATE);
         }
 
-        return $edge['id'];
+        return (int) $edge['id'];
     }
 
     public static function hasLink(Connection $db, $type, $sourceId, $targetId)

@@ -13,7 +13,7 @@ class LoTypesTest extends UtilCoreTestCase
         $this->assertContains(LoTypes::ACHIEVEMENT, $all);
         $this->assertContains(LoTypes::AWARD, $all);
         $this->assertContains(LoTypes::COURSE, $all);
-        $this->assertContains(LoTypes::LEANING_PATHWAY, $all);
+        $this->assertContains(LoTypes::LEARNING_PATHWAY, $all);
         $this->assertContains(LoTypes::MODULE, $all);
         $this->assertContains(LoTypes::GROUP, $all);
         $this->assertContains(LoTypes::PLAYLIST, $all);

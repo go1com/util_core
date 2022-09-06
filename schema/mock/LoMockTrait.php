@@ -17,7 +17,7 @@ trait LoMockTrait
     public function createLearningPathway(Connection $db, array $options = [])
     {
         return $this->createLO($db, [
-                'type'  => LoTypes::LEANING_PATHWAY,
+                'type'  => LoTypes::LEARNING_PATHWAY,
                 'title' => isset($options['title']) ? $options['title'] : 'Example learning pathway',
             ] + $options);
     }
@@ -207,8 +207,8 @@ trait LoMockTrait
     }
 
     public function createAttributeLookup(Connection $db, $key, $name, $attributeType, $loType, $required,
-                                          $permission, $defaultValue, $isArray = 0, $dimensionId = null,
-                                          $validationRegex = null, $sortOrder = null)
+        $permission, $defaultValue, $isArray = 0, $dimensionId = null,
+        $validationRegex = null, $sortOrder = null)
     {
         $db->insert('gc_lo_attributes_lookup', [
             '`key`'             => $key,
