@@ -53,6 +53,7 @@ class Schema
     const T_OBJECT              = 'object';
     const T_NESTED              = 'nested';
     const T_GEO_POINT           = 'geo_point';
+    const T_RANK_FEATURES       = 'rank_features';
 
     const O_EDGE                = 'edge';
     const O_LO                  = 'lo';

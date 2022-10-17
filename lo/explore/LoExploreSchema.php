@@ -234,6 +234,7 @@ class LoExploreSchema
             'product_ids' => ['type' => Schema::T_INT], # @see go1-core/content-subscription-index
             'decommissioned_at' => ['type' => Schema::T_DATE],
             'removed_at' => ['type' => Schema::T_DATE],
+            'regional_enrolment_score' => ['type' => Schema::T_RANK_FEATURES],
         ],
     ];
 
