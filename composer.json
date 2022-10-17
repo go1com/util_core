@@ -23,7 +23,8 @@
     "psr/log": "~1.0"
   },
   "require-dev": {
-    "ezyang/htmlpurifier": "^4.12"
+    "ezyang/htmlpurifier": "^4.12",
+    "phpspec/prophecy": "^1.15"
   },
   "suggest": {
     "go1/app": "for go1\\util\\DB::connectionOptions()",
