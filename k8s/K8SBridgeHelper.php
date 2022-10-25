@@ -29,6 +29,8 @@ class K8SBridgeHelper {
             if ($dbHostOverride = getenv('RDS_DB_HOST_OVERRIDE')) {
                 $dbEnvName = $this->k8sEnvNameTransform($dbHostOverride);
                 list($dbHost, $dbPort) = $this->getServiceEnvValues($dbEnvName);
+                $masterUsername = getenv('RDS_DB_USERNAME');
+                $masterPassword = getenv('RDS_DB_PASSWORD');
                 // Rewrite DB ENVs
                 if ($dbHost) {
                     // overwrite hosts
