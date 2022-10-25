@@ -31,12 +31,31 @@ class K8SBridgeHelper {
                 list($dbHost, $dbPort) = $this->getServiceEnvValues($dbEnvName);
                 // Rewrite DB ENVs
                 if ($dbHost) {
+                    $masterUsername = getenv('RDS_DB_USERNAME');
+                    $masterPassword = getenv('RDS_DB_PASSWORD');
+                    // overwrite hosts
                     putenv("RDS_DB_HOST={$dbHost}");
                     putenv("RDS_DB_HOST_READER={$dbHost}");
                     putenv("RDS_DB_SLAVE={$dbHost}");
+                    putenv("MYSQL_HOST={$dbHost}");
+                    putenv("RDS_SSL_DB_HOST={$dbHost}");
+                    putenv("RDS_SSL_DB_HOST_READER={$dbHost}");
+                    putenv("RDS_SSL_DB_SLAVE={$dbHost}");
+                    // overwrite username
+                    putenv("RDS_DB_USERNAME_READER={$masterUsername}");
+                    putenv("RDS_DB_USERNAME_SLAVE={$masterUsername}");
+                    putenv("RDS_SSL_DB_USERNAME_READER={$masterUsername}");
+                    putenv("RDS_SSL_DB_USERNAME_SLAVE={$masterUsername}");
+                    // overwrite password
+                    putenv("RDS_DB_PASSWORD_READER={$masterPassword}");
+                    putenv("RDS_DB_PASSWORD_SLAVE={$masterPassword}");
+                    putenv("RDS_SSL_DB_PASSWORD_READER={$masterPassword}");
+                    putenv("RDS_SSL_DB_PASSWORD_SLAVE={$masterPassword}");
                 }
                 if ($dbPort) {
+                    putenv("MYSQL_PORT={$dbPort}");
                     putenv("RDS_DB_PORT={$dbPort}");
+                    putenv("RDS_SSL_DB_PORT={$dbPort}");
                 }
             }
 
