@@ -26,15 +26,19 @@ class DB
 
         $prefix = strtoupper("{$name}_DB");
         $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
-        $dbHost = self::getEnvByPriority(["{$prefix}_HOST", 'RDS_DB_HOST', 'DEV_DB_HOST']);
-        $dbUser = self::getEnvByPriority(["{$prefix}_USERNAME", 'RDS_DB_USERNAME', 'DEV_DB_USERNAME']);
-        $dbPass = self::getEnvByPriority(["{$prefix}_PASSWORD", 'RDS_DB_PASSWORD', 'DEV_DB_PASSWORD']);
+
+        $enabledSSL = filter_var(self::getEnvByPriority(["{$prefix}_ENABLE_SSL", 'RDS_DB_ENABLE_SSL', 'DEV_DB_ENABLE_SSL']), FILTER_VALIDATE_BOOLEAN);
+        $sslString = $enabledSSL ? '_SSL' : '';
+
+        $dbHost = self::getEnvByPriority(["{$prefix}{$sslString}_HOST", "RDS{$sslString}_DB_HOST", "DEV{$sslString}_DB_HOST"]);
+        $dbUser = self::getEnvByPriority(["{$prefix}{$sslString}_USERNAME", "RDS{$sslString}_DB_USERNAME", "DEV{$sslString}_DB_USERNAME"]);
+        $dbPass = self::getEnvByPriority(["{$prefix}{$sslString}_PASSWORD", "RDS{$sslString}_DB_PASSWORD", "DEV{$sslString}_DB_PASSWORD"]);
 
         if (('GET' === $method) || $forceSlave) {
             if (!$forceMaster) {
-                $dbHost = self::getEnvByPriority(["{$prefix}_SLAVE", 'RDS_DB_SLAVE', 'DEV_DB_SLAVE']) ?: $dbHost;
-                $dbUser = self::getEnvByPriority(["{$prefix}_USERNAME_SLAVE", 'RDS_DB_USERNAME_SLAVE', 'DEV_DB_USERNAME_SLAVE']) ?: $dbUser;
-                $dbPass = self::getEnvByPriority(["{$prefix}_PASSWORD_SLAVE", 'RDS_DB_PASSWORD_SLAVE', 'DEV_DB_PASSWORD_SLAVE']) ?: $dbPass;
+                $dbHost = self::getEnvByPriority(["{$prefix}{$sslString}_SLAVE", "RDS{$sslString}_DB_SLAVE", "DEV{$sslString}_DB_SLAVE"]) ?: $dbHost;
+                $dbUser = self::getEnvByPriority(["{$prefix}{$sslString}_USERNAME_SLAVE", "RDS{$sslString}_DB_USERNAME_SLAVE", "DEV{$sslString}_DB_USERNAME_SLAVE"]) ?: $dbUser;
+                $dbPass = self::getEnvByPriority(["{$prefix}{$sslString}_PASSWORD_SLAVE", "RDS{$sslString}_DB_PASSWORD_SLAVE", "DEV{$sslString}_DB_PASSWORD_SLAVE"]) ?: $dbPass;
             }
         }
 
@@ -44,14 +48,25 @@ class DB
             $dbName = $isDevEnv ? 'dev_go1' : 'gc_go1';
         }
 
+        // Support SSL connection.
+        // Note: This only works with the provider who uses trusted CA like Azure.
+        $driverOptions = $enabledSSL
+            ? [
+                PDO::MYSQL_ATTR_SSL_CA => '',
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+            ]
+            : [];
+
         return [
             'driver'        => 'pdo_mysql',
             'dbname'        => getenv("{$prefix}_NAME") ?: $dbName,
             'host'          => $dbHost,
             'user'          => $dbUser,
             'password'      => $dbPass,
-            'port'          => self::getEnvByPriority(["{$prefix}_PORT", 'RDS_DB_PORT']) ?: '3306',
-            'driverOptions' => [1002 => 'SET NAMES utf8mb4'],
+            'port'          => self::getEnvByPriority(["{$prefix}{$sslString}_PORT", "RDS{$sslString}_DB_PORT"]) ?: '3306',
+            'driverOptions' => [
+                1002 => 'SET NAMES utf8mb4'
+            ] + $driverOptions,
         ];
     }
 
@@ -62,10 +77,21 @@ class DB
         $pdoOpions = [
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT         => true
-        ];
-        $o['pdo'] = new $pdo("mysql:host={$o['host']};dbname={$o['dbname']};port={$o['port']}", $o['user'], $o['password'], $pdoOpions);
+        ] + $o['driverOptions'];
 
-        return $o;
+        try {
+            $o['pdo'] = new $pdo(
+                "mysql:host={$o['host']};dbname={$o['dbname']};port={$o['port']}",
+                $o['user'],
+                $o['password'],
+                $pdoOpions
+            );
+            return $o;
+        } catch (\PDOException $e) {
+            // use zend.exception_ignore_args to prevent PDOException leaking credentials
+            ini_set("zend.exception_ignore_args", 1);  // PHP >= 7.4.0
+            throw $e;
+        }
     }
 
     private static function getEnvByPriority(array $names)

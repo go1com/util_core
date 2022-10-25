@@ -88,24 +88,6 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
         $this->assertEquals($msg->notify, $expectedNotify);
         $this->assertNotEmpty($msg->_context['sessionId']);
-        $this->assertFalse($msg->_context['reassign']);
-    }
-
-    public function testReassignPlan()
-    {
-        $plan = Plan::create((object) [
-            'instance_id' => $this->portalId,
-            'entity_type' => $this->entityType,
-            'entity_id'   => $this->entityId,
-            'user_id'     => $this->userId,
-            'assigner_id' => $this->assignerId,
-            'type'        => PlanTypes::SUGGESTED,
-            'status'      => PlanStatuses::ASSIGNED,
-        ]);
-        $this->rPlan->create($plan, false, ['reassign' => true]);
-        $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
-        $this->assertNotEmpty($msg->_context['sessionId']);
-        $this->assertTrue($msg->_context['reassign']);
     }
 
     public function testUpdate()
@@ -114,9 +96,9 @@ class PlanRepositoryTest extends UtilCoreTestCase
         $original = clone $plan;
         $plan->status = 0;
 
-        $this->rPlan->update($original, $plan, true, [], ['unified_assign_flow' => true]);
+        $this->rPlan->update($original, $plan, true, [], ['queue_context' => true]);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_UPDATE][0]);
-        $this->assertTrue($this->queueMessages[Queue::PLAN_UPDATE][0]['_context']['unified_assign_flow']);
+        $this->assertTrue($this->queueMessages[Queue::PLAN_UPDATE][0]['_context']['queue_context']);
     }
 
     public function testUpdatedAt()

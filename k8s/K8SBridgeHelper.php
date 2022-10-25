@@ -73,6 +73,8 @@ class K8SBridgeHelper {
                 $queueUser = getenv('QUEUE_USER');
                 if ($memCachedHost && $memCachedPort && $cachBackend === 'memcached') {
                     $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePort}";
+                    putenv("QUEUE_HOST={$queueHost}");
+                    putenv("QUEUE_PORT={$queuePort}");
                     putenv("QUEUE_URL={$queueUrl}");
                     putenv("RABBITMQ_URL={$queueUrl}");
                 }

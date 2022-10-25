@@ -85,8 +85,9 @@ class PortalSchema
 
         $installPortalConf && self::installPortalConf($schema);
         self::update01($schema);
-        self::update02($schema);
+        self::update02($schema);    
         self::update03($schema);
+        self::update04($schema);
     }
 
     public static function installPortalConf(Schema $schema)
@@ -148,6 +149,16 @@ class PortalSchema
             $portalTable = $schema->getTable('gc_instance');
             if (!$portalTable->hasIndex('uniq_portal_name')) {
                 $portalTable->addUniqueIndex(['title'], 'uniq_portal_name');
+            }
+        }
+    }
+
+    public static function update04(Schema $schema)
+    {
+        if ($schema->hasTable('portal_data')) {
+            $portalData = $schema->getTable('portal_data');
+            if (!$portalData->hasColumn('data_residency_region')) {
+                $portalData->addColumn('data_residency_region', 'string', ['length' => 30, 'notnull' => false]);
             }
         }
     }

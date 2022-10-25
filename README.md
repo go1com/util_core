@@ -13,3 +13,6 @@ The core including:
     - consumer
     - cron
     - install
+
+## Unit tests
+- Run all tests: `phpunit -c phpunit.xml.dist`

@@ -66,7 +66,7 @@ class ServiceConsumeController
             : new JsonResponse(null, 204);
     }
 
-    private function consume(string $routingKey, stdClass $body, $context): JsonResponse
+    protected function consume(string $routingKey, stdClass $body, $context): JsonResponse
     {
         foreach ($this->consumers as $consumer) {
             if ($consumer->aware()[$routingKey] ?? false) {
@@ -74,7 +74,7 @@ class ServiceConsumeController
                     $consumer->consume($routingKey, $body, $context);
                     $headers['X-CONSUMERS'][] = get_class($consumer);
                 } catch (IgnoreMessageException $e) {
-                    $this->logger->error('Message is ignored', [
+                    $this->logger->warning('Message is ignored', [
                         'message'    => $e->getMessage(),
                         'routingKey' => $routingKey,
                         'body'       => $body,

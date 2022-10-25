@@ -17,6 +17,7 @@ class UserSchema
             $user = $schema->createTable('gc_user');
             $user->addColumn('id', 'integer', ['unsigned' => true, 'autoincrement' => true]);
             $user->addColumn('uuid', 'string');
+            $user->addColumn('ulid', Types::STRING, ['length' => 30, 'notnull' => false]);
             $user->addColumn('user_uuid', 'string', ['notnull' => false]);
             $user->addColumn('instance', 'string');
             $user->addColumn('profile_id', 'integer', ['notnull' => false]);
@@ -34,6 +35,7 @@ class UserSchema
             $user->addColumn('locale', 'string', ['length' => 12, 'notnull' => false]);
             $user->addColumn('user_id', 'integer', ['unsigned' => true, 'notnull' => false]);
             $user->addColumn('job_role', 'string', ['notnull' => false]);
+            $user->addColumn('migrated', Types::BOOLEAN, ['notnull' => true, 'default' => false]);
 
             $user->setPrimaryKey(['id']);
             $user->addIndex(['uuid']);
@@ -44,6 +46,7 @@ class UserSchema
             $user->addIndex(['instance']);
             $user->addIndex(['user_uuid']);
             $user->addUniqueIndex(['uuid']);
+            $user->addUniqueIndex(['ulid']);
             $user->addUniqueIndex(['instance', 'mail']);
             $user->addUniqueIndex(['instance', 'profile_id']);
             $user->addForeignKeyConstraint('gc_user', ['user_id'], ['id']);
@@ -103,6 +106,7 @@ class UserSchema
             $stream->addColumn('id', Type::INTEGER, ['unsigned' => true, 'autoincrement' => true]);
             $stream->addColumn('created', Type::INTEGER, ['unsigned' => true]);
             $stream->addColumn('user_id', Type::INTEGER, ['unsigned' => true]);
+            $stream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'default' => 0]);
             $stream->addColumn('action', Type::STRING);
             $stream->addColumn('payload', Type::BLOB);
             $stream->setPrimaryKey(['id']);
@@ -116,6 +120,7 @@ class UserSchema
             $stream->addColumn('portal_id', Type::INTEGER, ['unsigned' => true]);
             $stream->addColumn('created', Type::INTEGER, ['unsigned' => true]);
             $stream->addColumn('account_id', Type::INTEGER, ['unsigned' => true]);
+            $stream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'default' => 0]);
             $stream->addColumn('action', Type::STRING);
             $stream->addColumn('payload', Type::BLOB);
             $stream->setPrimaryKey(['id']);
@@ -158,6 +163,46 @@ class UserSchema
         }
         if ($table->hasColumn('user_id') && $table->hasColumn('verified')) {
             !$table->hasIndex('uniq_user_id_email') && $table->addUniqueIndex(['user_id', 'title'], 'uniq_user_id_email');
+        }
+    }
+
+    public static function update06(Schema $schema) {
+
+        if ($schema->hasTable('gc_user')) {
+            $userTable = $schema->getTable('gc_user');
+            if (!$userTable->hasColumn('ulid')) {
+                //Length needs to allow for prefix which consists of a 3-character abbreviation plus a dash (4 in total)
+                //ulid needs to be nullable until after we have generated and stored ulid's for all users, leave as false for now
+                $userTable->addColumn('ulid', Types::STRING, ['length' => 30, 'notnull' => false]);
+                $userTable->addUniqueIndex(['ulid']);
+            }
+        }
+    }
+
+    public static function update04(Schema $schema)
+    {
+        if ($schema->hasTable('user_stream')) {
+            $userStream = $schema->getTable('user_stream');
+            if (!$userStream->hasColumn('actor_id')) {
+                $userStream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'notnull' => false]);
+            }
+        }
+
+        if ($schema->hasTable('account_stream')) {
+            $accountStream = $schema->getTable('account_stream');
+            if (!$accountStream->hasColumn('actor_id')) {
+                $accountStream->addColumn('actor_id', Type::INTEGER, ['unsigned' => true, 'notnull' => false]);
+            }
+        }
+    }
+
+    public static function update05(Schema $schema)
+    {
+        if($schema->hasTable('gc_user')) {
+            $userTable = $schema->getTable('gc_user');
+            if (!$userTable->hasColumn('migrated')) {
+                $userTable->addColumn('migrated', Types::BOOLEAN, ['notnull' => true, 'default' => false]);
+            }
         }
     }
 }
