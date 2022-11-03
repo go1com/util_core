@@ -111,7 +111,7 @@ class PortalHelper
         return $db->fetchColumn('SELECT title FROM gc_instance WHERE id = ?', [$id]);
     }
 
-    public static function parseConfig(stdClass &$portal)
+    public static function parseConfig(&$portal)
     {
         if (!isset($portal->configuration)) {
             if (!empty($portal->data)) {
