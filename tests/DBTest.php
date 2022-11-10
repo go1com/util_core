@@ -284,6 +284,7 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals($sslSlavePassword, $o['password']);
 
         //NO SSL TEST
+        putenv('FOO_DB_ENABLE_SSL=false');
         putenv('RDS_DB_ENABLE_SSL=false');
         $o = DB::connectionOptions('foo', false, true, MockPDO::class);
         $this->assertEquals([
@@ -312,7 +313,7 @@ class DBTest extends UtilCoreTestCase
         $this->expectException(\PDOException::class);
         $this->expectExceptionMessage(
             'SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo ' .
-            'failed: Temporary failure in name resolution'
+            'failed: Name does not resolve'
         );
         $_ = DB::connectionPoolOptions($connectionName, false, true, \PDO::class);
     }
