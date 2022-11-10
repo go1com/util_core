@@ -178,7 +178,7 @@ class DBTest extends UtilCoreTestCase
 
         putenv('_DOCKER_ENV=staging');
         putenv('RDS_DB_SLAVE=slave.bar.com');
-        $bar = DB::connectionOptions('s_foo');
+        $bar = DB::connectionOptions('s_foo', true);
         $this->assertEquals('slave.bar.com', $bar['host']);
         $this->assertEquals('s_foo_prod', $bar['dbname']);
     }
@@ -206,16 +206,16 @@ class DBTest extends UtilCoreTestCase
     {
         $_ENV = [];
         putenv('FOO_DB_NAME=foo_db');
-        putenv('FOO_DB_USERNAME=foo_username');
-        putenv('FOO_DB_PASSWORD=foo_password');
-        putenv('FOO_DB_SLAVE=slave.foo.com');
-        putenv('FOO_DB_HOST=foo.com');
+        putenv('RDS_SSL_DB_USERNAME=foo_username_ssl');
+        putenv('RDS_SSL_DB_PASSWORD=foo_password_ssl');
+        putenv('RDS_SSL_DB_SLAVE=slave.foo_ssl.com');
+        putenv('RDS_SSL_DB_HOST=foo_ssl.com');
         putenv('FOO_DB_ENABLE_SSL=true');
 
         $o = DB::connectionPoolOptions('foo', false, true, MockPDO::class);
-        $this->assertEquals('mysql:host=foo.com;dbname=foo_db;port=3306', $o['pdo']->dsn);
-        $this->assertEquals('foo_username', $o['pdo']->username);
-        $this->assertEquals('foo_password', $o['pdo']->password);
+        $this->assertEquals('mysql:host=foo_ssl.com;dbname=foo_db;port=3306', $o['pdo']->dsn);
+        $this->assertEquals('foo_username_ssl', $o['pdo']->username);
+        $this->assertEquals('foo_password_ssl', $o['pdo']->password);
         $this->assertEquals([
             1002 => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT   => true,
@@ -227,27 +227,78 @@ class DBTest extends UtilCoreTestCase
     public function testEnableSSL()
     {
         $_ENV = [];
+        //NON-SSL ENV VARIABLES
+        $username = 'foo_username';
+        $password = 'foo_password';
+        $host = 'foo.com';
+        $port = '3306';
         putenv('FOO_DB_NAME=foo_db');
-        putenv('FOO_DB_USERNAME=foo_username');
-        putenv('FOO_DB_PASSWORD=foo_password');
-        putenv('FOO_DB_SLAVE=slave.foo.com');
-        putenv('FOO_DB_HOST=foo.com');
-        putenv('RDS_DB_ENABLE_SSL=true');
+        putenv("FOO_DB_USERNAME={$username}");
+        putenv("FOO_DB_PASSWORD={$password}");
+        putenv("FOO_DB_HOST={$host}");
+        putenv("RDS_DB_PORT={$port}");
 
+        //NON-SSL SLAVE ENV VARIABLES
+        $slaveHost = 'slave.foo.com';
+        $slaveUsername = 'foo_slave_username';
+        $slavePassword = 'foo_slave_password';
+        putenv("RDS_DB_PASSWORD_SLAVE={$slavePassword}");
+        putenv("RDS_DB_USERNAME_SLAVE={$slaveUsername}");
+        putenv("RDS_DB_SLAVE={$slaveHost}");
+
+        //SSL ENV VARIABLES
+        $sslUsername = 'foo_ssl_username';
+        $sslPassword = 'foo_ssl_password';
+        $sslHost = 'foo-ssl.com';
+        $sslPort = '3307';
+        putenv("RDS_SSL_DB_USERNAME={$sslUsername}");
+        putenv("RDS_SSL_DB_PASSWORD={$sslPassword}");
+        putenv("RDS_SSL_DB_HOST={$sslHost}");
+        putenv("RDS_SSL_DB_PORT={$sslPort}");
+
+        //SSL SLAVE ENV VARIABLES
+        $sslSlaveHost = 'slave-ssl.foo.com';
+        $sslSlaveUsername = 'foo_ssl_slave_username';
+        $sslSlavePassword = 'foo_ssl_slave_password';
+        putenv("RDS_SSL_DB_PASSWORD_SLAVE={$sslSlavePassword}");
+        putenv("RDS_SSL_DB_USERNAME_SLAVE={$sslSlaveUsername}");
+        putenv("RDS_SSL_DB_SLAVE={$sslSlaveHost}");
+
+        //SSL TEST
+        putenv('RDS_DB_ENABLE_SSL=true');
         $o = DB::connectionOptions('foo', false, true, MockPDO::class);
         $this->assertEquals([
             1002                                   => 'SET NAMES utf8mb4',
             PDO::MYSQL_ATTR_SSL_CA                 => '',
             PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
         ], $o['driverOptions']);
+        $this->assertEquals($sslHost, $o['host']);
+        $this->assertEquals($sslUsername, $o['user']);
+        $this->assertEquals($sslPassword, $o['password']);
+        $this->assertEquals($sslPort, $o['port']);
 
+        //SLAVE SSL TEST
+        $o = DB::connectionOptions('foo', true, false, MockPDO::class);
+        $this->assertEquals($sslSlaveHost, $o['host']);
+        $this->assertEquals($sslSlaveUsername, $o['user']);
+        $this->assertEquals($sslSlavePassword, $o['password']);
+
+        //NO SSL TEST
         putenv('RDS_DB_ENABLE_SSL=false');
         $o = DB::connectionOptions('foo', false, true, MockPDO::class);
         $this->assertEquals([
-            1002                                   => 'SET NAMES utf8mb4',
-            PDO::MYSQL_ATTR_SSL_CA                 => '',
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+            1002 => 'SET NAMES utf8mb4',
         ], $o['driverOptions']);
+        $this->assertEquals($host, $o['host']);
+        $this->assertEquals($username, $o['user']);
+        $this->assertEquals($password, $o['password']);
+        $this->assertEquals($port, $o['port']);
+
+        //SLAVE NO SSL TEST
+        $o = DB::connectionOptions('foo', true, false, MockPDO::class);
+        $this->assertEquals($slaveHost, $o['host']);
+        $this->assertEquals($slaveUsername, $o['user']);
+        $this->assertEquals($slavePassword, $o['password']);
     }
 
     public function testConnectionPoolOptionsException()
@@ -256,11 +307,12 @@ class DBTest extends UtilCoreTestCase
         putenv("FOO_DB_USERNAME=${connectionName}_username");
         putenv("FOO_DB_PASSWORD=${connectionName}_password");
         // SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Temporary failure in name resolution
-        putenv("FOO_DB_HOST=:?$/");  
+        putenv("FOO_DB_HOST=:?$/");
 
         $this->expectException(\PDOException::class);
         $this->expectExceptionMessage(
-            'SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Name does not resolve'
+            'SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo ' .
+            'failed: Temporary failure in name resolution'
         );
         $_ = DB::connectionPoolOptions($connectionName, false, true, \PDO::class);
     }
