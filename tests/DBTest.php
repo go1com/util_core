@@ -284,7 +284,7 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals($sslSlavePassword, $o['password']);
 
         //NO SSL TEST
-        putenv('FOO_DB_ENABLE_SSL=false');
+        putenv('FOO_DB_ENABLE_SSL');
         putenv('RDS_DB_ENABLE_SSL=false');
         $o = DB::connectionOptions('foo', false, true, MockPDO::class);
         $this->assertEquals([
