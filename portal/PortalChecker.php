@@ -144,7 +144,7 @@ class PortalChecker
 
         return (PortalHelper::WEBSITE_DOMAIN == $domain || strpos($domain, PortalHelper::DEFAULT_WEB_APP))
             ? "https://{$domain}/{$uri}"
-            : "https://{$domain}/{$prefix}/{$uri}";
+            : (!empty($prefix) ? "https://{$domain}/{$prefix}/{$uri}" : "https://{$domain}/{$uri}");
     }
 
     private function getDomain(stdClass $portal, bool $replacePublicDomain = true): string
