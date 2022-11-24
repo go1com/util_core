@@ -41,6 +41,7 @@ class LoAttributes
     const PLAYLIST_TYPE                 = 30;
     const PLAYBACK_TARGET               = 31;
     const STREAMABLE                    = 32;
+    const GO1_CURATED                   = 33;
 
     public static function machineName(int $attribute): ?string
     {
@@ -77,6 +78,7 @@ class LoAttributes
             self::PLAYLIST_TYPE             => 'playlist_type',
             self::PLAYBACK_TARGET           => 'playback_target',
             self::STREAMABLE                => 'streamable',
+            self::GO1_CURATED               => 'go1_curated',
         ];
 
         return $map[$attribute] ?? null;

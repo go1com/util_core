@@ -169,6 +169,7 @@ class LoExploreSchema
                         ],
                     ],
                     'streamable'      => ['type' => Schema::T_INT],
+                    'go1_curated'     => ['type' => Schema::T_INT],
                 ],
             ],
             'custom_fields' => [
