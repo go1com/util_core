@@ -169,7 +169,13 @@ class LoExploreSchema
                         ],
                     ],
                     'streamable'      => ['type' => Schema::T_INT],
-                    'go1_curated'     => ['type' => Schema::T_INT],
+                    'curated_by'      => [
+                        'type'          => Schema::T_NESTED,
+                        'properties'    => [
+                            'value'     => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                            'key'       => ['type' => Schema::T_KEYWORD],
+                        ],
+                    ],
                 ],
             ],
             'custom_fields' => [
