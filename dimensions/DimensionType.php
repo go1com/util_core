@@ -15,7 +15,6 @@ class DimensionType
     const REGION_RELEVANCE       = 9;
     const ROLE_SKILL             = 10;
     const PLAYBACK_TARGET        = 11;
-    const CURATED_BY             = 12;
 
     public static function all()
     {
