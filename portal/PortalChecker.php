@@ -132,7 +132,7 @@ class PortalChecker
     /**
      * @param stdClass $portal
      * @param string   $uri
-     * @param string   $prefix              Pointing url come from specific web app. 'etc: 'p/#' from APIOM, 'r' from react-app, 'play' from 1_player
+     * @param string   $prefix              Pointing url come from specific web app. 'etc: 'p/#' from APIOM, 'r' from react-app, 'play' from go1-player app
      * @param bool     $replacePublicDomain If set to false, does not replace public.mygo1.com with www.go1.com
      * @return string
      */
