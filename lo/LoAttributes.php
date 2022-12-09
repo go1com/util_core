@@ -41,8 +41,8 @@ class LoAttributes
     const PLAYLIST_TYPE                 = 30;
     const PLAYBACK_TARGET               = 31;
     const STREAMABLE                    = 32;
-    const CURATED_BY                    = 33;
-    const FEATURED_BY                   = 34;
+    const CURATED_BY                    = 33; // use this to surface content curation tool and also in recommendations, could be used as a signal displayed on lo cards. Eg: curated_by = "go1"
+    const FEATURED_BY                   = 34; // for featured playlists, combine use with featured_status, Eg: featured_status = true & featured_by = "go1"
 
     public static function machineName(int $attribute): ?string
     {
