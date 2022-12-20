@@ -249,6 +249,7 @@ trait UserMockTrait
                 'roles'         => isset($options['roles'][$instanceName]) ? $options['roles'][$instanceName] : ['student'],
                 'instance_name' => $instanceName,
                 'mail'          => $mail,
+                'portal_id'     => $options['portal_id'][$instanceName] ?? 0,
                 'profile_id'    => isset($options['profile_ids'][$instanceName]) ? $options['profile_ids'][$instanceName] : intval($accountProfileId),
             ];
         }
