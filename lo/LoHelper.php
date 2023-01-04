@@ -295,13 +295,6 @@ class LoHelper
         return [];
     }
 
-    public static function hasActiveMembership(Connection $db, int $loId, int $instanceId): bool
-    {
-        $sql = 'SELECT 1 FROM gc_lo_group WHERE lo_id = ? AND instance_id = ?';
-
-        return $db->fetchColumn($sql, [$loId, $instanceId]) ? true : false;
-    }
-
     public static function activeMembershipIds(Connection $social, int $loId): array
     {
         $groupIds = 'SELECT group_id FROM social_group_item WHERE entity_type = ? AND entity_id = ?';
@@ -395,13 +388,6 @@ class LoHelper
         return EdgeHelper
             ::select('target_id')
             ->get($db, [$loId], [], [EdgeTypes::HAS_MODULE, EdgeTypes::HAS_ELECTIVE_LO], PDO::FETCH_COLUMN);
-    }
-
-    public static function isBelongToGroup(Connection $db, int $loId, int $instanceId): bool
-    {
-        $sql = 'SELECT 1 FROM gc_lo_group WHERE lo_id = ? AND instance_id = ?';
-
-        return $db->fetchColumn($sql, [$loId, $instanceId]) ? true : false;
     }
 
     public static function countEnrolment(Connection $db, int $loId)
