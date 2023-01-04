@@ -95,17 +95,6 @@ class LoSchema
             }
         }
 
-        if (!$schema->hasTable('gc_lo_group')) {
-            $group = $schema->createTable('gc_lo_group');
-            $group->addColumn('lo_id', 'integer', ['unsigned' => true]);
-            $group->addColumn('instance_id', 'integer', ['unsigned' => true]);
-            $group->setPrimaryKey(['lo_id', 'instance_id']);
-            $group->addIndex(['lo_id']);
-            $group->addIndex(['instance_id']);
-            $group->addForeignKeyConstraint('gc_lo', ['lo_id'], ['id']);
-            $group->addForeignKeyConstraint('gc_instance', ['instance_id'], ['id']);
-        }
-
         // @deprecated
         if (!$schema->hasTable('gc_event')) {
             $event = $schema->createTable('gc_event');

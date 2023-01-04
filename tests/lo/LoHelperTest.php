@@ -86,15 +86,6 @@ class LoHelperTest extends UtilCoreTestCase
         $this->assertEquals($this->assessor2Id, $assessors[1]);
     }
 
-    public function testHasActiveMembership()
-    {
-        $this->go1->insert('gc_lo_group', ['lo_id' => $loId = 10, 'instance_id' => 20]);
-        $this->go1->insert('gc_lo_group', ['lo_id' => $loId, 'instance_id' => 30]);
-        $this->assertTrue(LoHelper::hasActiveMembership($this->go1, $loId, 20));
-        $this->assertTrue(LoHelper::hasActiveMembership($this->go1, $loId, 30));
-        $this->assertFalse(LoHelper::hasActiveMembership($this->go1, $loId, 40));
-    }
-
     public function dataDescriptionPurifierConfig()
     {
         return [
@@ -625,7 +616,7 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testSanitizeTitle()
     {
-        $title = "<strong>Strong</strong> Test Title & &amp &lt; <br> <br/> 
+        $title = "<strong>Strong</strong> Test Title & &amp &lt; <br> <br/>
 
     After New line
          ";
