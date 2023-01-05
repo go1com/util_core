@@ -23,6 +23,7 @@ class UserHelperTest extends UtilCoreTestCase
         $this->assertEquals($id, $user->id);
         $this->assertEquals('foo@bar.baz', $user->mail);
         $this->assertEquals('qa.mygo1.com', $user->instance);
+        $this->assertNotEmpty($user->ulid);
         $this->assertNull($user->user_uuid);
         $this->assertEquals(false, UserHelper::load($this->go1, 0));
         $this->assertEquals(false, UserHelper::load($this->go1, 999));
