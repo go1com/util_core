@@ -17,12 +17,13 @@ class UserHelperTest extends UtilCoreTestCase
 
     public function testLoad()
     {
-        $id = $this->createUser($this->go1, ['mail' => 'foo@bar.baz', 'instance' => 'qa.mygo1.com']);
+        $id = $this->createUser($this->go1, ['mail' => 'foo@bar.baz', 'instance' => 'qa.mygo1.com', 'user_id' => 10]);
 
         $user = UserHelper::load($this->go1, $id);
         $this->assertEquals($id, $user->id);
         $this->assertEquals('foo@bar.baz', $user->mail);
         $this->assertEquals('qa.mygo1.com', $user->instance);
+        $this->assertEquals(10, $user->user_id);
         $this->assertNotEmpty($user->ulid);
         $this->assertNull($user->user_uuid);
         $this->assertEquals(false, UserHelper::load($this->go1, 0));

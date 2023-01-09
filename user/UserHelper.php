@@ -213,6 +213,7 @@ class UserHelper
             'locale'     => $user->locale ?? null,
             'phone'      => $data['phone'] ?? null,
             'root'       => null,
+            'user_id'    => $user->user_id ?? null,
         ];
     }
 
