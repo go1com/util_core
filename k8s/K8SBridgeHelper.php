@@ -97,7 +97,7 @@ class K8SBridgeHelper
                 [$queueHost, $queuePort] = $this->getServiceEnvValues($queueHostEnvName);
                 $queuePass = getenv('QUEUE_PASSWORD');
                 $queueUser = getenv('QUEUE_USER');
-                if ($memCachedHost && $memCachedPort && $cachBackend === 'memcached') {
+                if ($queueHost && $queuePort && $queuePass && $queueUser) {
                     $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePort}";
                     putenv("QUEUE_HOST={$queueHost}");
                     putenv("QUEUE_PORT={$queuePort}");
