@@ -44,7 +44,7 @@ release:
       - ci
   script:
     - touch CHANGELOG.md
-    - npm install @semantic-release/gitlab @semantic-release/changelog
+    - npm install semantic-release@^19.0.5 @semantic-release/gitlab @semantic-release/changelog
     - npx semantic-release
   artifacts:
     paths:
