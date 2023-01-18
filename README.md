@@ -14,5 +14,10 @@ The core including:
     - cron
     - install
 
+## Installation
+```shell
+composer install
+```
+
 ## Unit tests
 - Run all tests: `phpunit -c phpunit.xml`

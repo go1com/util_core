@@ -72,6 +72,12 @@ trait InstallTrait
 
                 // Added migrated flag to gc_user table
                 UserSchema::update05($schema);
+
+                // Added pending_decommission_at to gc_lo table
+                LoSchema::update01($schema);
+
+                // Added hashed_source_id to gc_lo table
+                LoSchema::update02($schema);
             },
             function (Schema $schema) use ($coreOnly) {
                 if (!$coreOnly) {

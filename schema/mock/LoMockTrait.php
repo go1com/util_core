@@ -95,6 +95,8 @@ trait LoMockTrait
             'single_li'         => boolval($singleLi),
             'decommissioned_at' => $options['decommissioned_at'] ?? null,
             'removed_at'        => $options['removed_at'] ?? null,
+            'pending_decommission_at' => $options['pending_decommission_at'] ?? null,
+            'hashed_source_id'        => $options['hashed_source_id'] ?? null,
         ];
         $db->insert('gc_lo', $opt);
 

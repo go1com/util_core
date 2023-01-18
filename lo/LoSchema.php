@@ -4,6 +4,7 @@ namespace go1\util\lo;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 
 class LoSchema
 {
@@ -301,6 +302,42 @@ class LoSchema
             if (!$lo->hasColumn('single_li')) {
                 $lo->addColumn('single_li', Type::BOOLEAN, ['notnull' => true, 'default' => 0]);
                 $lo->addIndex(['single_li']);
+            }
+        }
+    }
+
+    public static function update01(Schema $schema)
+    {
+        if ($schema->hasTable('gc_lo')) {
+            $table = $schema->getTable('gc_lo');
+            if (!$table->hasColumn('pending_decommission_at')) {
+                $table->addColumn('pending_decommission_at', Types::DATETIME_MUTABLE, [
+                    'notnull' => false
+                ]);
+
+                $indexName = 'index_pending_decommission_at';
+                if (!$table->hasIndex($indexName)) {
+                    $table->addIndex(['pending_decommission_at'], $indexName);
+                }
+            }
+        }
+    }
+
+    public static function update02(Schema $schema)
+    {
+        if ($schema->hasTable('gc_lo')) {
+            $table = $schema->getTable('gc_lo');
+            if (!$table->hasColumn('hashed_source_id')) {
+                $table->addColumn('hashed_source_id', Types::STRING, [
+                    'length'      => 32,
+                    'fixed'       => true,
+                    'notnull'     => false
+                ]);
+
+                $indexName = 'IDX_instance_id_hashed_source_id';
+                if (!$table->hasIndex($indexName)) {
+                    $table->addUniqueIndex(['instance_id', 'hashed_source_id'], $indexName);
+                }
             }
         }
     }
