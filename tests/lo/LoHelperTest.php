@@ -623,4 +623,21 @@ class LoHelperTest extends UtilCoreTestCase
         $sanitizedTitle = LoHelper::sanitizeTitle($title);
         $this->assertEquals($sanitizedTitle, "Strong Test Title & &amp <     After New line");
     }
+
+    public function testRemoveHashedSourceId()
+    {
+        $portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
+        $sourceId = 'lo_sourceId_value_to_md5_encoding';
+        $courseId = $this->createCourse($this->go1, [
+            'instance_id'             => $portalId,
+            'title'                   => 'a title',
+            'data'                    => ['source' => $sourceId],
+            'pending_decommission_at' => '3122-12-31T15:10:11+00:00',
+            'hashed_source_id'        => md5($sourceId)
+        ]);
+        $lo = LoHelper::load($this->go1, $courseId);
+        $this->assertEquals($lo->title, 'a title');
+        $this->assertEquals($lo->pending_decommission_at, '3122-12-31T15:10:11+00:00');
+        $this->assertFalse(property_exists($lo, 'hashed_source_id'), 'hashed_source_id should not be returned');
+    }
 }

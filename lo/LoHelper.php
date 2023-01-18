@@ -94,6 +94,8 @@ class LoHelper
             ];
             unset($lo->price, $lo->currency, $lo->tax, $lo->tax_included);
 
+            unset($lo->hashed_source_id); // this is a MD5 hashed value of data.source_id & internal to the LO service only.
+
             $lo->event = new stdClass;
             $loIds[] = $lo->id;
         }
