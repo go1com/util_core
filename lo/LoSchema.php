@@ -336,7 +336,7 @@ class LoSchema
 
                 $indexName = 'IDX_instance_id_hashed_source_id';
                 if (!$table->hasIndex($indexName)) {
-                    $table->addUniqueIndex(['instance_id', 'hashed_source_id'], $indexName);
+                    $table->addIndex(['instance_id', 'hashed_source_id'], $indexName);
                 }
             }
         }
