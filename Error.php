@@ -134,35 +134,36 @@ class Error
      */
     public static function formatError(?array $errors): array
     {
-        if (!empty($errors)) {
-            $data = ['message' => $errors['message']];
-            if (isset($errors['error_code'])) {
-                $data['error_code'] = $errors['error_code'];
-            }
-            if (isset($errors['ref'])) {
-                $data['ref'] = $errors['ref'];
-            }
-            if (isset($errors['error'])) {
-                foreach ($errors['error'] as $error) {
-                    $additionalError = ['message' => $error['message']];
-                    if (isset($error['path'])) {
-                        $additionalError['path'] = $error['path'];
-                    }
-                    if (isset($error['error_code'])) {
-                        $additionalError['error_code'] = $error['error_code'];
-                    }
-                    if (isset($error['http_code'])) {
-                        $additionalError['http_code'] = $error['http_code'];
-                    }
-                    if (isset($error['ref'])) {
-                        $additionalError['ref'] = $error['ref'];
-                    }
-                    $data['additional_errors'][] = $additionalError;
-                }
-            }
+        if (empty($errors)) {
+            return [];
+        }
+        $data = ['message' => $errors['message']];
+        if (isset($errors['error_code'])) {
+            $data['error_code'] = $errors['error_code'];
+        }
+        if (isset($errors['ref'])) {
+            $data['ref'] = $errors['ref'];
+        }
+        if (!isset($errors['error'])) {
             return $data;
         }
-        return [];
+        foreach ($errors['error'] as $error) {
+            $additionalError = ['message' => $error['message']];
+            if (isset($error['path'])) {
+                $additionalError['path'] = $error['path'];
+            }
+            if (isset($error['error_code'])) {
+                $additionalError['error_code'] = $error['error_code'];
+            }
+            if (isset($error['http_code'])) {
+                $additionalError['http_code'] = $error['http_code'];
+            }
+            if (isset($error['ref'])) {
+                $additionalError['ref'] = $error['ref'];
+            }
+            $data['additional_errors'][] = $additionalError;
+        }
+        return $data;
     }
 
     /**
