@@ -107,7 +107,7 @@ class Error
         return static::simpleErrorJsonResponse($msg, 500);
     }
 
-    public static function createLazyAssertionJsonResponse(LazyAssertionException $e, int $httpCode = 400): JsonResponse
+    public static function getLazyAssertionError(LazyAssertionException $e): array
     {
         $data = ['message' => $e->getMessage()];
 
@@ -118,6 +118,66 @@ class Error
             ];
         }
 
+        return $data;
+    }
+
+    public static function createLazyAssertionJsonResponse(LazyAssertionException $e, int $httpCode = 400): JsonResponse
+    {
+        $data = static::getLazyAssertionError($e);
         return new JsonResponse($data, $httpCode);
+    }
+
+    /**
+     * Format error message for consistence error message
+     * @param array|null $errors
+     * @return array
+     */
+    public static function formatError(?array $errors): array
+    {
+        if (empty($errors)) {
+            return [];
+        }
+        $data = ['message' => $errors['message']];
+        if (isset($errors['error_code'])) {
+            $data['error_code'] = $errors['error_code'];
+        }
+        if (isset($errors['ref'])) {
+            $data['ref'] = $errors['ref'];
+        }
+        if (!isset($errors['error'])) {
+            return $data;
+        }
+        foreach ($errors['error'] as $error) {
+            $additionalError = ['message' => $error['message']];
+            if (isset($error['path'])) {
+                $additionalError['path'] = $error['path'];
+            }
+            if (isset($error['error_code'])) {
+                $additionalError['error_code'] = $error['error_code'];
+            }
+            if (isset($error['http_code'])) {
+                $additionalError['http_code'] = $error['http_code'];
+            }
+            if (isset($error['ref'])) {
+                $additionalError['ref'] = $error['ref'];
+            }
+            $data['additional_errors'][] = $additionalError;
+        }
+        return $data;
+    }
+
+    /**
+     * Create json response for the error messages, This function can be used for the LazyAssertionException error and for error messages
+     * @param array|null $errors
+     * @param LazyAssertionException|null $e
+     * @param int $httpCode
+     * @return JsonResponse
+     */
+    public static function createMultipleErrorsJsonResponse(?array $errors, LazyAssertionException $e = null, int $httpCode = 400): JsonResponse
+    {
+        if ($e) {
+            $errors = static::getLazyAssertionError($e);
+        }
+        return new JsonResponse(static::formatError($errors), $httpCode);
     }
 }
