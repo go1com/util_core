@@ -147,19 +147,13 @@ class Error
         if (!isset($errors['error'])) {
             return $data;
         }
+        $additionalErrorTypes = ['path', 'error_code', 'ref', 'http_code'];
         foreach ($errors['error'] as $error) {
             $additionalError = ['message' => $error['message']];
-            if (isset($error['path'])) {
-                $additionalError['path'] = $error['path'];
-            }
-            if (isset($error['error_code'])) {
-                $additionalError['error_code'] = $error['error_code'];
-            }
-            if (isset($error['http_code'])) {
-                $additionalError['http_code'] = $error['http_code'];
-            }
-            if (isset($error['ref'])) {
-                $additionalError['ref'] = $error['ref'];
+            foreach ($additionalErrorTypes as $additionalErrorType) {
+                if (isset($error[$additionalErrorType])) {
+                    $additionalError[$additionalErrorType] = $error[$additionalErrorType];
+                }
             }
             $data['additional_errors'][] = $additionalError;
         }
