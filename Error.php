@@ -132,7 +132,8 @@ class Error
      * @param array|null $errors
      * @return array
      */
-    public static function formatError(?array $errors): array {
+    public static function formatError(?array $errors): array
+    {
         if (!empty($errors)) {
             $data = ['message' => $errors['message']];
             if (isset($errors['error_code'])) {
@@ -142,7 +143,7 @@ class Error
                 $data['ref'] = $errors['ref'];
             }
             if (isset($errors['error'])) {
-                foreach($errors['error'] as $error) {
+                foreach ($errors['error'] as $error) {
                     $additionalError = ['message' => $error['message']];
                     if (isset($error['path'])) {
                         $additionalError['path'] = $error['path'];

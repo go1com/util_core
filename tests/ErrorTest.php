@@ -24,6 +24,5 @@ class ErrorTest  extends UtilCoreTestCase
         $errors['error'][] = ['message' => 'invalid lo', 'path' => 'lo_id', 'error_code' => 'invalid_lo', 'http_code' => 400, 'ref' => 4567];
         $jsonResponse = Error::formatError($errors);
         $this->assertEquals($jsonResponse, ['additional_errors' => $errors['error'], 'message' => $errors['message'], 'error_code' => $errors['error_code'], 'ref' => $errors['ref']]);
-
     }
 }
