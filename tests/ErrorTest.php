@@ -8,21 +8,47 @@ use go1\util\tests\UtilCoreTestCase;
 
 class ErrorTest  extends UtilCoreTestCase
 {
-    public function testFormatError()
+    public function testWithNullData()
     {
         $jsonResponse = Error::formatError(null);
         $this->assertEquals($jsonResponse, []);
+    }
 
-        $errors = ['message' => 'Invalid Id'];
-        $jsonResponse = Error::formatError($errors);
-        $this->assertEquals($jsonResponse, ['message' => $errors['message']]);
+    /**
+     * @dataProvider provideErrorData
+     */
+    public function testFormatError(array $expectedOutput, array $input)
+    {
+        $jsonResponse = Error::formatError($input);
+        $this->assertEquals($jsonResponse, $expectedOutput);
+    }
 
-        $errors = ['message' => 'Invalid Id', 'error_code' => 'invalid_id', 'ref' => 1234];
-        $jsonResponse = Error::formatError($errors);
-        $this->assertEquals($jsonResponse, ['message' => $errors['message'], 'error_code' => $errors['error_code'], 'ref' => $errors['ref']]);
+    public function provideErrorData(): array
+    {
+        $error1 = [
+            'message' => 'Invalid Id'
+        ];
+        $error2 = [
+            'message' => 'Invalid Id',
+            'error_code' => 'invalid_id',
+            'ref' => 1234
+        ];
+        $error3 = array_merge($error2, ['error' => [[
+            'message' => 'invalid lo',
+            'path' => 'lo_id',
+            'error_code' => 'invalid_lo',
+            'http_code' => 400,
+            'ref' => 4567
+        ]]]);
+        $error3Expected = array_merge(
+            $error2,
+            ['additional_errors' => $error3['error']]
+        );
 
-        $errors['error'][] = ['message' => 'invalid lo', 'path' => 'lo_id', 'error_code' => 'invalid_lo', 'http_code' => 400, 'ref' => 4567];
-        $jsonResponse = Error::formatError($errors);
-        $this->assertEquals($jsonResponse, ['additional_errors' => $errors['error'], 'message' => $errors['message'], 'error_code' => $errors['error_code'], 'ref' => $errors['ref']]);
+        return [
+            'with only message' => [$error1, $error1],
+            'with all parameters' => [$error2, $error2],
+            'with additional errors' => [$error3Expected, $error3]
+        ];
     }
 }
