@@ -20,4 +20,7 @@ composer install
 ```
 
 ## Unit tests
-- Run all tests: `phpunit -c phpunit.xml`
+- Run all tests: 
+```
+XDEBUG_MODE=coverage phpunit -c phpunit.xml --coverage-text
+```

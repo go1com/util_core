@@ -8,12 +8,13 @@
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <coverage processUncoveredFiles="false">
+        <include>
             <directory suffix=".php">./</directory>
-            <exclude>
-                <directory suffix=".php">vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <directory>./tests</directory>
+            <directory>./vendor</directory>
+        </exclude>
+    </coverage>
 </phpunit>
