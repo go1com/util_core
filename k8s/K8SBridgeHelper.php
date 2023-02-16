@@ -121,7 +121,8 @@ class K8SBridgeHelper
 
     public function k8sEnvNameTransform(string $name): string
     {
-        return strtoupper(str_replace([".", "-"], "_", $name));
+        # https://github.com/Azure/Bridge-To-Kubernetes/blame/3b208325c25bbc10db440dd7035c245cc8a78446/src/library/Connect/LocalEnvironmentManager.cs#L453
+        return strtoupper(str_replace([".", "-"], "_", explode(".", $name)[0]));
     }
 
     public function getServiceEnvValues(string $serviceName): array
