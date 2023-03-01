@@ -124,6 +124,17 @@ class K8SBridgeHelper
                 }
             }
 
+            // Rewrite ES ENVs
+            if ($esHostOverride = getenv('ES_URL_AU_V8_HOST_OVERRIDE')) {
+                $esHostEnvName = $this->k8sEnvNameTransform($esHostOverride);
+                [$esHost, $esPort] = $this->getServiceEnvValues($esHostEnvName);
+                $esUrl = getenv('ES_URL_AU_V8');
+                if ($esHost && $esPort && $esUrl) {
+                    $prefix = explode('@', $esUrl)[0];
+                    putenv("ES_URL_AU_V8={$prefix}@{$esHost}:{$esPort}");
+                }
+            }
+
             // Rewrite other Service ENVs, replacing namespace, allowing uniformed treatment for local, QA and Prod
             $env = getenv();
             foreach ($env as $key => $value) {
