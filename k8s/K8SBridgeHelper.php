@@ -92,17 +92,46 @@ class K8SBridgeHelper
             }
 
             // Rewrite Rabbit Queue ENVs
-            if ($queueHostOverride = getenv('QUEUE_HOST_OVERRIDE')) {
-                $queueHostEnvName = $this->k8sEnvNameTransform($queueHostOverride);
-                [$queueHost, $queuePort] = $this->getServiceEnvValues($queueHostEnvName);
+            if ($queueHost = getenv('K8S_QA_RABBITMQ_SERVICE_HOST')) {
                 $queuePass = getenv('QUEUE_PASSWORD');
                 $queueUser = getenv('QUEUE_USER');
+                // Service has 3 ports, K8S_QA_RABBITMQ_SERVICE_PORT will be the last defined
+                // ports:
+                // - appProtocol: amqp
+                //     name: amqp
+                //     port: 5672
+                //     protocol: TCP
+                //     targetPort: 5672
+                // - appProtocol: http
+                //     name: management
+                //     port: 15672
+                //     protocol: TCP
+                //     targetPort: 15672
+                // - appProtocol: prometheus.io/metrics
+                //     name: prometheus
+                //     port: 15692
+                //     protocol: TCP
+                //     targetPort: 15692
+                $queuePort = getenv('K8S_QA_RABBITMQ_SERVICE_PORT');
                 if ($queueHost && $queuePort && $queuePass && $queueUser) {
-                    $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePort}";
+                    // Service has 3 ports, we need the first one (defined sequentially)
+                    $queuePortOffset = ((int) $queuePort) - 2;
+                    $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePortOffset}";
                     putenv("QUEUE_HOST={$queueHost}");
-                    putenv("QUEUE_PORT={$queuePort}");
+                    putenv("QUEUE_PORT={$queuePortOffset}");
                     putenv("QUEUE_URL={$queueUrl}");
                     putenv("RABBITMQ_URL={$queueUrl}");
+                }
+            }
+
+            // Rewrite ES ENVs
+            if ($esHostOverride = getenv('ES_URL_AU_V8_HOST_OVERRIDE')) {
+                $esHostEnvName = $this->k8sEnvNameTransform($esHostOverride);
+                [$esHost, $esPort] = $this->getServiceEnvValues($esHostEnvName);
+                $esUrl = getenv('ES_URL_AU_V8');
+                if ($esHost && $esPort && $esUrl) {
+                    $prefix = explode('@', $esUrl)[0];
+                    putenv("ES_URL_AU_V8={$prefix}@{$esHost}:{$esPort}");
                 }
             }
 
