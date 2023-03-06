@@ -212,7 +212,7 @@ class EnrolmentHelper
         return $parentLo && ($parentLo->type == $parentLoType) ? $parentEnrolment : false;
     }
 
-    public static function sequenceEnrolmentCompleted(Connection $db, int $loId, int $parentLoId, string $parentLoType = LoTypes::COURSE, int $profileId = 0)
+    public static function sequenceEnrolmentCompleted(Connection $db, int $loId, int $parentLoId, string $parentLoType = LoTypes::COURSE, int $userId = 0)
     {
         $edgeType = ($parentLoType == LoTypes::COURSE) ? EdgeTypes::LearningObjectTree['course'] : EdgeTypes::LearningObjectTree['module'];
         $requiredEdgeType = ($parentLoType == LoTypes::COURSE) ? EdgeTypes::HAS_MODULE : EdgeTypes::HAS_LI;
@@ -239,7 +239,7 @@ class EnrolmentHelper
             ->select('COUNT(*)')
             ->from('gc_enrolment')
             ->where('lo_id IN (:lo_ids)')->setParameter(':lo_ids', $requiredLoIds, Connection::PARAM_INT_ARRAY)
-            ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', $profileId)
+            ->andWhere('user_id = :user_id')->setParameter(':user_id', $userId)
             ->andWhere('status = :status')->setParameter(':status', EnrolmentStatuses::COMPLETED);
 
         $completedRequiredLos = $enrolmentQuery->execute()->fetchColumn();
