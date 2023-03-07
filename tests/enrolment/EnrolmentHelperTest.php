@@ -34,7 +34,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
     protected $portalPublicKey;
     protected $portalPrivateKey;
     protected $portalName = 'az.mygo1.com';
-    protected $profileId  = 11;
+    protected $profileId = 11;
     protected $userId, $jwt;
     protected $lpId, $courseId, $moduleId, $liVideoId, $liResourceId, $liInteractiveId, $electiveQuestionId, $electiveTextId, $electiveQuizId;
 
@@ -166,7 +166,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
     public function testSequenceEnrolmentCompleted()
     {
-        $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
+        $basicLiData = ['user_id' => $this->userId, 'profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
         $enrolments = [
             'lp'       => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->lpId]),
             'course'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->courseId, 'parent_lo_id' => $this->lpId]),
@@ -176,14 +176,13 @@ class EnrolmentHelperTest extends UtilCoreTestCase
             'question' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liResourceId, 'parent_lo_id' => $this->moduleId]),
         ];
 
-        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->electiveTextId, $this->moduleId, LoTypes::MODULE, $this->profileId);
+        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->electiveTextId, $this->moduleId, LoTypes::MODULE, $this->userId);
         $this->assertTrue($completion);
-        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->liResourceId, $this->moduleId, LoTypes::MODULE, $this->profileId);
+        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->liResourceId, $this->moduleId, LoTypes::MODULE, $this->userId);
         $this->assertTrue($completion);
-        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->electiveQuizId, $this->moduleId, LoTypes::MODULE, $this->profileId);
+        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->electiveQuizId, $this->moduleId, LoTypes::MODULE, $this->userId);
         $this->assertTrue($completion);
-
-        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->liInteractiveId, $this->moduleId, LoTypes::MODULE, $this->profileId);
+        $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->liInteractiveId, $this->moduleId, LoTypes::MODULE, $this->userId);
         $this->assertFalse($completion);
     }
 
