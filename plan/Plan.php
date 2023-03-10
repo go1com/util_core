@@ -90,7 +90,7 @@ class Plan implements JsonSerializable
         ($this->type != $plan->type) && $values['type'] = $plan->type;
         ($this->assignerId != $plan->assignerId) && $values['assigner_id'] = $plan->assignerId;
         ($this->status != $plan->status) && $values['status'] = $plan->status;
-        ($this->due != $plan->due) && $values['due_date'] = $plan->due ? $plan->due->format(DATE_ISO8601) : null;
+        ($this->due != $plan->due) && $values['due_date'] = $plan->due ? $plan->due->format(DATE_MYSQL) : null;
         ($processData($this->data) != $processData($plan->data)) && $values['data'] = is_scalar($plan->data) ? $plan->data : json_encode($plan->data);
 
         return $values ?? [];
