@@ -16,6 +16,8 @@ use go1\util\plan\event_publishing\PlanUpdateEventEmbedder;
 use go1\util\queue\Queue;
 use Ramsey\Uuid\Uuid;
 
+const DATE_MYSQL = 'Y-m-d H:i:s';
+
 class PlanRepository
 {
     private Connection              $db;
@@ -177,8 +179,8 @@ class PlanRepository
             'entity_type'  => $plan->entityType,
             'entity_id'    => $plan->entityId,
             'status'       => $plan->status,
-            'created_date' => $plan->created ? $plan->created->format(DATE_ISO8601) : '',
-            'due_date'     => $plan->due ? $plan->due->format(DATE_ISO8601) : null,
+            'created_date' => $plan->created ? $plan->created->format(DATE_MYSQL) : '',
+            'due_date'     => $plan->due ? $plan->due->format(DATE_MYSQL) : null,
             'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
 
@@ -210,8 +212,8 @@ class PlanRepository
             'entity_type'  => $plan->entityType,
             'entity_id'    => $plan->entityId,
             'status'       => $plan->status,
-            'created_date' => $plan->created ? $plan->created->format(DATE_ISO8601) : '',
-            'due_date'     => $plan->due ? $plan->due->format(DATE_ISO8601) : '',
+            'created_date' => $plan->created ? $plan->created->format(DATE_MYSQL) : '',
+            'due_date'     => $plan->due ? $plan->due->format(DATE_MYSQL) : '',
             'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
     }
@@ -225,7 +227,7 @@ class PlanRepository
         $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded, $queueContext) {
             $diff['updated_at'] = (new DateTimeImmutable('now'))
                 ->setTimezone(new DateTimeZone('UTC'))
-                ->format('Y-m-d H:i:s');
+                ->format(DATE_MYSQL);
             $this->createRevision($original);
             $this->db->update('gc_plan', $diff, ['id' => $original->id]);
             $plan->id = $original->id;
