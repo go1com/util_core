@@ -237,6 +237,13 @@ class LoExploreSchema
             'decommissioned_at' => ['type' => Schema::T_DATE],
             'removed_at' => ['type' => Schema::T_DATE],
             'regional_enrolment_scores' => ['type' => Schema::T_RANK_FEATURES],
+            'skills'     => [
+                'type'       => Schema::T_NESTED,
+                'properties' => [
+                    'name'        => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
+                    'confidence'  => ['type' => Schema::T_FLOAT],
+                ],
+            ],
         ],
     ];
 
