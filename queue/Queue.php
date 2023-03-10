@@ -327,6 +327,7 @@ class Queue
     const DO_ASSESSOR                    = 'do.assessor'; # { task: string, body: OBJECT }
     const DO_PAGEUP_UPLOAD_COURSE        = 'do.pageup.upload-couse'; # { $portal_id, $course_id }
     const REINDEX_PREFIX                 = 'go1-reindex.';
+    const DO_POST_COMPLETION_MAIL_SEND   = 'recommender-v2.email.post-completion.send';
 
     /**
      * TEMPORARY EVENT (will be removed when premium/region restriction propagation is removed
