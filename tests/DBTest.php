@@ -76,7 +76,8 @@ class DBTest extends UtilCoreTestCase
         $this->assertEmpty(array_diff_assoc($dataUser, $originalUser));
 
         DB::merge(
-            $this->go1, 'gc_user',
+            $this->go1,
+            'gc_user',
             [
                 'id' => $userId,
             ],
@@ -197,7 +198,7 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals('foo_username', $o['pdo']->username);
         $this->assertEquals('foo_password', $o['pdo']->password);
         $this->assertEquals([
-            1002                 => 'SET NAMES utf8',
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
             PDO::ATTR_PERSISTENT => true,
         ], $o['pdo']->options);
     }
@@ -217,10 +218,10 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals('foo_username_ssl', $o['pdo']->username);
         $this->assertEquals('foo_password_ssl', $o['pdo']->password);
         $this->assertEquals([
-            1002 => 'SET NAMES utf8',
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
             PDO::ATTR_PERSISTENT   => true,
-            PDO::MYSQL_ATTR_SSL_CA => '',
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+            PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt',
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true
         ], $o['pdo']->options);
     }
 
@@ -268,9 +269,9 @@ class DBTest extends UtilCoreTestCase
         putenv('RDS_DB_ENABLE_SSL=true');
         $o = DB::connectionOptions('foo', false, true, MockPDO::class);
         $this->assertEquals([
-            1002                                   => 'SET NAMES utf8mb4',
-            PDO::MYSQL_ATTR_SSL_CA                 => '',
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+            PDO::MYSQL_ATTR_INIT_COMMAND            => 'SET NAMES utf8mb4',
+            PDO::MYSQL_ATTR_SSL_CA                  => '/etc/ssl/certs/ca-certificates.crt',
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT  => true
         ], $o['driverOptions']);
         $this->assertEquals($sslHost, $o['host']);
         $this->assertEquals($sslUsername, $o['user']);
@@ -313,7 +314,7 @@ class DBTest extends UtilCoreTestCase
         $this->expectException(\PDOException::class);
         $this->expectExceptionMessage(
             'SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo ' .
-            'failed: Name does not resolve'
+                'failed: Name does not resolve'
         );
         $_ = DB::connectionPoolOptions($connectionName, false, true, \PDO::class);
     }

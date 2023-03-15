@@ -51,8 +51,8 @@ class DB
         // Note: This only works with the provider who uses trusted CA like Azure.
         $driverOptions = $enabledSSL
             ? [
-                PDO::MYSQL_ATTR_SSL_CA => '',
-                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+                PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt', #Linux standard location
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true
             ]
             : [];
 
@@ -64,7 +64,7 @@ class DB
             'password'      => $dbPass,
             'port'          => self::getEnvByPriority(["{$prefix}{$sslString}_PORT", "RDS{$sslString}_DB_PORT"]) ?: '3306',
             'driverOptions' => [
-                1002 => 'SET NAMES utf8mb4'
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4'
             ] + $driverOptions,
         ];
     }
@@ -74,7 +74,7 @@ class DB
         $o = self::connectionOptions($name, $forceSlave, $forceMaster);
 
         $pdoOpions = [
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
             PDO::ATTR_PERSISTENT         => true
         ] + $o['driverOptions'];
 

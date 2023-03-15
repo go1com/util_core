@@ -1,0 +1,30 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/php
+{
+	"name": "PHP",
+	"image": "mcr.microsoft.com/devcontainers/php:7.4",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"php.validate.executablePath": "/usr/local/bin/php"
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"mrmlnc.vscode-apache"
+			]
+		}
+	},
+	"mounts": [
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.composer,target=/home/vscode/.composer,type=bind,consistency=cached"
+	],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "composer install --dev"
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
