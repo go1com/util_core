@@ -52,7 +52,8 @@ class DB
         $driverOptions = $enabledSSL
             ? [
                 PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt', #Linux standard location
-                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true
+                // PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT for b2k needs to be false due to localhost connection
+                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => getenv('AZURE_BRIDGE_MODE') ? false : true
             ]
             : [];
 
