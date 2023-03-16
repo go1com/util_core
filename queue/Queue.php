@@ -22,6 +22,10 @@ class Queue
     const NOTIFY_TASKS = [
         self::NOTIFY_PORTAL_USER_PLAN,
     ];
+     
+    # recommendation
+    const RECOMMENDATION_POST_LEARNING_COMPLETION_SEND = 'recommendation.post-learning-completion.send';
+
 
     # The entity events
     # -------
@@ -327,7 +331,6 @@ class Queue
     const DO_ASSESSOR                    = 'do.assessor'; # { task: string, body: OBJECT }
     const DO_PAGEUP_UPLOAD_COURSE        = 'do.pageup.upload-couse'; # { $portal_id, $course_id }
     const REINDEX_PREFIX                 = 'go1-reindex.';
-    const DO_RECOMMENDER_V2_MAIL_SEND    = 'do.recommender-v2.mail.send';
 
     /**
      * TEMPORARY EVENT (will be removed when premium/region restriction propagation is removed
