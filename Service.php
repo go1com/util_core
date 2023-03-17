@@ -57,7 +57,9 @@ class Service
             // K8S Service discovery using ENV variables
             $k8sName = strtoupper(str_replace(["-", "."], "_", $name));
             $k8sHost = getenv("{$k8sName}_SERVICE_HOST");
-            $k8sPort = getenv("{$k8sName}_SERVICE_PORT");
+            // https://github.com/Azure/Bridge-To-Kubernetes/pull/173
+            // prefer named port
+            $k8sPort = getenv("{$k8sName}_SERVICE_PORT_HTTP") ?: getenv("{$k8sName}_SERVICE_PORT");
             if ($k8sHost && $k8sPort) {
                 return "http://{$k8sHost}:{$k8sPort}";
             }
