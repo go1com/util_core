@@ -95,7 +95,7 @@ class K8SBridgeHelper
             if ($queueHost = getenv('K8S_QA_RABBITMQ_SERVICE_HOST')) {
                 $queuePass = getenv('QUEUE_PASSWORD');
                 $queueUser = getenv('QUEUE_USER');
-                // Service has 3 ports, K8S_QA_RABBITMQ_SERVICE_PORT will be the last defined
+                // Service has 3 ports, K8S_QA_RABBITMQ_SERVICE_PORT will be the first defined
                 // ports:
                 // - appProtocol: amqp
                 //     name: amqp
@@ -112,13 +112,11 @@ class K8SBridgeHelper
                 //     port: 15692
                 //     protocol: TCP
                 //     targetPort: 15692
-                $queuePort = getenv('K8S_QA_RABBITMQ_SERVICE_PORT');
+                $queuePort = getenv('K8S_QA_RABBITMQ_SERVICE_PORT_AMQP'); // https://github.com/Azure/Bridge-To-Kubernetes/pull/173
                 if ($queueHost && $queuePort && $queuePass && $queueUser) {
-                    // Service has 3 ports, we need the first one (defined sequentially)
-                    $queuePortOffset = ((int) $queuePort) - 2;
-                    $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePortOffset}";
+                    $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePort}";
                     putenv("QUEUE_HOST={$queueHost}");
-                    putenv("QUEUE_PORT={$queuePortOffset}");
+                    putenv("QUEUE_PORT={$queuePort}");
                     putenv("QUEUE_URL={$queueUrl}");
                     putenv("RABBITMQ_URL={$queueUrl}");
                 }
@@ -156,6 +154,11 @@ class K8SBridgeHelper
 
     public function getServiceEnvValues(string $serviceName): array
     {
-        return [getenv("{$serviceName}_SERVICE_HOST"), getenv("{$serviceName}_SERVICE_PORT")];
+        // https://github.com/Azure/Bridge-To-Kubernetes/pull/173
+        $namedPort = getenv("{$serviceName}_SERVICE_PORT_HTTP");
+        return [
+            getenv("{$serviceName}_SERVICE_HOST"),
+            $namedPort ?: getenv("{$serviceName}_SERVICE_PORT")
+        ];
     }
 }
