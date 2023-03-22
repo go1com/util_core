@@ -30,7 +30,7 @@ class ManualRecordRepository
             'entity_id'   => $record->entityId,
             'instance_id' => $record->instanceId,
             'user_id'     => $record->userId,
-            'verified'    => $record->verified,
+            'verified'    => $record->verified ? 1 : 0,
             'data'        => is_scalar($record->data) ? $record->data : json_encode($record->data),
             'created'     => $record->created,
             'updated'     => $record->updated,
