@@ -11,93 +11,93 @@ use go1\util\event\AttendanceStatuses;
  */
 class Schema
 {
-    const INDEX             = ES_INDEX;
-    const ALL_INDEX         = ES_INDEX . '*';
-    const MARKETPLACE_INDEX = ES_INDEX . '_marketplace';
-    const GROUP_INDEX       = ES_INDEX . '_group';
-    const LOG_INDEX         = ES_INDEX . '_log';
-    const ACTIVITY_INDEX    = ES_INDEX . '_activity';
-    const PORTALS_INDEX     = ES_INDEX . '_portal*';
-    const PAYMENT_INDEX     = ES_INDEX . '_payment';
-    const EVENT_INDEX       = ES_INDEX . '_event';
-    const AWARD_INDEX       = ES_INDEX . '_award';
+    public const INDEX             = ES_INDEX;
+    public const ALL_INDEX         = ES_INDEX . '*';
+    public const MARKETPLACE_INDEX = ES_INDEX . '_marketplace';
+    public const GROUP_INDEX       = ES_INDEX . '_group';
+    public const LOG_INDEX         = ES_INDEX . '_log';
+    public const ACTIVITY_INDEX    = ES_INDEX . '_activity';
+    public const PORTALS_INDEX     = ES_INDEX . '_portal*';
+    public const PAYMENT_INDEX     = ES_INDEX . '_payment';
+    public const EVENT_INDEX       = ES_INDEX . '_event';
+    public const AWARD_INDEX       = ES_INDEX . '_award';
 
     # GO1-core indices
-    const LEARNING_RECORD_INDEX = ES_INDEX.'_learning_record';
-    const LEARNING_OBJECT_INDEX = ES_INDEX.'_learning_object';
+    public const LEARNING_RECORD_INDEX = ES_INDEX.'_learning_record';
+    public const LEARNING_OBJECT_INDEX = ES_INDEX.'_learning_object';
 
     # Indices for explore
-    const EXPLORE_INDEX             = ES_INDEX . '_explore';
-    const COD_EXPLORE_INDEX         = ES_INDEX . '_cod_explore';
-    const EXPLORE_GROUP_INDEX       = ES_INDEX . '_explore_group';
-    const EXPLORE_MARKETPLACE_INDEX = ES_INDEX . '_explore_marketplace';
+    public const EXPLORE_INDEX             = ES_INDEX . '_explore';
+    public const COD_EXPLORE_INDEX         = ES_INDEX . '_cod_explore';
+    public const EXPLORE_GROUP_INDEX       = ES_INDEX . '_explore_group';
+    public const EXPLORE_MARKETPLACE_INDEX = ES_INDEX . '_explore_marketplace';
 
-    const TEMP             = -32;
-    const MAX_INPUT_LENGTH = 50;
+    public const TEMP             = -32;
+    public const MAX_INPUT_LENGTH = 50;
 
-    const DO_INDEX  = 'index';
-    const DO_UPDATE = 'update';
-    const DO_DELETE = 'delete';
+    public const DO_INDEX  = 'index';
+    public const DO_UPDATE = 'update';
+    public const DO_DELETE = 'delete';
 
-    const T_BOOL                = 'boolean'; # Don't use this, because query_string will match true always, use T_INT instead.
-    const T_SHORT               = 'short';
-    const T_INT                 = 'integer';
-    const T_FLOAT               = 'float';
-    const T_DOUBLE              = 'double'; # Use double if you want to use aggregation feature.
-    const T_TEXT                = 'text';
-    const T_KEYWORD             = 'keyword';
-    const T_DATE                = 'date';
-    const T_ARRAY               = 'array';
-    const T_COMPLETION          = 'completion';
-    const T_COMPLETION_CATEGORY = 'CATEGORY'; # must be in upper-case
-    const T_OBJECT              = 'object';
-    const T_NESTED              = 'nested';
-    const T_GEO_POINT           = 'geo_point';
-    const T_RANK_FEATURES       = 'rank_features';
+    public const T_BOOL                = 'boolean'; # Don't use this, because query_string will match true always, use T_INT instead.
+    public const T_SHORT               = 'short';
+    public const T_INT                 = 'integer';
+    public const T_FLOAT               = 'float';
+    public const T_DOUBLE              = 'double'; # Use double if you want to use aggregation feature.
+    public const T_TEXT                = 'text';
+    public const T_KEYWORD             = 'keyword';
+    public const T_DATE                = 'date';
+    public const T_ARRAY               = 'array';
+    public const T_COMPLETION          = 'completion';
+    public const T_COMPLETION_CATEGORY = 'CATEGORY'; # must be in upper-case
+    public const T_OBJECT              = 'object';
+    public const T_NESTED              = 'nested';
+    public const T_GEO_POINT           = 'geo_point';
+    public const T_RANK_FEATURES       = 'rank_features';
 
-    const O_EDGE                = 'edge';
-    const O_LO                  = 'lo';
-    const O_LO_COLLECTION       = 'lo_collection';
-    const O_PLAN                = 'plan';
-    const O_ENROLMENT           = 'enrolment';
-    const O_ENROLMENT_REVISION  = 'enrolment_revision';
-    const O_GROUP               = 'group';
-    const O_GROUP_ITEM          = 'group_item';
-    const O_PAYMENT_TRANSACTION = 'payment_transaction';
-    const O_CREDIT              = 'credit';
-    const O_QUIZ_USER_ANSWER    = 'quiz_user_answer';
-    const O_PURCHASE_REQUEST    = 'purchase_request';
-    const O_COUPON              = 'coupon';
-    const O_LO_GROUP            = 'lo_group';
-    const O_LO_POLICY           = 'lo_policy';
-    const O_LO_TAG              = 'lo_tag';
-    const O_EVENT               = 'event';
-    const O_EVENT_ATTENDANCE    = 'event_attendance';
-    const O_AWARD               = 'award';
-    const O_AWARD_ITEM          = 'award_item';
-    const O_AWARD_ITEM_MANUAL   = 'award_item_manual';
-    const O_AWARD_ENROLMENT     = 'award_enrolment';
-    const O_AWARD_ACHIEVEMENT   = 'award_achievement';
-    const O_SUGGESTION_CATEGORY = 'suggestion_category'; # Suggestion for award manual item's category
-    const O_SUGGESTION_TAG      = 'suggestion_tag'; # Suggestion for ES LO's tag
-    const O_MYTEAM_PROGRESS     = 'myteam_progress';
-    const O_CONTRACT            = 'contract';
-    const O_METRIC              = 'metric';
+    public const O_EDGE                = 'edge';
+    public const O_LO                  = 'lo';
+    public const O_LO_COLLECTION       = 'lo_collection';
+    public const O_PLAN                = 'plan';
+    public const O_ENROLMENT           = 'enrolment';
+    public const O_ENROLMENT_REVISION  = 'enrolment_revision';
+    public const O_GROUP               = 'group';
+    public const O_GROUP_ITEM          = 'group_item';
+    public const O_PAYMENT_TRANSACTION = 'payment_transaction';
+    public const O_CREDIT              = 'credit';
+    public const O_QUIZ_USER_ANSWER    = 'quiz_user_answer';
+    public const O_PURCHASE_REQUEST    = 'purchase_request';
+    public const O_COUPON              = 'coupon';
+    public const O_LO_GROUP            = 'lo_group';
+    public const O_LO_POLICY           = 'lo_policy';
+    public const O_LO_TAG              = 'lo_tag';
+    public const O_EVENT               = 'event';
+    public const O_EVENT_ATTENDANCE    = 'event_attendance';
+    public const O_AWARD               = 'award';
+    public const O_AWARD_ITEM          = 'award_item';
+    public const O_AWARD_ITEM_MANUAL   = 'award_item_manual';
+    public const O_AWARD_ENROLMENT     = 'award_enrolment';
+    public const O_AWARD_ACHIEVEMENT   = 'award_achievement';
+    public const O_SUGGESTION_CATEGORY = 'suggestion_category'; # Suggestion for award manual item's category
+    public const O_SUGGESTION_TAG      = 'suggestion_tag'; # Suggestion for ES LO's tag
+    public const O_MYTEAM_PROGRESS     = 'myteam_progress';
+    public const O_CONTRACT            = 'contract';
+    public const O_METRIC              = 'metric';
 
-    const A_SIMPLE     = 'simple';
-    const A_WHITESPACE = 'whitespace';
+    public const A_SIMPLE     = 'simple';
+    public const A_WHITESPACE = 'whitespace';
 
-    const SCHEMA = [
+    public const SCHEMA = [
         'index' => self::INDEX,
         'body'  => self::BODY,
     ];
 
-    const BODY = [
+    public const BODY = [
         'mappings' => self::MAPPING,
         'settings' => self::SETTINGS,
     ];
 
-    const SETTINGS = [
+    public const SETTINGS = [
         'analysis' => [
             'normalizer' => [
                 'lowercase' => [
@@ -108,7 +108,7 @@ class Schema
         ]
     ];
 
-    const MAPPING = [
+    public const MAPPING = [
         self::O_EDGE                => self::EDGE_MAPPING,
         self::O_LO                  => self::LO_MAPPING,
         self::O_LO_GROUP            => self::LO_GROUP_MAPPING,
@@ -138,7 +138,7 @@ class Schema
         self::O_LO_COLLECTION       => self::LO_COLLECTION_MAPPING,
     ];
 
-    const ANALYZED = [
+    public const ANALYZED = [
         'fields' => [
             'analyzed' => [
                 'type' => self::T_TEXT,
@@ -146,7 +146,7 @@ class Schema
         ],
     ];
 
-    const ANALYZED_AND_NORMALIZED = [
+    public const ANALYZED_AND_NORMALIZED = [
         'fields' => [
             'analyzed' => [
                 'type' => self::T_TEXT,
@@ -158,7 +158,7 @@ class Schema
         ],
     ];
 
-    const EDGE_MAPPING = [
+    public const EDGE_MAPPING = [
         'properties' => [
             'id'        => ['type' => self::T_KEYWORD],
             'type_id'   => ['type' => self::T_INT],
@@ -169,7 +169,7 @@ class Schema
         ],
     ];
 
-    const LO_MAPPING = [
+    public const LO_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'              => ['type' => self::T_KEYWORD],
@@ -272,7 +272,7 @@ class Schema
         ],
     ];
 
-    const LO_GROUP_MAPPING = [
+    public const LO_GROUP_MAPPING = [
         '_parent'    => ['type' => self::O_LO],
         '_routing'   => ['required' => true],
         'properties' => [
@@ -281,7 +281,7 @@ class Schema
         ],
     ];
 
-    const LO_TAG_MAPPING = [
+    public const LO_TAG_MAPPING = [
         'properties' => [
             'title'    => ['type' => self::T_KEYWORD],
             'type'     => ['type' => self::T_KEYWORD],
@@ -293,7 +293,7 @@ class Schema
         ],
     ];
 
-    const LO_POLICY_MAPPING = [
+    public const LO_POLICY_MAPPING = [
         '_parent'    => ['type' => self::O_LO],
         '_routing'   => ['required' => true],
         'properties' => [
@@ -314,7 +314,7 @@ class Schema
         ],
     ];
 
-    const PLAN_MAPPING = [
+    public const PLAN_MAPPING = [
         'properties' => [
             'id'          => ['type' => self::T_KEYWORD],
             'user_id'     => ['type' => self::T_INT],
@@ -337,7 +337,7 @@ class Schema
     /**
      * @TODO Make sure the revisions are indexed on content re-indexing.
      */
-    const ENROLMENT_MAPPING = [
+    public const ENROLMENT_MAPPING = [
         '_routing'          => ['required' => true],
         'properties'        => [
             'id'                  => ['type' => self::T_KEYWORD],
@@ -471,7 +471,7 @@ class Schema
         ],
     ];
 
-    const ENROLMENT_MAPPING_REVISION = [
+    public const ENROLMENT_MAPPING_REVISION = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'                  => ['type' => self::T_KEYWORD],
@@ -506,7 +506,7 @@ class Schema
         ],
     ];
 
-    const GROUP_MAPPING = [
+    public const GROUP_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'          => ['type' => self::T_KEYWORD],
@@ -528,7 +528,7 @@ class Schema
         ],
     ];
 
-    const GROUP_ITEM_MAPPING = [
+    public const GROUP_ITEM_MAPPING = [
         '_routing'   => ['required' => true],
         '_parent'    => ['type' => self::O_GROUP],
         'properties' => [
@@ -545,7 +545,7 @@ class Schema
         ],
     ];
 
-    const PAYMENT_TRANSACTION_MAPPING = [
+    public const PAYMENT_TRANSACTION_MAPPING = [
         'properties' => [
             'id'                 => ['type' => self::T_KEYWORD],
             'instance_id'        => ['type' => self::T_INT],
@@ -571,7 +571,7 @@ class Schema
         ],
     ];
 
-    const PAYMENT_TRANSACTION_ITEM_MAPPING = [
+    public const PAYMENT_TRANSACTION_ITEM_MAPPING = [
         'properties' => [
             'id'                   => ['type' => self::T_KEYWORD],
             'product_type'         => ['type' => self::T_KEYWORD],
@@ -587,7 +587,7 @@ class Schema
         ],
     ];
 
-    const QUIZ_USER_ANSWER_MAPPING = [
+    public const QUIZ_USER_ANSWER_MAPPING = [
         'properties' => [
             'id'            => ['type' => self::T_KEYWORD],
             'question_type' => ['type' => self::T_KEYWORD],
@@ -622,7 +622,7 @@ class Schema
         ],
     ];
 
-    const PURCHASE_REQUEST_MAPPING = [
+    public const PURCHASE_REQUEST_MAPPING = [
         'properties' => [
             'id'            => ['type' => self::T_KEYWORD],
             'portal_id'     => ['type' => self::T_INT],
@@ -650,7 +650,7 @@ class Schema
         ],
     ];
 
-    const COUPON_MAPPING = [
+    public const COUPON_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'           => ['type' => self::T_KEYWORD],
@@ -687,7 +687,7 @@ class Schema
         ],
     ];
 
-    const CREDIT_MAPPING = [
+    public const CREDIT_MAPPING = [
         '_routing'   => ['required' => true],
         '_parent'    => ['type' => self::O_PAYMENT_TRANSACTION],
         'properties' => [
@@ -712,7 +712,7 @@ class Schema
         ],
     ];
 
-    const INSTRUCTOR_PROPERTIES = [
+    public const INSTRUCTOR_PROPERTIES = [
         'id'         => ['type' => self::T_KEYWORD],
         'profile_id' => ['type' => self::T_INT],
         'instance'   => ['type' => self::T_KEYWORD],
@@ -725,7 +725,7 @@ class Schema
         'roles'      => ['type' => self::T_KEYWORD],
     ];
 
-    const EVENT_PROPERTIES = [
+    public const EVENT_PROPERTIES = [
         'id'                       => ['type' => self::T_KEYWORD],
         'lo_id'                    => ['type' => self::T_INT],
         'title'                    => ['type' => self::T_KEYWORD] + self::ANALYZED,
@@ -757,7 +757,7 @@ class Schema
         'coordinate'               => ['type' => self::T_GEO_POINT],
     ];
 
-    const EVENT_MAPPING = [
+    public const EVENT_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => self::EVENT_PROPERTIES + [
                 'parent'   => [
@@ -772,7 +772,7 @@ class Schema
             ],
     ];
 
-    const ACCOUNT_LITE_PROPERTIES = [
+    public const ACCOUNT_LITE_PROPERTIES = [
         'id'         => ['type' => self::T_KEYWORD],
         'profile_id' => ['type' => self::T_INT],
         'instance'   => ['type' => self::T_KEYWORD],
@@ -794,7 +794,7 @@ class Schema
         ],
     ];
 
-    const EVENT_ATTENDANCE_PROPERTIES = [
+    public const EVENT_ATTENDANCE_PROPERTIES = [
         'id'           => ['type' => self::T_KEYWORD],
         'user_id'      => ['type' => self::T_INT],
         'lo_id'        => ['type' => self::T_INT],
@@ -824,7 +824,7 @@ class Schema
         ],
     ];
 
-    const EVENT_ATTENDANCE_MAPPING = [
+    public const EVENT_ATTENDANCE_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => self::EVENT_ATTENDANCE_PROPERTIES + [
                 'metadata'         => [
@@ -836,7 +836,7 @@ class Schema
             ],
     ];
 
-    const AWARD_MAPPING = [
+    public const AWARD_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'          => ['type' => self::T_KEYWORD],
@@ -864,7 +864,7 @@ class Schema
         ],
     ];
 
-    const AWARD_ITEM_MAPPING = [
+    public const AWARD_ITEM_MAPPING = [
         '_parent'    => ['type' => self::O_AWARD],
         '_routing'   => ['required' => true],
         'properties' => [
@@ -883,7 +883,7 @@ class Schema
         ],
     ];
 
-    const AWARD_ITEM_MANUAL_MAPPING = [
+    public const AWARD_ITEM_MANUAL_MAPPING = [
         '_parent'    => ['type' => self::O_AWARD],
         '_routing'   => ['required' => true],
         'properties' => [
@@ -902,7 +902,7 @@ class Schema
         ],
     ];
 
-    const AWARD_ACHIEVEMENT_MAPPING = [
+    public const AWARD_ACHIEVEMENT_MAPPING = [
         '_parent'    => ['type' => self::O_AWARD_ENROLMENT],
         '_routing'   => ['required' => true],
         'properties' => [
@@ -913,7 +913,7 @@ class Schema
         ],
     ];
 
-    const SUGGESTION_CATEGORY_MAPPING = [
+    public const SUGGESTION_CATEGORY_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'category' => [
@@ -937,7 +937,7 @@ class Schema
         ],
     ];
 
-    const SUGGESTION_TAG_MAPPING = [
+    public const SUGGESTION_TAG_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'tag'      => [
@@ -963,7 +963,7 @@ class Schema
         ],
     ];
 
-    const MY_TEAM_MAPPING = [
+    public const MY_TEAM_MAPPING = [
         'properties' => [
             # Data for filters.
             'accessor_id'         => ['type' => self::T_INT],
@@ -988,7 +988,7 @@ class Schema
         ],
     ];
 
-    const CONTRACT_MAPPING = [
+    public const CONTRACT_MAPPING = [
         'properties' => [
             'id'              => ['type' => self::T_KEYWORD],
             'name'            => ['type' => self::T_KEYWORD],
@@ -1021,7 +1021,7 @@ class Schema
         ],
     ];
 
-    const METRIC_MAPPING = [
+    public const METRIC_MAPPING = [
         'properties' => [
             'id'           => ['type' => self::T_KEYWORD],
             'title'        => ['type' => self::T_KEYWORD],
@@ -1043,7 +1043,7 @@ class Schema
         ],
     ];
 
-    const LO_COLLECTION_MAPPING = [
+    public const LO_COLLECTION_MAPPING = [
         '_parent'    => ['type' => self::O_LO],
         '_routing'   => ['required' => true],
         'properties' => [

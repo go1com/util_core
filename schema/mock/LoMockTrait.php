@@ -161,7 +161,9 @@ trait LoMockTrait
             'loc_postal_code'             => $event['location']['postal_code'] ?? null,
         ];
 
-        $db->insert('gc_event', [
+        $db->insert(
+            'gc_event',
+            [
                 'start'    => $event['start'],
                 'end'      => isset($event['end']) ? $event['end'] : null,
                 'timezone' => isset($event['timezone']) ? $event['timezone'] : 'UTC',
@@ -208,10 +210,20 @@ trait LoMockTrait
         ]);
     }
 
-    public function createAttributeLookup(Connection $db, $key, $name, $attributeType, $loType, $required,
-        $permission, $defaultValue, $isArray = 0, $dimensionId = null,
-        $validationRegex = null, $sortOrder = null)
-    {
+    public function createAttributeLookup(
+        Connection $db,
+        $key,
+        $name,
+        $attributeType,
+        $loType,
+        $required,
+        $permission,
+        $defaultValue,
+        $isArray = 0,
+        $dimensionId = null,
+        $validationRegex = null,
+        $sortOrder = null
+    ) {
         $db->insert('gc_lo_attributes_lookup', [
             '`key`'             => $key,
             'name'              => $name,

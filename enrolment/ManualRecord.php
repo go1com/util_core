@@ -25,7 +25,7 @@ class ManualRecord implements JsonSerializable
 
     public static function create(stdClass $input): ManualRecord
     {
-        $record = new ManualRecord;
+        $record = new ManualRecord();
         $record->id = $input->id ?? null;
         $record->instanceId = $input->instance_id;
         $record->entityType = $input->entity_type ?? null;

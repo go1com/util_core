@@ -4,9 +4,9 @@ namespace go1\util\award;
 
 class AwardItemTypes
 {
-    const LO    = 'lo';
-    const LI    = 'li';
-    const AWARD = 'award';
+    public const LO    = 'lo';
+    public const LI    = 'li';
+    public const AWARD = 'award';
 
     public static function all()
     {

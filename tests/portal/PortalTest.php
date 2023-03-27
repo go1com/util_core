@@ -44,10 +44,12 @@ class PortalHelperTest extends UtilCoreTestCase
                        ->getMock();
         $mockDb->expects($this->once())
                ->method('executeQuery')
-               ->willReturn($this->go1->executeQuery('SELECT gc_instance.* FROM gc_instance'
+               ->willReturn($this->go1->executeQuery(
+                   'SELECT gc_instance.* FROM gc_instance'
                    . ' INNER JOIN gc_lo ON gc_instance.id = gc_lo.instance_id'
                    . ' WHERE gc_lo.id = ?',
-                   [$courseId]));
+                   [$courseId]
+               ));
 
         $portal = PortalHelper::loadFromLoId($mockDb, $courseId);
         $portal = PortalHelper::loadFromLoId($mockDb, $courseId);

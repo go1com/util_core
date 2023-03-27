@@ -4,8 +4,8 @@ namespace go1\util;
 
 class Currency
 {
-    const DEFAULT   = 'AUD';
-    const AVAILABLE = [
+    public const DEFAULT   = 'AUD';
+    public const AVAILABLE = [
         'AUD' => 'Australian Dollar',
         'BRL' => 'Brazilian Real',
         'GBP' => 'British Pound',

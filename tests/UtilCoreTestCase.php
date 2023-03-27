@@ -93,7 +93,7 @@ class UtilCoreTestCase extends TestCase
 
         if (null === $container || $rebuild) {
             $container = new Container(['accounts_name' => 'accounts.test']);
-            $container->register(new UtilCoreServiceProvider, [
+            $container->register(new UtilCoreServiceProvider(), [
                 'logger' => function () {
                     $logger = $this
                         ->getMockBuilder(LoggerInterface::class)
@@ -138,7 +138,7 @@ class UtilCoreTestCase extends TestCase
 
                         return array_map(
                             function ($legacyUser) {
-                                return (new Marshaller)->parse(
+                                return (new Marshaller())->parse(
                                     (object) [
                                         'id'        => md5($legacyUser->uuid),
                                         'legacyId'  => $legacyUser->id,
@@ -148,7 +148,7 @@ class UtilCoreTestCase extends TestCase
                                         'lastName'  => $legacyUser->last_name,
                                         'status'    => $legacyUser->status ? 'ACTIVE' : 'INACTIVE',
                                     ],
-                                    new User
+                                    new User()
                                 );
                             },
                             $legacyUsers,
@@ -165,7 +165,7 @@ class UtilCoreTestCase extends TestCase
                             ->executeQuery('SELECT * FROM gc_accounts WHERE instance = ? AND id = ?', [$portalName, $id])
                             ->fetch(PDO::FETCH_OBJ);
 
-                        return !$legacyAccount ? null : (new Marshaller)->parse(
+                        return !$legacyAccount ? null : (new Marshaller())->parse(
                             (object) [
                                 'id'        => md5($legacyAccount->uuid),
                                 'legacyId'  => $legacyAccount->id,
@@ -196,7 +196,7 @@ class UtilCoreTestCase extends TestCase
                                         ->fetchAll(DB::OBJ)
                                 ),
                             ],
-                            new PortalAccount,
+                            new PortalAccount(),
                         );
                     }
                 );
@@ -219,7 +219,7 @@ class UtilCoreTestCase extends TestCase
                             ->executeQuery('SELECT * FROM gc_accounts WHERE instance = ? AND mail = ?', [$portalName, $legacyUser->mail])
                             ->fetch(PDO::FETCH_OBJ);
 
-                        return (new Marshaller)->parse(
+                        return (new Marshaller())->parse(
                             (object) [
                                 'id'        => md5($legacyUser->uuid),
                                 'legacyId'  => $legacyUser->id,
@@ -239,7 +239,7 @@ class UtilCoreTestCase extends TestCase
                                     'createdAt' => DateTime::formatDate($legacyAccount->created),
                                 ],
                             ],
-                            new User
+                            new User()
                         );
                     }
                 );

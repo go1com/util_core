@@ -4,23 +4,23 @@ namespace go1\util\user;
 
 class Roles
 {
-    const ROOT          = 'Admin on #Accounts';
-    const ADMIN         = 'administrator';
-    const ADMIN_CONTENT = 'content administrator';
-    const DEVELOPER     = 'developer';
-    const AUTHENTICATED = 'authenticated user';
-    const STUDENT       = 'Student';
-    const TUTOR         = 'tutor';
-    const ASSESSOR      = 'tutor';
-    const MANAGER       = 'manager';
-    const TAM           = 'training account manager';
-    const ANONYMOUS     = 'anonymous';
+    public const ROOT          = 'Admin on #Accounts';
+    public const ADMIN         = 'administrator';
+    public const ADMIN_CONTENT = 'content administrator';
+    public const DEVELOPER     = 'developer';
+    public const AUTHENTICATED = 'authenticated user';
+    public const STUDENT       = 'Student';
+    public const TUTOR         = 'tutor';
+    public const ASSESSOR      = 'tutor';
+    public const MANAGER       = 'manager';
+    public const TAM           = 'training account manager';
+    public const ANONYMOUS     = 'anonymous';
 
-    const ACCOUNTS_ROLES     = [self::ROOT, self::DEVELOPER, self::AUTHENTICATED, self::TAM];
-    const PORTAL_ROLES       = [self::ANONYMOUS, self::AUTHENTICATED, self::ADMIN, self::ADMIN_CONTENT, self::STUDENT, self::TUTOR, self::MANAGER];
-    const PORTAL_ADMIN_ROLES = [self::ADMIN, self::ADMIN_CONTENT, self::MANAGER]; # Roles can access portal admin area.
+    public const ACCOUNTS_ROLES     = [self::ROOT, self::DEVELOPER, self::AUTHENTICATED, self::TAM];
+    public const PORTAL_ROLES       = [self::ANONYMOUS, self::AUTHENTICATED, self::ADMIN, self::ADMIN_CONTENT, self::STUDENT, self::TUTOR, self::MANAGER];
+    public const PORTAL_ADMIN_ROLES = [self::ADMIN, self::ADMIN_CONTENT, self::MANAGER]; # Roles can access portal admin area.
 
-    const NAMES = [
+    public const NAMES = [
         self::ADMIN         => 'Administrator',
         self::STUDENT       => 'Learner',
         self::ASSESSOR      => 'Assessor',

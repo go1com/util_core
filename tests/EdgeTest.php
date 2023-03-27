@@ -14,7 +14,7 @@ class EdgeTest extends UtilCoreTestCase
 {
     protected $edgeIds;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -165,8 +165,7 @@ class EdgeTest extends UtilCoreTestCase
 
     public function testCustomSelect()
     {
-        $targetIds = EdgeHelper
-            ::select('target_id')
+        $targetIds = EdgeHelper::select('target_id')
             ->get($this->go1, [$userId = 1], [], [EdgeTypes::HAS_ACCOUNT], PDO::FETCH_COLUMN);
 
         $this->assertCount(3, $targetIds);

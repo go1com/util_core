@@ -115,7 +115,7 @@ class PortalCheckerTest extends UtilCoreTestCase
         $instanceId = $this->createPortal($this->go1, ['title' => $instance]);
         $portal = PortalHelper::load($this->go1, $instanceId);
 
-        $this->assertEquals($expecting, (new PortalChecker)->buildLink($portal, $uri, $prefix));
+        $this->assertEquals($expecting, (new PortalChecker())->buildLink($portal, $uri, $prefix));
     }
 
     public function testBuildLinkNoPublicDomainReplacement()
@@ -123,7 +123,7 @@ class PortalCheckerTest extends UtilCoreTestCase
         putenv('ENV=production');
         $instanceId = $this->createPortal($this->go1, ['title' => 'public.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $instanceId);
-        $this->assertEquals('https://public.mygo1.com/p/#/', (new PortalChecker)->buildLink($portal, '', 'p/#', false));
+        $this->assertEquals('https://public.mygo1.com/p/#/', (new PortalChecker())->buildLink($portal, '', 'p/#', false));
     }
 
     public function testAllowDiscussion()
@@ -498,7 +498,7 @@ class PortalCheckerTest extends UtilCoreTestCase
         putenv("ENV_HOSTNAME_QA");
         $portalId = $this->createPortal($this->go1, ['title' => 'az.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $portalId);
-        $this->assertEquals('https://az.mygo1.com/p/#/app/course-overview/123', (new PortalChecker)->buildLink($portal, 'app/course-overview/123'));
+        $this->assertEquals('https://az.mygo1.com/p/#/app/course-overview/123', (new PortalChecker())->buildLink($portal, 'app/course-overview/123'));
     }
 
     public function testBuildLinkForMonolith()
@@ -508,7 +508,7 @@ class PortalCheckerTest extends UtilCoreTestCase
         putenv("ENV_HOSTNAME_QA");
         $portalId = $this->createPortal($this->go1, ['title' => 'az.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $portalId);
-        $this->assertEquals('https://localhost/p/#/app/course-overview/123', (new PortalChecker)->buildLink($portal, 'app/course-overview/123'));
+        $this->assertEquals('https://localhost/p/#/app/course-overview/123', (new PortalChecker())->buildLink($portal, 'app/course-overview/123'));
     }
 
     public function testBuildLinkForLegacy()
@@ -520,13 +520,13 @@ class PortalCheckerTest extends UtilCoreTestCase
             'version' => PortalHelper::LEGACY_VERSION,
         ]);
         $portal = PortalHelper::load($this->go1, $portalId);
-        $this->assertEquals('https://az.mygo1.com/webapp/#/app/course-overview/123', (new PortalChecker)->buildLink($portal, 'app/course-overview/123'));
+        $this->assertEquals('https://az.mygo1.com/webapp/#/app/course-overview/123', (new PortalChecker())->buildLink($portal, 'app/course-overview/123'));
     }
 
     public function testBuildLinkWithoutPrefix()
     {
         $portalId = $this->createPortal($this->go1, ['title' => 'az.mygo1.com']);
         $portal = PortalHelper::load($this->go1, $portalId);
-        $this->assertEquals('https://az.mygo1.com/foo', (new PortalChecker)->buildLink($portal, 'foo', ''));
+        $this->assertEquals('https://az.mygo1.com/foo', (new PortalChecker())->buildLink($portal, 'foo', ''));
     }
 }

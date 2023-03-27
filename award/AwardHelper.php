@@ -244,8 +244,7 @@ class AwardHelper
 
     public static function assessorIds(Connection $go1, int $loId): array
     {
-        return EdgeHelper
-            ::select('target_id')
+        return EdgeHelper::select('target_id')
             ->get($go1, [$loId], [], [EdgeTypes::AWARD_ASSESSOR], PDO::FETCH_COLUMN);
     }
 

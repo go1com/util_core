@@ -10,13 +10,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DB
 {
-    const OBJ      = PDO::FETCH_OBJ;
-    const ARR      = PDO::FETCH_ASSOC;
-    const COL      = PDO::FETCH_COLUMN;
-    const INTEGER  = PDO::PARAM_INT;
-    const INTEGERS = Connection::PARAM_INT_ARRAY;
-    const STRING   = PDO::PARAM_STR;
-    const STRINGS  = Connection::PARAM_STR_ARRAY;
+    public const OBJ      = PDO::FETCH_OBJ;
+    public const ARR      = PDO::FETCH_ASSOC;
+    public const COL      = PDO::FETCH_COLUMN;
+    public const INTEGER  = PDO::PARAM_INT;
+    public const INTEGERS = Connection::PARAM_INT_ARRAY;
+    public const STRING   = PDO::PARAM_STR;
+    public const STRINGS  = Connection::PARAM_STR_ARRAY;
 
     public static function connectionOptions(string $name, $forceSlave = false, $forceMaster = false): array
     {
@@ -136,7 +136,7 @@ class DB
     {
         $db->transactional(
             function (Connection $db) use (&$callbacks) {
-                $compare = new Comparator;
+                $compare = new Comparator();
                 $schemaManager = $db->getSchemaManager();
                 $schema = $schemaManager->createSchema();
                 $originSchema = clone $schema;

@@ -2,7 +2,6 @@
 
 namespace go1\util\tests;
 
-
 use go1\util\portal\PartnerType;
 
 class PartnerTypeTest extends UtilCoreTestCase

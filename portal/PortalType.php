@@ -4,18 +4,18 @@ namespace go1\util\portal;
 
 class PortalType extends ConstantContainer
 {
-    static protected $name = 'portal';
+    protected static $name = 'portal';
 
-    static protected $customFormats = [
+    protected static $customFormats = [
         self::JSE_CUSTOMER => 'JSE Customer'
     ];
 
-    const CONTENT_PARTNER      = 'content_partner';
-    const DISTRIBUTION_PARTNER = 'distribution_partner';
-    const INTERNAL             = 'internal';
-    const CUSTOMER             = 'customer';
-    const COMPLISPACE          = 'complispace';
-    const JSE_CUSTOMER         = 'jse_customer';
-    const TOTARA_CUSTOMER      = 'totara_customer';
-    const TEAM                 = 'team';
+    public const CONTENT_PARTNER      = 'content_partner';
+    public const DISTRIBUTION_PARTNER = 'distribution_partner';
+    public const INTERNAL             = 'internal';
+    public const CUSTOMER             = 'customer';
+    public const COMPLISPACE          = 'complispace';
+    public const JSE_CUSTOMER         = 'jse_customer';
+    public const TOTARA_CUSTOMER      = 'totara_customer';
+    public const TEAM                 = 'team';
 }

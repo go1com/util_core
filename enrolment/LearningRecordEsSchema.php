@@ -6,8 +6,8 @@ use go1\util\es\Schema;
 
 class LearningRecordEsSchema
 {
-    const INDEX   = ES_INDEX . '_learning_record';
-    const MAPPING = [
+    public const INDEX   = ES_INDEX . '_learning_record';
+    public const MAPPING = [
         Schema::O_ENROLMENT          => Schema::ENROLMENT_MAPPING,
         Schema::O_ENROLMENT_REVISION => Schema::ENROLMENT_MAPPING_REVISION,
         Schema::O_PLAN               => Schema::PLAN_MAPPING,

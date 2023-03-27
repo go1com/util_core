@@ -13,9 +13,9 @@ use InvalidArgumentException;
 
 class Contract implements JsonSerializable
 {
-    const STATUS_ACTIVE   = 1;
-    const STATUS_INACTIVE = 0;
-    const STATUS_CANCELED = -1;
+    public const STATUS_ACTIVE   = 1;
+    public const STATUS_INACTIVE = 0;
+    public const STATUS_CANCELED = -1;
 
     public static $statuses = [-1, 0, 1];
 
@@ -457,7 +457,7 @@ class Contract implements JsonSerializable
         return $values;
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return [
             'id'              => $this->id,

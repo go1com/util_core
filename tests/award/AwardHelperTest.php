@@ -2,7 +2,6 @@
 
 namespace go1\util\tests\award;
 
-
 use go1\util\award\AwardHelper;
 use go1\util\award\AwardItemTypes;
 use go1\util\edge\EdgeTypes;

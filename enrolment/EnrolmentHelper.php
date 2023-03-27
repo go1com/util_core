@@ -23,6 +23,7 @@ use LengthException;
 use PDO;
 use ReflectionClass;
 use stdClass;
+
 use function array_map;
 
 /**
@@ -162,8 +163,7 @@ class EnrolmentHelper
 
     public static function assessorIds(Connection $db, int $enrolmentId): array
     {
-        return EdgeHelper
-            ::select('source_id')
+        return EdgeHelper::select('source_id')
             ->get($db, [], [$enrolmentId], [EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE], PDO::FETCH_COLUMN);
     }
 
@@ -325,7 +325,7 @@ class EnrolmentHelper
 
     public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
     {
-        return (boolean) (
+        return (bool) (
             $takenPortalId
                 ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
                 : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)

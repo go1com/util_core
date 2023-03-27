@@ -16,17 +16,17 @@ class AwardTestHelper
     use AwardMockTrait;
 
     private $db;
-    public  $award;
-    public  $awardItems;
-    public  $awardItemManuals;
-    public  $awardAchievements;
-    public  $awardEnrolments;
-    public  $awardItemEnrolments;
-    public  $plans;
+    public $award;
+    public $awardItems;
+    public $awardItemManuals;
+    public $awardAchievements;
+    public $awardEnrolments;
+    public $awardItemEnrolments;
+    public $plans;
 
     public static function create(Connection $db)
     {
-        $helper = new self;
+        $helper = new self();
         $helper->db = $db;
 
         return $helper;

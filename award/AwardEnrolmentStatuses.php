@@ -8,14 +8,14 @@ use InvalidArgumentException;
 
 class AwardEnrolmentStatuses
 {
-    const IN_PROGRESS   = 1;
-    const COMPLETED     = 2;
-    const EXPIRED       = 3;
-    const NOT_STARTED   = 4;
+    public const IN_PROGRESS   = 1;
+    public const COMPLETED     = 2;
+    public const EXPIRED       = 3;
+    public const NOT_STARTED   = 4;
 
-    const S_IN_PROGRESS     = 'in-progress';
-    const S_COMPLETED       = 'completed';
-    const S_EXPIRED         = 'expired';
+    public const S_IN_PROGRESS     = 'in-progress';
+    public const S_COMPLETED       = 'completed';
+    public const S_EXPIRED         = 'expired';
 
     public static function all()
     {

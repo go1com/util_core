@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 

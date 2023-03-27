@@ -4,7 +4,7 @@ namespace go1\util\lo;
 
 class LoStatuses
 {
-    const PUBLISHED   = 1;
-    const UNPUBLISHED = 0;
-    const ARCHIVED    = -1;
+    public const PUBLISHED   = 1;
+    public const UNPUBLISHED = 0;
+    public const ARCHIVED    = -1;
 }

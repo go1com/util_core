@@ -6,53 +6,53 @@ use ReflectionClass;
 
 class LiTypes
 {
-    const ASSIGNMENT  = 'assignment';
-    const AUDIO       = 'audio';
-    const DOCUMENT    = 'document';
-    const EVENT       = 'event';
-    const INTEGRATION = 'integration';
-    const INTERACTIVE = 'interactive';
-    const MANUAL      = 'manual';
-    const LINK        = 'link';
-    const LTI         = 'lti';
-    const QUESTION    = 'question';
-    const QUIZ        = 'quiz';
-    const TEXT        = 'text';
-    const VIDEO       = 'video';
-    const COMPLEX     = ['assignment', 'h5p', 'interactive', 'quiz', 'lti', 'event'];
+    public const ASSIGNMENT  = 'assignment';
+    public const AUDIO       = 'audio';
+    public const DOCUMENT    = 'document';
+    public const EVENT       = 'event';
+    public const INTEGRATION = 'integration';
+    public const INTERACTIVE = 'interactive';
+    public const MANUAL      = 'manual';
+    public const LINK        = 'link';
+    public const LTI         = 'lti';
+    public const QUESTION    = 'question';
+    public const QUIZ        = 'quiz';
+    public const TEXT        = 'text';
+    public const VIDEO       = 'video';
+    public const COMPLEX     = ['assignment', 'h5p', 'interactive', 'quiz', 'lti', 'event'];
 
     // deprecated LI types
     /**
      * @deprecated use the ASSIGNMENT type instead
      */
-    const ACTIVITY    = 'activities';
+    public const ACTIVITY    = 'activities';
 
     /**
      * @deprecated
      */
-    const H5P         = 'h5p';
+    public const H5P         = 'h5p';
 
     /**
      * @deprecated use the EVENT type instead
      */
-    const ATTENDANCE  = 'attendance';
+    public const ATTENDANCE  = 'attendance';
 
     /**
      * @deprecated use the LINK type instead
      */
-    const IFRAME      = 'iframe';
+    public const IFRAME      = 'iframe';
 
     /**
      * @deprecated use the TEXT or DOCUMENT type instead
      */
-    const RESOURCE    = 'resource';
+    public const RESOURCE    = 'resource';
 
     /**
      * @deprecated use the EVENT type instead
      */
-    const WORKSHOP    = 'workshop';
+    public const WORKSHOP    = 'workshop';
 
-    const PRIVATE_PROPERTIES = [
+    public const PRIVATE_PROPERTIES = [
         self::DOCUMENT    => ['path'],
         self::H5P         => ['path'],
         self::INTERACTIVE => ['url'],

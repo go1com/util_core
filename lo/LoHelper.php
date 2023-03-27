@@ -14,35 +14,36 @@ use go1\util\enrolment\EnrolmentHelper;
 use HTMLPurifier_Config;
 use PDO;
 use stdClass;
+
 use function array_map;
 
 class LoHelper
 {
     # configuration key for LO, which put under gc_lo.data
     # ---------------------
-    const DISCUSSION_ALLOW = 'allow_discussion';
-    const ENROLMENT_ALLOW  = 'allow_enrolment';
+    public const DISCUSSION_ALLOW = 'allow_discussion';
+    public const ENROLMENT_ALLOW  = 'allow_enrolment';
     /** @deprecated */
-    const ENROLMENT_ALLOW_DEFAULT   = 'allow';
-    const ASSIGNMENT_ALLOW_RESUBMIT = 'allow_resubmit';
+    public const ENROLMENT_ALLOW_DEFAULT   = 'allow';
+    public const ASSIGNMENT_ALLOW_RESUBMIT = 'allow_resubmit';
     /** @deprecated */
-    const ENROLMENT_ALLOW_DISABLE = 'disable';
+    public const ENROLMENT_ALLOW_DISABLE = 'disable';
     /** @deprecated */
-    const ENROLMENT_ALLOW_ENQUIRY    = 'enquiry';
-    const ENROLMENT_RE_ENROL         = 're_enrol';
-    const ENROLMENT_RE_ENROL_DEFAULT = true;
-    const MANUAL_PAYMENT             = 'manual_payment';
-    const MANUAL_PAYMENT_RECIPIENT   = 'manual_payment_recipient';
-    const SEQUENCE_ENROL             = 'requiredSequence';
-    const SUGGESTED_COMPLETION_TIME  = 'suggested_completion_time';
-    const SUGGESTED_COMPLETION_UNIT  = 'suggested_completion_unit';
-    const PASS_RATE                  = 'pass_rate';
-    const SINGLE_LI                  = 'single_li';
-    const ALLOW_REUSE_ENROLMENT      = 'allow_reuse_enrolment'; // Use existing enrollments for reused content
+    public const ENROLMENT_ALLOW_ENQUIRY    = 'enquiry';
+    public const ENROLMENT_RE_ENROL         = 're_enrol';
+    public const ENROLMENT_RE_ENROL_DEFAULT = true;
+    public const MANUAL_PAYMENT             = 'manual_payment';
+    public const MANUAL_PAYMENT_RECIPIENT   = 'manual_payment_recipient';
+    public const SEQUENCE_ENROL             = 'requiredSequence';
+    public const SUGGESTED_COMPLETION_TIME  = 'suggested_completion_time';
+    public const SUGGESTED_COMPLETION_UNIT  = 'suggested_completion_unit';
+    public const PASS_RATE                  = 'pass_rate';
+    public const SINGLE_LI                  = 'single_li';
+    public const ALLOW_REUSE_ENROLMENT      = 'allow_reuse_enrolment'; // Use existing enrollments for reused content
 
     // GO1P-5665: Expiration for award.
-    const AWARD      = 'award';
-    const AWARD_TYPE = [
+    public const AWARD      = 'award';
+    public const AWARD_TYPE = [
         'quantity'   => ['type' => 'bool', 'default' => false],
         'expiration' => ['type' => 'string', 'default' => '+ 1 year'],
     ];
@@ -96,7 +97,7 @@ class LoHelper
 
             unset($lo->hashed_source_id); // this is a MD5 hashed value of data.source_id & internal to the LO service only.
 
-            $lo->event = new stdClass;
+            $lo->event = new stdClass();
             $loIds[] = $lo->id;
         }
 
@@ -281,16 +282,14 @@ class LoHelper
 
     public static function assessorIds(Connection $db, int $loId): array
     {
-        return EdgeHelper
-            ::select('target_id')
+        return EdgeHelper::select('target_id')
             ->get($db, [$loId], [], [EdgeTypes::COURSE_ASSESSOR], PDO::FETCH_COLUMN);
     }
 
     public static function enrolmentAssessorIds(Connection $db, int $loId, int $learnerProfileId): array
     {
         if ($enrolmentId = EnrolmentHelper::enrolmentId($db, $loId, $learnerProfileId)) {
-            return EdgeHelper
-                ::select('source_id')
+            return EdgeHelper::select('source_id')
                 ->get($db, [], [$enrolmentId], [EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE], PDO::FETCH_COLUMN);
         }
 
@@ -387,8 +386,7 @@ class LoHelper
 
     public static function moduleIds(Connection $db, int $loId): array
     {
-        return EdgeHelper
-            ::select('target_id')
+        return EdgeHelper::select('target_id')
             ->get($db, [$loId], [], [EdgeTypes::HAS_MODULE, EdgeTypes::HAS_ELECTIVE_LO], PDO::FETCH_COLUMN);
     }
 
@@ -422,8 +420,7 @@ class LoHelper
 
     public static function authorIds(Connection $db, int $loId): array
     {
-        return EdgeHelper
-            ::select('target_id')
+        return EdgeHelper::select('target_id')
             ->get($db, [$loId], [], [EdgeTypes::HAS_AUTHOR_EDGE], PDO::FETCH_COLUMN);
     }
 

@@ -6,13 +6,13 @@ use ReflectionClass;
 
 class AwardManualTypes
 {
-    const BOOK       = 'book';
-    const ARTICLE    = 'article';
-    const JOURNAL    = 'journal';
-    const F2F        = 'face to face';
-    const ONLINE     = 'online';
-    const OTHER      = 'other';
-    const ON_THE_JOB = 'on the job';
+    public const BOOK       = 'book';
+    public const ARTICLE    = 'article';
+    public const JOURNAL    = 'journal';
+    public const F2F        = 'face to face';
+    public const ONLINE     = 'online';
+    public const OTHER      = 'other';
+    public const ON_THE_JOB = 'on the job';
 
     public static function all()
     {

@@ -6,7 +6,7 @@ use stdClass;
 
 class EventAttendanceCreate
 {
-    const ROUTING_KEY = 'event.attendance.create';
+    public const ROUTING_KEY = 'event.attendance.create';
 
     public function publish(stdClass $body): stdClass
     {

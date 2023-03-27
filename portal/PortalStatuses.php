@@ -4,12 +4,12 @@ namespace go1\util\portal;
 
 class PortalStatuses
 {
-    const ONBOARDING = -100;
-    const DELETED    = -2;
-    const DISABLED   = -1;
-    const QUEUED     = 0;
-    const ENABLED    = 1;
+    public const ONBOARDING = -100;
+    public const DELETED    = -2;
+    public const DISABLED   = -1;
+    public const QUEUED     = 0;
+    public const ENABLED    = 1;
 
-    const TIERS  = ['Unclassified', 'Trial', 'Paid', 'Free', 'Test', 'Inactive'];
-    const STAGES = ['Pre-onboarding', 'Onboarding', 'Established', 'Advocate', 'Inactive'];
+    public const TIERS  = ['Unclassified', 'Trial', 'Paid', 'Free', 'Test', 'Inactive'];
+    public const STAGES = ['Pre-onboarding', 'Onboarding', 'Established', 'Advocate', 'Inactive'];
 }

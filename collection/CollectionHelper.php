@@ -7,7 +7,7 @@ use go1\util\DB;
 
 class CollectionHelper
 {
-    public static function loadByPortalAndMachineName(Connection $db, int $portalId, string $machineName = CollectionTypes::DEFAULT):? Collection
+    public static function loadByPortalAndMachineName(Connection $db, int $portalId, string $machineName = CollectionTypes::DEFAULT): ?Collection
     {
         $collection = $db
             ->executeQuery("SELECT * FROM collection_collection WHERE portal_id = ? AND machine_name = ?", [$portalId, $machineName], [DB::INTEGER, DB::STRING])

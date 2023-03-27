@@ -20,7 +20,7 @@ trait Relay
     public function relayException(\RuntimeException $e, ?int $overwriteErrorCode = null)
     {
         if (!method_exists($e, 'getResponse')) {
-            return new Response(json_encode([]),500,['Content-Type' => 'application/json']);
+            return new Response(json_encode([]), 500, ['Content-Type' => 'application/json']);
         }
 
         $response = $e->getResponse();

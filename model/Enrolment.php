@@ -42,7 +42,7 @@ class Enrolment implements JsonSerializable
 
     public static function create(stdClass $row = null): Enrolment
     {
-        $enrolment = new Enrolment;
+        $enrolment = new Enrolment();
         $enrolment->id = $row->id ?? null;
         $enrolment->profileId = $row->profile_id ?? null;
         $enrolment->parentLoId = $row->parent_lo_id ?? 0;

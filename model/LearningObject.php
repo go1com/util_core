@@ -38,7 +38,7 @@ class LearningObject
 
     public static function create(stdClass $row, int $userProfileId = null, Connection $db = null): LearningObject
     {
-        $lo = new LearningObject;
+        $lo = new LearningObject();
         $lo->id = $row->id;
         $lo->type = $row->type;
         $lo->language = $row->language;

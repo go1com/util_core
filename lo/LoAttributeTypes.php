@@ -6,11 +6,11 @@ use ReflectionClass;
 
 class LoAttributeTypes
 {
-    const BOOLEAN   = "BOOLEAN";
-    const INTEGER   = "INTEGER";
-    const TEXT      = "TEXT";
-    const DIMENSION = "DIMENSION";
-    const DATE      = "DATE";
+    public const BOOLEAN   = "BOOLEAN";
+    public const INTEGER   = "INTEGER";
+    public const TEXT      = "TEXT";
+    public const DIMENSION = "DIMENSION";
+    public const DATE      = "DATE";
 
     public static function all()
     {

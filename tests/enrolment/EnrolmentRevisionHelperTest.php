@@ -19,7 +19,7 @@ class EnrolmentRevisionHelperTest extends UtilCoreTestCase
     private $liEnrolmentIdA3    = 6;
     private $liEnrolmentIdB1    = 7;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

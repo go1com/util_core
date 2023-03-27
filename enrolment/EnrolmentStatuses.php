@@ -15,33 +15,33 @@ class EnrolmentStatuses
     # ---------------------
     # const PENDING                  = -1; # will be removed soon
     # const ASSIGNED                 = -3; # Someone added this for you to do
-    const PENDING_REVIEW           = -1;
-    const ENQUIRED                 = -4; # @deprecated: We will use plan object for this this kind of purpose.
-    const MANUAL_COMPLETE          = -5;
-    const MANUAL_COMPLETE_VERIFIED = -6;
-    const MANUAL_COMPLETE_REJECTED = -7;
+    public const PENDING_REVIEW           = -1;
+    public const ENQUIRED                 = -4; # @deprecated: We will use plan object for this this kind of purpose.
+    public const MANUAL_COMPLETE          = -5;
+    public const MANUAL_COMPLETE_VERIFIED = -6;
+    public const MANUAL_COMPLETE_REJECTED = -7;
 
     # Enrolment statuses
     # ---------------------
-    const NOT_STARTED = 'not-started'; # you have enrolled but not yet opened the course
-    const IN_PROGRESS = 'in-progress'; # you are learning the LO.
-    const PENDING     = 'pending';     # you have enrolled but the enrolment need to be reviewed or blocked by other enrolment
-    const COMPLETED   = 'completed';   # you get this state when you finish the course
-    const EXPIRED     = 'expired';     # your enrolment was completed, but it's expired.
+    public const NOT_STARTED = 'not-started'; # you have enrolled but not yet opened the course
+    public const IN_PROGRESS = 'in-progress'; # you are learning the LO.
+    public const PENDING     = 'pending';     # you have enrolled but the enrolment need to be reviewed or blocked by other enrolment
+    public const COMPLETED   = 'completed';   # you get this state when you finish the course
+    public const EXPIRED     = 'expired';     # your enrolment was completed, but it's expired.
 
     # Enrolment pass
     # ---------------------
-    const PASSED = 1;
-    const FAILED = 0;
+    public const PASSED = 1;
+    public const FAILED = 0;
 
     // Numeric values for the statuses. Being used in ES.
-    const I_NOT_STARTED = -20;
-    const I_PENDING     = -10;
-    const I_IN_PROGRESS = 10;
-    const I_EXPIRED     = 20;
-    const I_COMPLETED   = 100;
+    public const I_NOT_STARTED = -20;
+    public const I_PENDING     = -10;
+    public const I_IN_PROGRESS = 10;
+    public const I_EXPIRED     = 20;
+    public const I_COMPLETED   = 100;
 
-    const PERCENTAGE = 'percentage';
+    public const PERCENTAGE = 'percentage';
 
     /**
      * All available values that user can input.

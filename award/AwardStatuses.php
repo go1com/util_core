@@ -4,10 +4,10 @@ namespace go1\util\award;
 
 class AwardStatuses
 {
-    const PENDING     = -2;
-    const ARCHIVED    = -1;
-    const UNPUBLISHED = 0;
-    const PUBLISHED   = 1;
+    public const PENDING     = -2;
+    public const ARCHIVED    = -1;
+    public const UNPUBLISHED = 0;
+    public const PUBLISHED   = 1;
 
     public static function all()
     {

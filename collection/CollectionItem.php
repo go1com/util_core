@@ -37,4 +37,3 @@ class CollectionItem implements JsonSerializable
         return $array;
     }
 }
-
