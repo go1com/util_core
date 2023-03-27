@@ -2,7 +2,6 @@
 
 namespace go1\util\schema\mock;
 
-
 use Doctrine\DBAL\Connection;
 use go1\util\DateTime;
 use go1\util\enrolment\EnrolmentStatuses;

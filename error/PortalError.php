@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class PortalError extends Error
 {
     # Specific errors inside portal service
-    const PORTAL_USER_PLAN_REACHED = 3002;
+    public const PORTAL_USER_PLAN_REACHED = 3002;
 
     public static function createPortalUserPlanReached(string $instance): JsonResponse
     {

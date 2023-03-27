@@ -13,51 +13,52 @@ use go1\util\DB;
 use go1\util\edge\EdgeTypes;
 use go1\util\queue\Queue;
 use stdClass;
+
 use function array_map;
 
 class PortalHelper
 {
-    const LEGACY_VERSION = 'v2.11.0';
-    const STABLE_VERSION = 'v3.0.0';
+    public const LEGACY_VERSION = 'v2.11.0';
+    public const STABLE_VERSION = 'v3.0.0';
 
-    const WEBSITE_DOMAIN             = 'www.go1.com';
-    const WEBSITE_DEV_DOMAIN         = 'website.dev.go1.cloud';
-    const WEBSITE_QA_DOMAIN          = 'website.qa.go1.cloud';
-    const WEBSITE_PUBLIC_INSTANCE    = 'public.mygo1.com';
-    const WEBSITE_STAGING_INSTANCE   = 'staging.mygo1.com';
-    const WEBSITE_QA_INSTANCE        = 'qa.go1.cloud';
-    const WEBSITE_DEV_INSTANCE       = 'dev.mygo1.com';
-    const CUSTOM_DOMAIN_DEFAULT_HOST = 'go1portals.com';
+    public const WEBSITE_DOMAIN             = 'www.go1.com';
+    public const WEBSITE_DEV_DOMAIN         = 'website.dev.go1.cloud';
+    public const WEBSITE_QA_DOMAIN          = 'website.qa.go1.cloud';
+    public const WEBSITE_PUBLIC_INSTANCE    = 'public.mygo1.com';
+    public const WEBSITE_STAGING_INSTANCE   = 'staging.mygo1.com';
+    public const WEBSITE_QA_INSTANCE        = 'qa.go1.cloud';
+    public const WEBSITE_DEV_INSTANCE       = 'dev.mygo1.com';
+    public const CUSTOM_DOMAIN_DEFAULT_HOST = 'go1portals.com';
 
-    const LANGUAGE               = 'language';
-    const LANGUAGE_DEFAULT       = 'en';
-    const LOCALE                 = 'locale';
-    const LOCALE_DEFAULT         = 'AU';
-    const FEATURE_CREDIT         = 'credit';
-    const FEATURE_CREDIT_DEFAULT = true;
+    public const LANGUAGE               = 'language';
+    public const LANGUAGE_DEFAULT       = 'en';
+    public const LOCALE                 = 'locale';
+    public const LOCALE_DEFAULT         = 'AU';
+    public const FEATURE_CREDIT         = 'credit';
+    public const FEATURE_CREDIT_DEFAULT = true;
     /** @deprecated */
-    const FEATURE_SEND_WELCOME_EMAIL = 'send_welcome_email';
+    public const FEATURE_SEND_WELCOME_EMAIL = 'send_welcome_email';
     /** @deprecated */
-    const FEATURE_SEND_WELCOME_EMAIL_DEFAULT   = true;
-    const FEATURE_CUSTOM_SMTP                  = 'custom_smtp';
-    const FEATURE_CREDIT_REQUEST               = 'credit_request';
-    const FEATURE_CREDIT_REQUEST_DEFAULT       = false;
-    const FEATURE_NOTIFY_NEW_ENROLMENT         = 'notify_on_enrolment_create';
-    const FEATURE_NOTIFY_NEW_ENROLMENT_DEFAULT = true;
-    const FEATURE_NOTIFY_REMIND_MAJOR_EVENT    = 'notify_remind_major_event';
-    const TIMEZONE_DEFAULT                     = "Australia/Brisbane";
-    const COLLECTIONS                          = 'collections';
-    const COLLECTIONS_DEFAULT                  = [
+    public const FEATURE_SEND_WELCOME_EMAIL_DEFAULT   = true;
+    public const FEATURE_CUSTOM_SMTP                  = 'custom_smtp';
+    public const FEATURE_CREDIT_REQUEST               = 'credit_request';
+    public const FEATURE_CREDIT_REQUEST_DEFAULT       = false;
+    public const FEATURE_NOTIFY_NEW_ENROLMENT         = 'notify_on_enrolment_create';
+    public const FEATURE_NOTIFY_NEW_ENROLMENT_DEFAULT = true;
+    public const FEATURE_NOTIFY_REMIND_MAJOR_EVENT    = 'notify_remind_major_event';
+    public const TIMEZONE_DEFAULT                     = "Australia/Brisbane";
+    public const COLLECTIONS                          = 'collections';
+    public const COLLECTIONS_DEFAULT                  = [
         PortalCollectionConfiguration::FREE,
         PortalCollectionConfiguration::PAID,
         PortalCollectionConfiguration::SUBSCRIBE,
         PortalCollectionConfiguration::SHARE,
     ];
 
-    const PLAYER_APP_PREFIX  = 'play';
-    const REACT_APP_PREFIX   = 'r';
-    const DEFAULT_APP_PREFIX = 'p/#';
-    const DEFAULT_WEB_APP    = 'webapp/#';
+    public const PLAYER_APP_PREFIX  = 'play';
+    public const REACT_APP_PREFIX   = 'r';
+    public const DEFAULT_APP_PREFIX = 'p/#';
+    public const DEFAULT_WEB_APP    = 'webapp/#';
 
     public static function load(Connection $go1, $nameOrId, $columns = '*', bool $aliasSupport = false, bool $includePortalData = false): ?stdClass
     {
@@ -150,7 +151,8 @@ class PortalHelper
             'SELECT gc_instance.* FROM gc_instance'
             . ' INNER JOIN gc_lo ON gc_instance.id = gc_lo.instance_id'
             . ' WHERE gc_lo.id = ?',
-            [$loId])->fetch(DB::OBJ);
+            [$loId]
+        )->fetch(DB::OBJ);
     }
 
     public static function titleFromLoId(Connection $db, int $loId)
@@ -211,7 +213,9 @@ class PortalHelper
         $adminIds = self::portalAdminIds($userClient, $portalName);
         $adminIds = array_map('intval', $adminIds);
         $admins = !$adminIds ? [] : array_map(
-            function (User $user) { return UserMapper::toLegacyStandardFormat('', $user); },
+            function (User $user) {
+                return UserMapper::toLegacyStandardFormat('', $user);
+            },
             $userClient->helper()->loadMultipleUsers($adminIds)
         );
 

@@ -13,9 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AwardEnrolmentCreateEventEmbedder
 {
-    protected                   $go1;
-    protected                   $award;
-    protected                   $access;
+    protected $go1;
+    protected $award;
+    protected $access;
     protected UserDomainHelper  $userDomainHelper;
 
     public function __construct(Connection $go1, Connection $award, AccessChecker $access, UserDomainHelper $userDomainHelper)

@@ -1,4 +1,5 @@
 <?php
+
 namespace go1\util\schema;
 
 use Doctrine\DBAL\Schema\Schema;

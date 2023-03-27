@@ -19,7 +19,7 @@ class ServiceConsumeControllerTest extends UtilCoreTestCase
         $c = $this->getContainer();
 
         $c['consumers'] = [
-            new class($this->logs) implements ServiceConsumerInterface {
+            new class ($this->logs) implements ServiceConsumerInterface {
                 private array $logs;
 
                 public function __construct(array &$logs)

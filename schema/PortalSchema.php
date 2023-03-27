@@ -85,7 +85,7 @@ class PortalSchema
 
         $installPortalConf && self::installPortalConf($schema);
         self::update01($schema);
-        self::update02($schema);    
+        self::update02($schema);
         self::update03($schema);
         self::update04($schema);
     }

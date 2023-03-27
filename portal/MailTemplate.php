@@ -6,7 +6,10 @@ use JsonSerializable;
 
 class MailTemplate implements JsonSerializable
 {
-    private $id, $subject, $body, $html;
+    private $id;
+    private $subject;
+    private $body;
+    private $html;
 
     public function __construct(string $id, string $subject, string $body = null, string $html = null)
     {

@@ -9,29 +9,29 @@ class CustomerEsSchema
     /**
      * @deprecated `customer` index on ES version 5.6
      */
-    const INDEX     = ES_INDEX . '_customer';
+    public const INDEX     = ES_INDEX . '_customer';
 
     /**
      * `customer` indices on ES version 8
      */
-    const INDEX_ES8_PORTAL  = ES_INDEX . '_customer_portal';
-    const INDEX_ES8_USER    = ES_INDEX . '_customer_user';
-    const INDEX_ES8_ACCOUNT = ES_INDEX . '_customer_account';
+    public const INDEX_ES8_PORTAL  = ES_INDEX . '_customer_portal';
+    public const INDEX_ES8_USER    = ES_INDEX . '_customer_user';
+    public const INDEX_ES8_ACCOUNT = ES_INDEX . '_customer_account';
 
-    const O_PORTAL  = 'portal';
-    const O_USER    = 'user';
-    const O_ACCOUNT = 'account';
+    public const O_PORTAL  = 'portal';
+    public const O_USER    = 'user';
+    public const O_ACCOUNT = 'account';
 
     /**
      * @deprecated `customer` index's mappings on ES version 5.6
      */
-    const MAPPING = [
+    public const MAPPING = [
         self::O_PORTAL  => self::PORTAL_MAPPING,
         self::O_USER    => self::USER_MAPPING,
         self::O_ACCOUNT => self::ACCOUNT_MAPPING,
     ];
 
-    const PORTAL_MAPPING = [
+    public const PORTAL_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'                => ['type' => Schema::T_KEYWORD],
@@ -62,7 +62,7 @@ class CustomerEsSchema
         ],
     ];
 
-    const USER_MAPPING = [
+    public const USER_MAPPING = [
         'properties' => [
             'id'                     => ['type' => Schema::T_KEYWORD],
             'profile_id'             => ['type' => Schema::T_INT],
@@ -82,7 +82,7 @@ class CustomerEsSchema
         ],
     ];
 
-    const ACCOUNT_MAPPING = [
+    public const ACCOUNT_MAPPING = [
         '_routing'          => ['required' => true],
         'properties'        => [
             'id'           => ['type' => Schema::T_KEYWORD],

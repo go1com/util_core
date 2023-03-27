@@ -6,18 +6,18 @@ use InvalidArgumentException;
 
 class EnrolmentAllowTypes
 {
-    const DEFAULT      = 'allow';
-    const ENROLL       = 'enroll'; // legacy data
-    const ENQUIRY      = 'enquiry';
-    const DISABLE      = 'disable';
-    const SUBSCRIPTION = 'subscription';
+    public const DEFAULT      = 'allow';
+    public const ENROLL       = 'enroll'; // legacy data
+    public const ENQUIRY      = 'enquiry';
+    public const DISABLE      = 'disable';
+    public const SUBSCRIPTION = 'subscription';
 
     // Numeric values for the types. Being used in ES.
     // allow > enquiry > subscription > disable
-    const I_DISABLE      = 0;
-    const I_ENQUIRY      = 10; // premium course also used the enquiry value
-    const I_SUBSCRIPTION = 5;
-    const I_DEFAULT      = 20;
+    public const I_DISABLE      = 0;
+    public const I_ENQUIRY      = 10; // premium course also used the enquiry value
+    public const I_SUBSCRIPTION = 5;
+    public const I_DEFAULT      = 20;
 
     public static function toNumeric(string $type): int
     {

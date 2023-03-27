@@ -1,6 +1,7 @@
 <?php
 
 namespace go1\util\tests\dimensions;
+
 use go1\util\schema\mock\DimensionsMockTrait;
 use go1\util\dimensions\DimensionHelper;
 use go1\util\tests\UtilCoreTestCase;
@@ -16,7 +17,8 @@ class DimesionsHelperTest extends UtilCoreTestCase
         $modifiedDate = DateTime::create('-1 day')->format(DATE_ISO8601);
 
         $this->createTable($this->go1);
-        $dimensionId = $this->createDimension($this->go1,
+        $dimensionId = $this->createDimension(
+            $this->go1,
             [
                 'parent_id' => 0,
                 'name' => 'Design and Animation',
@@ -43,20 +45,22 @@ class DimesionsHelperTest extends UtilCoreTestCase
         $dimensionIds = array();
 
         $this->createTable($this->go1);
-        array_push($dimensionIds, $this->createDimension($this->go1,
-            [   
+        array_push($dimensionIds, $this->createDimension(
+            $this->go1,
+            [
                 'parent_id' => 0,
                 'name' => 'Design and Animation',
-                'type' => '1', 
+                'type' => '1',
                 'created_date' => $createdDate,
                 'modified_date' => $modifiedDate,
             ]
         ));
-        array_push($dimensionIds, $this->createDimension($this->go1,
-            [   
+        array_push($dimensionIds, $this->createDimension(
+            $this->go1,
+            [
                 'parent_id' => 0,
                 'name' => 'Investment and Trading',
-                'type' => '1', 
+                'type' => '1',
                 'created_date' => $createdDate,
                 'modified_date' => $modifiedDate,
             ]
@@ -75,7 +79,8 @@ class DimesionsHelperTest extends UtilCoreTestCase
         $modifiedDate = DateTime::create('-1 day')->format(DATE_ISO8601);
 
         $this->createTable($this->go1);
-        $this->createDimension($this->go1,
+        $this->createDimension(
+            $this->go1,
             [
                 'parent_id' => 0,
                 'name' => 'Design and Animation',
@@ -84,7 +89,8 @@ class DimesionsHelperTest extends UtilCoreTestCase
                 'modified_date' => $modifiedDate,
             ]
         );
-        $this->createDimension($this->go1,
+        $this->createDimension(
+            $this->go1,
             [
                 'parent_id' => 0,
                 'name' => 'Investment and Trading',
@@ -105,7 +111,8 @@ class DimesionsHelperTest extends UtilCoreTestCase
     {
         $createdDate = DateTime::create('-2 day')->format(DATE_ISO8601);
         $modifiedDate = DateTime::create('-1 day')->format(DATE_ISO8601);
-        $id = $this->createDimension($this->go1,
+        $id = $this->createDimension(
+            $this->go1,
             [
                 'parent_id' => 0,
                 'name' => 'Design and Animation',
@@ -114,7 +121,8 @@ class DimesionsHelperTest extends UtilCoreTestCase
                 'modified_date' => $modifiedDate,
             ]
         );
-        $id2 = $this->createDimension($this->go1,
+        $id2 = $this->createDimension(
+            $this->go1,
             [
                 'parent_id' => $id,
                 'name' => 'Investment and Trading',
@@ -123,7 +131,8 @@ class DimesionsHelperTest extends UtilCoreTestCase
                 'modified_date' => $modifiedDate,
             ]
         );
-        $this->createDimension($this->go1,
+        $this->createDimension(
+            $this->go1,
             [
                 'parent_id' => $id2,
                 'name' => 'Third level',

@@ -7,20 +7,20 @@ namespace go1\util\es;
  */
 class TermSchema
 {
-    const INDEX = Schema::INDEX . '_term';
+    public const INDEX = Schema::INDEX . '_term';
 
-    const O_TERM = 'term';
+    public const O_TERM = 'term';
 
-    const SCHEMA = [
+    public const SCHEMA = [
         'index' => self::INDEX,
         'body'  => self::BODY,
     ];
 
-    const BODY = [
+    public const BODY = [
         'mappings' => self::TERM_MAPPING,
     ];
 
-    const TERM_MAPPING = [
+    public const TERM_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'term'  => [

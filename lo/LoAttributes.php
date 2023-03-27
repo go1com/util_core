@@ -6,43 +6,43 @@ use ReflectionClass;
 
 class LoAttributes
 {
-    const MOBILE_OPTIMISED    = 1;
-    const WCAG                = 2;  // Web Content Accessibility Guidelines compatible
-    const ASSESSABLE          = 3;
-    const AVAILABILITY        = 4;  // marketplace
+    public const MOBILE_OPTIMISED    = 1;
+    public const WCAG                = 2;  // Web Content Accessibility Guidelines compatible
+    public const ASSESSABLE          = 3;
+    public const AVAILABILITY        = 4;  // marketplace
     /**
      * @deprecated use the REGION_RESTRICTIONS type instead
      */
-    const REGION_RESTRICTION            = 5;
-    const TOPICS                        = 6;
-    const REGION_RESTRICTIONS           = 7;
-    const LEARNING_OUTCOMES             = 8;
-    const PROVIDER                      = 9;
-    const INTERNAL_QA_RATING            = 10;
-    const DOWNLOAD_SPEED                = 11;
-    const AUDIO_VISUAL_DESIGN           = 12;
-    const PRESENTATION_OF_CONTENT       = 13;
-    const STRUCTURE_NAVIGATION          = 14;
-    const INTEGRATION                   = 15;
-    const INTEGRATION_URL               = 16;
-    const INDUSTRY                      = 17;
-    const COMPANY_SIZE                  = 18;
-    const YEAR_CREATED                  = 19;
-    const FEATURED_STATUS               = 20;
-    const FEATURED_LOCALE               = 21;
-    const FEATURED_TIMESTAMP            = 22;
-    const ENTRY_LEVEL                   = 23;
-    const LOCALE                        = 24;
-    const REGION_RELEVANCE              = 25;
-    const CHECK_URL                     = 26;
-    const ROLES                         = 27;
-    const SKILLS                        = 28;
-    const SUBSCRIPTION_RENEWAL_DATE     = 29;
-    const PLAYLIST_TYPE                 = 30;
-    const PLAYBACK_TARGET               = 31;
-    const STREAMABLE                    = 32;
-    const CURATED_BY                    = 33; // use this to surface content curation tool and also in recommendations, could be used as a signal displayed on lo cards. Eg: curated_by = "go1"
-    const FEATURED_BY                   = 34; // for featured playlists, combine use with featured_status, Eg: featured_status = true & featured_by = "go1"
+    public const REGION_RESTRICTION            = 5;
+    public const TOPICS                        = 6;
+    public const REGION_RESTRICTIONS           = 7;
+    public const LEARNING_OUTCOMES             = 8;
+    public const PROVIDER                      = 9;
+    public const INTERNAL_QA_RATING            = 10;
+    public const DOWNLOAD_SPEED                = 11;
+    public const AUDIO_VISUAL_DESIGN           = 12;
+    public const PRESENTATION_OF_CONTENT       = 13;
+    public const STRUCTURE_NAVIGATION          = 14;
+    public const INTEGRATION                   = 15;
+    public const INTEGRATION_URL               = 16;
+    public const INDUSTRY                      = 17;
+    public const COMPANY_SIZE                  = 18;
+    public const YEAR_CREATED                  = 19;
+    public const FEATURED_STATUS               = 20;
+    public const FEATURED_LOCALE               = 21;
+    public const FEATURED_TIMESTAMP            = 22;
+    public const ENTRY_LEVEL                   = 23;
+    public const LOCALE                        = 24;
+    public const REGION_RELEVANCE              = 25;
+    public const CHECK_URL                     = 26;
+    public const ROLES                         = 27;
+    public const SKILLS                        = 28;
+    public const SUBSCRIPTION_RENEWAL_DATE     = 29;
+    public const PLAYLIST_TYPE                 = 30;
+    public const PLAYBACK_TARGET               = 31;
+    public const STREAMABLE                    = 32;
+    public const CURATED_BY                    = 33; // use this to surface content curation tool and also in recommendations, could be used as a signal displayed on lo cards. Eg: curated_by = "go1"
+    public const FEATURED_BY                   = 34; // for featured playlists, combine use with featured_status, Eg: featured_status = true & featured_by = "go1"
 
     public static function machineName(int $attribute): ?string
     {

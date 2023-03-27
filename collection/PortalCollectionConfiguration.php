@@ -4,14 +4,14 @@ namespace go1\util\collection;
 
 class PortalCollectionConfiguration
 {
-    const FREE         = 'free';
-    const PAID         = 'paid';
-    const SUBSCRIBE    = 'subscribe';
-    const CUSTOM       = 'custom';
-    const SHARE        = 'share';
-    const CUSTOM_SHARE = 'custom_share';
-    const CONTENT_LOADER = 'content_loader';
-    const ALL = [
+    public const FREE         = 'free';
+    public const PAID         = 'paid';
+    public const SUBSCRIBE    = 'subscribe';
+    public const CUSTOM       = 'custom';
+    public const SHARE        = 'share';
+    public const CUSTOM_SHARE = 'custom_share';
+    public const CONTENT_LOADER = 'content_loader';
+    public const ALL = [
         self::FREE,
         self::SUBSCRIBE,
         self::PAID,

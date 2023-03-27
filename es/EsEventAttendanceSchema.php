@@ -9,20 +9,20 @@ use go1\util\event\AttendanceStatuses;
  */
 class EsEventAttendanceSchema
 {
-    const INDEX = Schema::INDEX . '_event_attendance';
+    public const INDEX = Schema::INDEX . '_event_attendance';
 
-    const O_EVENT_ATTENDANCE = 'event_attendance';
+    public const O_EVENT_ATTENDANCE = 'event_attendance';
 
-    const SCHEMA = [
+    public const SCHEMA = [
         'index' => self::INDEX,
         'body'  => self::BODY,
     ];
 
-    const BODY = [
+    public const BODY = [
         'mappings' => self::EVENT_ATTENDANCE_MAPPING,
     ];
 
-    const EVENT_ATTENDANCE_PROPERTIES = [
+    public const EVENT_ATTENDANCE_PROPERTIES = [
         'id'           => ['type' => Schema::T_KEYWORD],
         'user_id'      => ['type' => Schema::T_INT],
         'lo_id'        => ['type' => Schema::T_INT],
@@ -52,7 +52,7 @@ class EsEventAttendanceSchema
         ],
     ];
 
-    const EVENT_ATTENDANCE_MAPPING = [
+    public const EVENT_ATTENDANCE_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => self::EVENT_ATTENDANCE_PROPERTIES + [
                 'metadata' => [

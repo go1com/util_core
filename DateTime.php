@@ -8,11 +8,11 @@ use InvalidArgumentException;
 
 class DateTime
 {
-    const DEFAULT_HUMAN_FORMAT    = 'Y-m-d H:i:s';
-    const DATE_SHORT_MONTH_FORMAT = 'd-M-Y';
-    const DATETIME_GREATER        = 1;
-    const DATETIME_EQUAL          = 0;
-    const DATETIME_LESS           = -1;
+    public const DEFAULT_HUMAN_FORMAT    = 'Y-m-d H:i:s';
+    public const DATE_SHORT_MONTH_FORMAT = 'd-M-Y';
+    public const DATETIME_GREATER        = 1;
+    public const DATETIME_EQUAL          = 0;
+    public const DATETIME_LESS           = -1;
 
     public static function create($time, $timezone = 'UTC', $reset = false): DefaultDateTime
     {
@@ -20,7 +20,7 @@ class DateTime
             throw new InvalidArgumentException('Specific date/time string can not empty');
         }
 
-        $datetime = new DefaultDateTime;
+        $datetime = new DefaultDateTime();
         $datetime->setTimezone(new DateTimeZone($timezone));
         $datetime->setTimestamp((is_numeric($time) ? $time : strtotime($time)));
         $reset && $datetime->setTime(0, 0);

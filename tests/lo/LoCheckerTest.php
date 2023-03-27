@@ -25,7 +25,7 @@ class LoCheckerTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_MODULE, $courseId, $moduleId);
         $this->link($this->go1, EdgeTypes::HAS_AUTHOR_EDGE, $courseId, $userId);
 
-        $checker = new LoChecker;
+        $checker = new LoChecker();
         $this->assertEquals(true, $checker->isAuthor($this->go1, $courseId, $userId));
         $this->assertEquals(true, $checker->isModuleAuthor($this->go1, $moduleId, $userId));
         $this->assertEquals(false, $checker->isAuthor($this->go1, $courseId + 444, $userId));
@@ -75,7 +75,7 @@ class LoCheckerTest extends UtilCoreTestCase
             LoHelper::SINGLE_LI => true,
         ]);
         $video = LoHelper::load($this->go1, $videoId);
-        $checker = new LoChecker;
+        $checker = new LoChecker();
         $this->assertEquals(true, $checker->singleLi($video));
     }
 }

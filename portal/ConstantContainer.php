@@ -1,11 +1,12 @@
 <?php
+
 namespace go1\util\portal;
 
 abstract class ConstantContainer
 {
-    static protected $name = '';
+    protected static $name = '';
 
-    static protected $customFormats = [];
+    protected static $customFormats = [];
 
     public static function all()
     {

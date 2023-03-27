@@ -7,7 +7,7 @@ use function getenv;
 
 class Service
 {
-    const VERSION = 'v19.02.22.0';
+    public const VERSION = 'v19.02.22.0';
 
     public static function cacheOptions($root)
     {

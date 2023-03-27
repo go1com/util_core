@@ -11,9 +11,9 @@ use stdClass;
 class Plan implements JsonSerializable
 {
     /** @deprecated */
-    const TYPE_AWARD = 'award';
+    public const TYPE_AWARD = 'award';
     /** @deprecated */
-    const TYPE_LO = 'lo';
+    public const TYPE_LO = 'lo';
 
     /** @var integer */
     public $id;
@@ -61,7 +61,7 @@ class Plan implements JsonSerializable
 
     public static function create(stdClass $input): Plan
     {
-        $plan = new Plan;
+        $plan = new Plan();
         $plan->id = $input->id ?? null;
         $plan->type = $input->type ?? PlanTypes::ASSIGN;
         $plan->userId = $input->user_id ?? null;
@@ -96,7 +96,7 @@ class Plan implements JsonSerializable
         return $values ?? [];
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return [
             'id'           => $this->id,

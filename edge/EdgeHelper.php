@@ -49,7 +49,7 @@ class EdgeHelper
 
     public static function select(string $select = null)
     {
-        $helper = new self;
+        $helper = new self();
         $helper->select = $select;
 
         return $helper;
@@ -116,8 +116,8 @@ class EdgeHelper
         int $type,
         int $sourceId = null,
         int $targetId = null,
-        int $weight = null): array
-    {
+        int $weight = null
+    ): array {
         if (!$sourceId && !$targetId) {
             throw new BadFunctionCallException('Require source or target.');
         }

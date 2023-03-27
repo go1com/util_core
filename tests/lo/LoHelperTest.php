@@ -102,7 +102,7 @@ class LoHelperTest extends UtilCoreTestCase
     /** @dataProvider dataDescriptionPurifierConfig */
     public function testDescriptionPurifierConfig(string $input, string $expect)
     {
-        $html = new HTMLPurifier;
+        $html = new HTMLPurifier();
         $result = $html->purify(trim($input), LoHelper::descriptionPurifierConfig());
         $this->assertEquals($expect, $result);
     }
@@ -559,8 +559,18 @@ class LoHelperTest extends UtilCoreTestCase
     public function testAttributes()
     {
         $dimensionType = 2;
-        $this->createAttributeLookup($this->go1, LoAttributes::REGION_RESTRICTIONS, LoAttributes::machineName(LoAttributes::REGION_RESTRICTIONS), 'DIMENSION', 'video',
-            '["ALWAYS", "FOR_PUBLISH"]', '["Author"]', null, 1, $dimensionType);
+        $this->createAttributeLookup(
+            $this->go1,
+            LoAttributes::REGION_RESTRICTIONS,
+            LoAttributes::machineName(LoAttributes::REGION_RESTRICTIONS),
+            'DIMENSION',
+            'video',
+            '["ALWAYS", "FOR_PUBLISH"]',
+            '["Author"]',
+            null,
+            1,
+            $dimensionType
+        );
 
         $this->go1->insert('dimensions', [
             'id'            => 3,
@@ -586,8 +596,18 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testAttributeLearningOutcomes()
     {
-        $this->createAttributeLookup($this->go1, LoAttributes::LEARNING_OUTCOMES, LoAttributes::machineName(LoAttributes::LEARNING_OUTCOMES), 'TEXT', 'video',
-            '["NO"]', '[]', null, 1, null);
+        $this->createAttributeLookup(
+            $this->go1,
+            LoAttributes::LEARNING_OUTCOMES,
+            LoAttributes::machineName(LoAttributes::LEARNING_OUTCOMES),
+            'TEXT',
+            'video',
+            '["NO"]',
+            '[]',
+            null,
+            1,
+            null
+        );
 
         $body = [LoAttributes::machineName(LoAttributes::LEARNING_OUTCOMES) => [
             "This is alearning, outcome",

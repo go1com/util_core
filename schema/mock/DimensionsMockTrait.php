@@ -49,7 +49,8 @@ trait DimensionsMockTrait
                 'create view dimensions_levels as select a.id as "Level1", b.id as "Level2", c.id as "Level3"
                 from dimensions a
                 inner join dimensions b on b.parent_id = a.id AND a.parent_id = 0
-                left join dimensions c on c.parent_id = b.id;');
+                left join dimensions c on c.parent_id = b.id;'
+            );
         }
     }
 }

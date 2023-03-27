@@ -8,7 +8,7 @@ use stdClass;
 
 class Collection implements JsonSerializable
 {
-    const DEFAULT_MACHINE_NAME = 'default';
+    public const DEFAULT_MACHINE_NAME = 'default';
 
     public $id;
     public $type;
@@ -27,7 +27,7 @@ class Collection implements JsonSerializable
     public static function create(stdClass $input): Collection
     {
         Text::purify(null, $input);
-        $collection = new Collection;
+        $collection = new Collection();
         $collection->id = $input->id ?? null;
         $collection->type = $input->type ?? null;
         $collection->machineName = $input->machine_name ?? null;

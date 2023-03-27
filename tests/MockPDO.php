@@ -1,8 +1,6 @@
 <?php
 
-
 namespace go1\util\tests;
-
 
 class MockPDO extends \PDO
 {

@@ -61,8 +61,8 @@ trait AwardMockTrait
         float $quantity = null,
         int $parentAwardItemId = null,
         $weight = null,
-        $mandatory = false)
-    {
+        $mandatory = false
+    ) {
         $db->insert('award_item', [
             'award_revision_id'    => $awardRevId,
             'type'                 => $type,

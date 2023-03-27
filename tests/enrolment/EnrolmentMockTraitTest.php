@@ -26,8 +26,17 @@ class EnrolmentMockTraitTest extends UtilCoreTestCase
     protected $portalPrivateKey;
     protected $portalName = 'az.mygo1.com';
     protected $profileId  = 11;
-    protected $userId, $jwt;
-    protected $lpId, $courseId, $moduleId, $liVideoId, $liResourceId, $liInteractiveId, $electiveQuestionId, $electiveTextId, $electiveQuizId;
+    protected $userId;
+    protected $jwt;
+    protected $lpId;
+    protected $courseId;
+    protected $moduleId;
+    protected $liVideoId;
+    protected $liResourceId;
+    protected $liInteractiveId;
+    protected $electiveQuestionId;
+    protected $electiveTextId;
+    protected $electiveQuizId;
 
     public function setUp(): void
     {
@@ -114,7 +123,7 @@ class EnrolmentMockTraitTest extends UtilCoreTestCase
 
         $enrolment = EnrolmentHelper::loadSingle($this->go1, $enrolmentId);
         $this->assertEquals($status, $enrolment->status);
-        $this->assertTrue($expectedStartDate <= $enrolment->startDate,);
+        $this->assertTrue($expectedStartDate <= $enrolment->startDate, );
         $this->assertTrue($expectedEndDate <= $enrolment->endDate);
     }
 }

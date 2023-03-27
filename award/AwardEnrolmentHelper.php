@@ -12,8 +12,7 @@ class AwardEnrolmentHelper
 {
     public static function assessorIds(Connection $db, int $enrolmentId): array
     {
-        return EdgeHelper
-            ::select('source_id')
+        return EdgeHelper::select('source_id')
             ->get($db, [], [$enrolmentId], [EdgeTypes::HAS_AWARD_TUTOR_ENROLMENT_EDGE], PDO::FETCH_COLUMN);
     }
 

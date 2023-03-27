@@ -17,7 +17,7 @@ class EnrolmentSchemaTest extends UtilCoreTestCase
     {
         parent::setUp();
 
-        DB::install($this->go1, [fn(Schema $schema) => EnrolmentSchema::installManualRecord($schema)]);
+        DB::install($this->go1, [fn (Schema $schema) => EnrolmentSchema::installManualRecord($schema)]);
     }
 
     public function testUniqueOK()

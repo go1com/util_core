@@ -15,7 +15,7 @@ class AwardHelperTest extends UtilCoreTestCase
 
     private $awardData;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 

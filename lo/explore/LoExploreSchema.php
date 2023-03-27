@@ -8,12 +8,12 @@ use go1\util\es\Schema;
 
 class LoExploreSchema
 {
-    const BODY = [
+    public const BODY = [
         'mappings' => self::MAPPING,
         'settings' => self::SETTINGS,
     ];
 
-    const SETTINGS = [
+    public const SETTINGS = [
         'analysis' => [
             'normalizer' => [
                 'lowercase' => [
@@ -24,7 +24,7 @@ class LoExploreSchema
         ]
     ];
 
-    const MAPPING = [
+    public const MAPPING = [
         Schema::O_LO                => self::LO_MAPPING,
         Schema::O_GROUP             => self::GROUP_MAPPING,
         Schema::O_ENROLMENT         => self::ENROLMENT_MAPPING,
@@ -33,7 +33,7 @@ class LoExploreSchema
         CustomerEsSchema::O_PORTAL  => self::PORTAL_MAPPING,
     ];
 
-    const LO_MAPPING = [
+    public const LO_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'              => ['type' => Schema::T_KEYWORD],
@@ -247,7 +247,7 @@ class LoExploreSchema
         ],
     ];
 
-    const ENROLMENT_MAPPING = [
+    public const ENROLMENT_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'         => ['type' => Schema::T_KEYWORD],
@@ -265,7 +265,7 @@ class LoExploreSchema
         ],
     ];
 
-    const GROUP_ITEM_MAPPING = [
+    public const GROUP_ITEM_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'          => ['type' => Schema::T_KEYWORD],
@@ -282,7 +282,7 @@ class LoExploreSchema
         ],
     ];
 
-    const ACCOUNT_MAPPING = [
+    public const ACCOUNT_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'        => ['type' => Schema::T_KEYWORD],
@@ -307,7 +307,7 @@ class LoExploreSchema
         ],
     ];
 
-    const PORTAL_MAPPING = [
+    public const PORTAL_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'                 => ['type' => Schema::T_KEYWORD],
@@ -323,7 +323,7 @@ class LoExploreSchema
         ],
     ];
 
-    const GROUP_MAPPING = [
+    public const GROUP_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => [
             'id'               => ['type' => Schema::T_KEYWORD],

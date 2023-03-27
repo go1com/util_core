@@ -8,8 +8,8 @@ use go1\util\tests\UtilCoreTestCase;
 class RelayTest extends UtilCoreTestCase
 {
     private \PHPUnit\Framework\MockObject\MockObject $relay;
-    private                                          $response;
-    private                                          $exception;
+    private $response;
+    private $exception;
 
     public function setUp(): void
     {
@@ -27,17 +27,17 @@ class RelayTest extends UtilCoreTestCase
                 $this->headers = $headers;
             }
 
-            function getBody()
+            public function getBody()
             {
                 return $this->body;
             }
 
-            function getStatusCode()
+            public function getStatusCode()
             {
                 return $this->statusCode;
             }
 
-            function getHeaders()
+            public function getHeaders()
             {
                 return $this->headers;
             }
@@ -46,12 +46,12 @@ class RelayTest extends UtilCoreTestCase
         $this->exception = new class () extends \RuntimeException {
             private $response;
 
-            function getResponse()
+            public function getResponse()
             {
                 return $this->response;
             }
 
-            function setResponse($response)
+            public function setResponse($response)
             {
                 $this->response = $response;
             }

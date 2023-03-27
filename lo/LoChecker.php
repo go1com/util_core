@@ -107,7 +107,7 @@ class LoChecker
 
     public static function allowDiscussion(stdClass $lo): bool
     {
-        $data = (new self)->loData($lo);
+        $data = (new self())->loData($lo);
 
         return $data[LoHelper::DISCUSSION_ALLOW] ?? ($data['is_discussion_enabled'] ?? true);
     }
@@ -137,7 +137,7 @@ class LoChecker
 
     public function canUpdate(Connection $db, int $id, string $instance, Request $req)
     {
-        $accessChecker = new AccessChecker;
+        $accessChecker = new AccessChecker();
         if ($accessChecker->isPortalTutor($req, $instance)) {
             return true;
         }
@@ -163,7 +163,7 @@ class LoChecker
 
     public static function passRate(stdClass $lo)
     {
-        $data = (new static)->loData($lo);
+        $data = (new static())->loData($lo);
 
         return $data[LoHelper::PASS_RATE] ?? 0;
     }

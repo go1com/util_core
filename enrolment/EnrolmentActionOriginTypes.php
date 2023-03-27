@@ -4,6 +4,6 @@ namespace go1\util\enrolment;
 
 class EnrolmentActionOriginTypes
 {
-    const SELF_DIRECTED = 1;
-    const ASSIGNED = 2;
+    public const SELF_DIRECTED = 1;
+    public const ASSIGNED = 2;
 }

@@ -6,7 +6,7 @@ use Assert\Assertion;
 use go1\util\Error;
 use go1\util\tests\UtilCoreTestCase;
 
-class ErrorTest  extends UtilCoreTestCase
+class ErrorTest extends UtilCoreTestCase
 {
     public function testWithNullData()
     {

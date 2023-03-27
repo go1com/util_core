@@ -17,16 +17,25 @@ use stdClass;
 class User implements JsonSerializable
 {
     /** @var integer */
-    public $id, $profileId;
+    public $id;
+    public $profileId;
 
     /** @var string */
-    public $instance, $name, $mail, $firstName, $lastName, $avatar;
+    public $instance;
+    public $name;
+    public $mail;
+    public $firstName;
+    public $lastName;
+    public $avatar;
 
     /** @var bool */
     public $status;
 
     /** @var integer */
-    public $created, $access, $login, $timestamp;
+    public $created;
+    public $access;
+    public $login;
+    public $timestamp;
 
     /** @var string[] */
     public $roles = [];
@@ -50,7 +59,7 @@ class User implements JsonSerializable
     {
         $data = $row->data ?? null;
 
-        $user = new User;
+        $user = new User();
         $user->id = $row->id;
         $user->profileId = $row->profile_id ?? null;
         $user->instance = $row->instance ?? null;
@@ -100,7 +109,7 @@ class User implements JsonSerializable
         return trim($this->firstName . ' ' . $this->lastName);
     }
 
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return [
             'id'         => $this->id,

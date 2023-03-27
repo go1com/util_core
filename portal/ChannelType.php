@@ -4,20 +4,20 @@ namespace go1\util\portal;
 
 class ChannelType extends ConstantContainer
 {
-    static protected $name = 'channel';
+    protected static $name = 'channel';
 
-    static protected $customFormats = [
+    protected static $customFormats = [
         self::SALES => 'SDR / Account Exec',
         self::DIRECT => 'Direct or Inbound',
     ];
 
-    const INTERNAL             = 'internal';
-    const REFERRAL_PARTNER     = 'referral_partner';
-    const DISTRIBUTION_PARTNER = 'distribution_partner';
-    const SALES                = 'sales';
-    const EXISTING_CUSTOMER    = 'existing_customer';
-    const DIRECT               = 'direct';
-    const PLATFORM_PARTNER     = 'platform_partner';
-    const PORTAL_LAUNCHER      = 'portal_launcher';
-    const CONTENT_PARTNER      = 'content_partner';
+    public const INTERNAL             = 'internal';
+    public const REFERRAL_PARTNER     = 'referral_partner';
+    public const DISTRIBUTION_PARTNER = 'distribution_partner';
+    public const SALES                = 'sales';
+    public const EXISTING_CUSTOMER    = 'existing_customer';
+    public const DIRECT               = 'direct';
+    public const PLATFORM_PARTNER     = 'platform_partner';
+    public const PORTAL_LAUNCHER      = 'portal_launcher';
+    public const CONTENT_PARTNER      = 'content_partner';
 }

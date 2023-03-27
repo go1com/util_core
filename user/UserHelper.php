@@ -11,20 +11,21 @@ use PDO;
 use RuntimeException;
 use stdClass;
 use Symfony\Component\HttpFoundation\Request;
+
 use function array_fill_keys;
 use function array_map;
 
 class UserHelper
 {
-    const ROOT_JWT                     = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvYmplY3QiOnsidHlwZSI6InVzZXIiLCJjb250ZW50Ijp7ImlkIjoxLCJwcm9maWxlX2lkIjoxLCJyb2xlcyI6WyJBZG1pbiBvbiAjQWNjb3VudHMiXSwibWFpbCI6IjFAMS4xIn19fQ.YwGrlnegpd_57ek0vew5ixBfzhxiepc5ODVwPva9egs';
-    const DEFAULT_ACCOUNTS_ROLES       = [Roles::AUTHENTICATED];
-    const DEFAULT_PORTAL_ROLES         = [Roles::STUDENT, Roles::AUTHENTICATED];
-    const SYSTEM_USER_ID               = -1;
-    const CRON_USER_ID                 = -11;
-    const INTERACTIVE_ADMIN_USER_ID    = -100;
-    const INTERACTIVE_ADMIN_PROFILE_ID = -100;
-    const QUIZ_ADMIN_USER_ID           = -200;
-    const QUIZ_ADMIN_PROFILE_ID        = -200;
+    public const ROOT_JWT                     = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJvYmplY3QiOnsidHlwZSI6InVzZXIiLCJjb250ZW50Ijp7ImlkIjoxLCJwcm9maWxlX2lkIjoxLCJyb2xlcyI6WyJBZG1pbiBvbiAjQWNjb3VudHMiXSwibWFpbCI6IjFAMS4xIn19fQ.YwGrlnegpd_57ek0vew5ixBfzhxiepc5ODVwPva9egs';
+    public const DEFAULT_ACCOUNTS_ROLES       = [Roles::AUTHENTICATED];
+    public const DEFAULT_PORTAL_ROLES         = [Roles::STUDENT, Roles::AUTHENTICATED];
+    public const SYSTEM_USER_ID               = -1;
+    public const CRON_USER_ID                 = -11;
+    public const INTERACTIVE_ADMIN_USER_ID    = -100;
+    public const INTERACTIVE_ADMIN_PROFILE_ID = -100;
+    public const QUIZ_ADMIN_USER_ID           = -200;
+    public const QUIZ_ADMIN_PROFILE_ID        = -200;
 
     public static function isEmbeddedPortalActive(stdClass $user): bool
     {

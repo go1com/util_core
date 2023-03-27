@@ -6,10 +6,10 @@ use InvalidArgumentException;
 
 class PlanType
 {
-    const PREMIUM          = 'premium';
-    const PLATFORM         = 'platform';
-    const INTERNAL         = 'internal';
-    const PLATFORM_PARTNER = 'platform_partner';
+    public const PREMIUM          = 'premium';
+    public const PLATFORM         = 'platform';
+    public const INTERNAL         = 'internal';
+    public const PLATFORM_PARTNER = 'platform_partner';
 
     public static function all()
     {

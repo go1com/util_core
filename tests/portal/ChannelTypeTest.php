@@ -1,4 +1,5 @@
 <?php
+
 namespace go1\util\tests\portal;
 
 use go1\util\portal\ChannelType;

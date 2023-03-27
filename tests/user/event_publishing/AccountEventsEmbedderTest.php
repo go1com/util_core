@@ -24,7 +24,7 @@ class AccountEventsEmbedderTest extends UtilCoreTestCase
     protected $profileId = 999;
     protected $jwt;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -39,7 +39,7 @@ class AccountEventsEmbedderTest extends UtilCoreTestCase
     public function test()
     {
         $c = $this->getContainer();
-        $embedder = new AccountEventsEmbedder($this->go1, new $c['access_checker']);
+        $embedder = new AccountEventsEmbedder($this->go1, new $c['access_checker']());
 
         $account = UserHelper::load($this->go1, $this->accountId);
         $req = Request::create('/', 'POST');

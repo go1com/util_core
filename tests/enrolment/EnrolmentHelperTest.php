@@ -35,8 +35,17 @@ class EnrolmentHelperTest extends UtilCoreTestCase
     protected $portalPrivateKey;
     protected $portalName = 'az.mygo1.com';
     protected $profileId = 11;
-    protected $userId, $jwt;
-    protected $lpId, $courseId, $moduleId, $liVideoId, $liResourceId, $liInteractiveId, $electiveQuestionId, $electiveTextId, $electiveQuizId;
+    protected $userId;
+    protected $jwt;
+    protected $lpId;
+    protected $courseId;
+    protected $moduleId;
+    protected $liVideoId;
+    protected $liResourceId;
+    protected $liInteractiveId;
+    protected $electiveQuestionId;
+    protected $electiveTextId;
+    protected $electiveQuizId;
 
     /**
      * @var EnrolmentEventsEmbedder
@@ -47,7 +56,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
     {
         parent::setUp();
         $c = $this->getContainer();
-        $this->enrolmentEventsEmbedder = new EnrolmentEventsEmbedder($this->go1, new AccessChecker, $c['go1.client.user-domain-helper']);
+        $this->enrolmentEventsEmbedder = new EnrolmentEventsEmbedder($this->go1, new AccessChecker(), $c['go1.client.user-domain-helper']);
 
         // Create instance
         $this->portalId = $this->createPortal($this->go1, ['title' => $this->portalName]);

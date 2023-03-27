@@ -7,20 +7,20 @@ namespace go1\util\es;
  */
 class EsEventSchema
 {
-    const INDEX = Schema::INDEX . '_event';
+    public const INDEX = Schema::INDEX . '_event';
 
-    const O_EVENT = 'event';
+    public const O_EVENT = 'event';
 
-    const SCHEMA = [
+    public const SCHEMA = [
         'index' => self::INDEX,
         'body'  => self::BODY,
     ];
 
-    const BODY = [
+    public const BODY = [
         'mappings' => self::EVENT_MAPPING,
     ];
 
-    const EVENT_PROPERTIES = [
+    public const EVENT_PROPERTIES = [
         'id'                       => ['type' => Schema::T_KEYWORD],
         'lo_id'                    => ['type' => Schema::T_INT],
         'title'                    => ['type' => Schema::T_KEYWORD] + Schema::ANALYZED,
@@ -52,7 +52,7 @@ class EsEventSchema
         'coordinate'               => ['type' => Schema::T_GEO_POINT],
     ];
 
-    const EVENT_MAPPING = [
+    public const EVENT_MAPPING = [
         '_routing'   => ['required' => true],
         'properties' => self::EVENT_PROPERTIES + [
                 'parent'   => [

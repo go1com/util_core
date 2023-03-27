@@ -19,7 +19,7 @@ class Edge implements JsonSerializable
 
     public static function create(stdClass $row): Edge
     {
-        $edge = new Edge;
+        $edge = new Edge();
         $edge->id = $row->id;
         $edge->type = $row->type;
         $edge->sourceId = $row->source_id;

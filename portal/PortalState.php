@@ -6,15 +6,15 @@ use InvalidArgumentException;
 
 class PortalState
 {
-    const TRIAL       = 'trial';
-    const ONBOARDING  = 'onboarding';
-    const LIVE        = 'live';
-    const EXPIRED     = 'expired';
-    const SUSPENDED   = 'suspended';
-    const CANCELLED   = 'cancelled';
-    const TEST        = 'test';
-    const TEMPLATE    = 'template';
-    const DEVELOPMENT = 'development';
+    public const TRIAL       = 'trial';
+    public const ONBOARDING  = 'onboarding';
+    public const LIVE        = 'live';
+    public const EXPIRED     = 'expired';
+    public const SUSPENDED   = 'suspended';
+    public const CANCELLED   = 'cancelled';
+    public const TEST        = 'test';
+    public const TEMPLATE    = 'template';
+    public const DEVELOPMENT = 'development';
 
     public static function all()
     {

@@ -23,12 +23,12 @@ class AccessCheckerTest extends UtilCoreTestCase
         $accountId = $this->createUser($this->go1, ['instance' => 'qa.mygo1.com']);
         $this->link($this->go1, EdgeTypes::HAS_ACCOUNT, $userId, $accountId);
 
-        $req = new Request;
+        $req = new Request();
         $jwt = $this->jwtForUser($this->go1, $userId, 'qa.mygo1.com');
         $payload = Text::jwtContent($jwt);
         $req->attributes->set('jwt.payload', $payload);
-        $service = new AccessChecker;
-        
+        $service = new AccessChecker();
+
         {
             // context portal
             $portal = $service->contextPortal($req);
@@ -68,14 +68,14 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_MANAGER, $studentId, $managerId);
 
         # Is manager
-        $req = new Request;
+        $req = new Request();
         $req->attributes->set('jwt.payload', $this->getPayload(['id' => $managerId, 'mail' => $managerMail]));
-        $this->assertTrue((new AccessChecker)->isStudentManager($this->go1, $req, $studentMail, $portalName, EdgeTypes::HAS_MANAGER));
+        $this->assertTrue((new AccessChecker())->isStudentManager($this->go1, $req, $studentMail, $portalName, EdgeTypes::HAS_MANAGER));
 
         # Is not manager
-        $req = new Request;
+        $req = new Request();
         $req->attributes->set('jwt.payload', $this->getPayload(['id' => $manager2Id, 'mail' => $manager2Mail]));
-        $this->assertFalse((new AccessChecker)->isStudentManager($this->go1, $req, $studentMail, $portalName, EdgeTypes::HAS_MANAGER));
+        $this->assertFalse((new AccessChecker())->isStudentManager($this->go1, $req, $studentMail, $portalName, EdgeTypes::HAS_MANAGER));
     }
 
     public function testPortalAdminWithInheritance()
@@ -87,8 +87,8 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $userId, $this->createAccountsAdminRole($this->go1, ['instance' => $accountsName]));
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $accountId, $this->createPortalAdminRole($this->go1, ['instance' => $portalName]));
 
-        $req = new Request;
-        $access = new AccessChecker;
+        $req = new Request();
+        $access = new AccessChecker();
         $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
         $this->assertTrue((bool) $access->isPortalAdmin($req, $portalName));
         $this->assertTrue((bool) $access->isPortalAdmin($req, $portalId));
@@ -115,8 +115,8 @@ class AccessCheckerTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $userId, $this->createAccountsAdminRole($this->go1, ['instance' => $accountsName]));
         $this->link($this->go1, EdgeTypes::HAS_ROLE, $portalName, $this->createPortalContentAdminRole($this->go1, ['instance' => $portalName]));
 
-        $req = new Request;
-        $accessChecker = new AccessChecker;
+        $req = new Request();
+        $accessChecker = new AccessChecker();
         $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
         $this->assertTrue((bool) $accessChecker->isPortalAdmin($req, $portalName));
         $this->assertFalse((bool) $accessChecker->isPortalAdmin($req, $portalName, Roles::ADMIN, false));
@@ -128,8 +128,8 @@ class AccessCheckerTest extends UtilCoreTestCase
     {
         $sessionToken = '2235e435f2015211bb1e633a677a690844a0cc55aec409fb1aa84f9210a96373271d2fda1e62cd96192bec475cd664103a6edadd508276880b9db3bd5c992199';
 
-        $req = new Request;
-        $accessChecker = new AccessChecker;
+        $req = new Request();
+        $accessChecker = new AccessChecker();
         $this->assertNull($accessChecker->sessionToken($req));
 
         $req->attributes->set('jwt.payload', (object) ['sid' => $sessionToken]);
@@ -146,25 +146,25 @@ class AccessCheckerTest extends UtilCoreTestCase
         ];
 
         {
-            $req = new Request;
+            $req = new Request();
             $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
         }
 
         {
-            $req = new Request;
+            $req = new Request();
             $req->headers->set('X-ACCESS', 'verified');
             $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
         }
 
         {
-            $req = new Request;
+            $req = new Request();
             $req->headers->set('X-ACCESS', 'unverified');
             $this->assertFalse(AccessChecker::isRequestVerified($req, $scope));
         }
 
         {
             $jwt = JWT::encode(['sid' => 'SID', 'exp' => strtotime('+ 15 minutes'), 'scope' => $scope], 'INTERNAL');
-            $req = new Request;
+            $req = new Request();
             $req->attributes->set('jwt.payload', JWT::decode($jwt, 'INTERNAL', ['HS256']));
             $req->headers->set('X-ACCESS', 'verified');
             $this->assertTrue(AccessChecker::isRequestVerified($req, $scope));

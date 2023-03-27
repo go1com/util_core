@@ -13,13 +13,19 @@ use stdClass;
 class Portal
 {
     /** @var integer */
-    public $id, $created, $timestamp;
+    public $id;
+    public $created;
+    public $timestamp;
 
     /** @var string */
-    public $title, $version, $primaryDomain, $userPlan;
+    public $title;
+    public $version;
+    public $primaryDomain;
+    public $userPlan;
 
     /** @var bool */
-    public $status, $isPrimary;
+    public $status;
+    public $isPrimary;
 
     /** @var string[] */
     public $domains;
@@ -38,7 +44,7 @@ class Portal
     {
         $data = is_string($row->data) ? json_decode($row->data) : $row->data;
 
-        $portal = new Portal;
+        $portal = new Portal();
         $portal->id = $row->id;
         $portal->title = $row->title;
         $portal->status = $row->status;
@@ -48,7 +54,7 @@ class Portal
         $portal->created = $row->created;
         $portal->data = clone $data;
         $portal->domains = [];
-        $portal->primaryDomain = (new PortalChecker)->getPrimaryDomain($row);
+        $portal->primaryDomain = (new PortalChecker())->getPrimaryDomain($row);
 
         if ($db) {
             $domainIds = 'SELECT target_id FROM gc_ro WHERE type = ? AND source_id = ?';

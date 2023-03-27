@@ -16,11 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AccessChecker
 {
-    const ACCESS_PUBLIC        = 0;
-    const ACCESS_AUTHENTICATED = 100;
-    const ACCESS_ADMIN         = 200;
-    const ACCESS_ROOT          = 300;
-    const ACCESS_OWNER         = 400;
+    public const ACCESS_PUBLIC        = 0;
+    public const ACCESS_AUTHENTICATED = 100;
+    public const ACCESS_ADMIN         = 200;
+    public const ACCESS_ROOT          = 300;
+    public const ACCESS_OWNER         = 400;
 
     public function isContentAdministrator(Request $req, $instance, bool $inheritance = true)
     {
@@ -274,15 +274,15 @@ class AccessChecker
         int        $courseId,
         int        $assessorId,
         int        $studentProfileId = null,
-        Request    $req = null): bool
-    {
-        $checker = new self;
+        Request    $req = null
+    ): bool {
+        $checker = new self();
 
         if ($checker->isAccountsAdmin($req)) {
             return true;
         }
 
-        if ((new LoChecker)->isAuthor($db, $courseId, $assessorId)) {
+        if ((new LoChecker())->isAuthor($db, $courseId, $assessorId)) {
             return true;
         }
 
