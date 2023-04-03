@@ -71,7 +71,9 @@ class Plan implements JsonSerializable
         $plan->entityId = $input->entity_id ?? null;
         $plan->status = $input->status ?? null;
         $plan->created = DateTime::create($input->created_date ?? time());
-        $plan->due = isset($input->due_date) ? ($input->due_date ? DateTime::create($input->due_date) : $input->due_date) : null;
+        // due_date could be timestamp or date string (+30 days) or NULL or empty string ("") ¯\_(ツ)_/¯
+        // All of them should be converted to DateTime object, except NULL (the null value will help database to set default value)
+        $plan->due = isset($input->due_date) ? ($input->due_date ? DateTime::create($input->due_date) : null) : null;
         $plan->data = isset($input->data) ? (!$input->data ? null : (is_scalar($input->data) ? json_decode($input->data) : $input->data)) : null;
         Text::purify(null, $plan->data);
 
