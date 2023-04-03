@@ -17,7 +17,7 @@
     "go1/flood": "dev-master",
     "go1/kv": "dev-master",
     "go1.core/util": "dev-master",
-    "ramsey/uuid": "^3.4",
+    "ramsey/uuid": "^3 || ^4",
     "symfony/http-foundation": "^4.0 | ^3.4",
     "pimple/pimple": "^v3.0.0",
     "psr/log": "~1.0"
