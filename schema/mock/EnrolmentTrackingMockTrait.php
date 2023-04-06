@@ -10,9 +10,8 @@ trait EnrolmentTrackingMockTrait
     {
         $db->insert('enrolment_tracking', [
             'enrolment_id' => $options['enrolment_id'],
-            'action_origin' => $options['action_origin'],
-            'actor_id' => $options['actor_id'],
-            'channel' => $options['channel']
+            'original_enrolment_type' => $options['original_enrolment_type'],
+            'actor_id' => $options['actor_id']
         ]);
     }
 }
