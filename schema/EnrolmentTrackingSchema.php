@@ -13,11 +13,10 @@ class EnrolmentTrackingSchema
         if (!$schema->hasTable('enrolment_tracking')) {
             $table = $schema->createTable('enrolment_tracking');
             $table->addColumn('enrolment_id', Type::INTEGER, ['unsigned' => true]);
-            $table->addColumn('action_origin', Type::SMALLINT, ['unsigned' => true]);
-            $table->addColumn('channel', Type::SMALLINT, ['unsigned' => true]);
+            $table->addColumn('original_enrolment_type', Type::SMALLINT, ['unsigned' => true]);
             $table->addColumn('actor_id', Type::INTEGER, ['unsigned' => true]);
             $table->addColumn(
-                'created_date',
+                'created_time',
                 Types::DATETIME_MUTABLE,
                 ['default' => 'CURRENT_TIMESTAMP']
             );
