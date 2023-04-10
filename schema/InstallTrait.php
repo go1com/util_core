@@ -78,6 +78,9 @@ trait InstallTrait
 
                 // Added hashed_source_id to gc_lo table
                 LoSchema::update02($schema);
+
+                // Added ulid to gc_lo table
+                LoSchema::update03($schema);
             },
             function (Schema $schema) use ($coreOnly) {
                 if (!$coreOnly) {
