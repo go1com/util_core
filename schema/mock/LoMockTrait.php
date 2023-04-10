@@ -97,6 +97,7 @@ trait LoMockTrait
             'removed_at'        => $options['removed_at'] ?? null,
             'pending_decommission_at' => $options['pending_decommission_at'] ?? null,
             'hashed_source_id'        => $options['hashed_source_id'] ?? null,
+            'ulid'              => $options['ulid'] ?? ''
         ];
         $db->insert('gc_lo', $opt);
 

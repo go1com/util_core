@@ -341,4 +341,25 @@ class LoSchema
             }
         }
     }
+
+    public static function update03(Schema $schema)
+    {
+        if ($schema->hasTable('gc_lo')) {
+            $table = $schema->getTable('gc_lo');
+            if (!$table->hasColumn('ulid')) {
+                $table->addColumn('ulid', Types::STRING, [
+                    'length'      => 26,
+                    'fixed'       => true,
+                    'notnull'     => true,
+                    'default'     => '',
+                    'description' => 'The primary identifier for v2 of Learning Objects'
+                ]);
+
+                $indexName = 'IDX_ulid';
+                if (!$table->hasIndex($indexName)) {
+                    $table->addIndex(['ulid'], $indexName);
+                }
+            }
+        }
+    }
 }
