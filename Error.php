@@ -5,6 +5,7 @@ namespace go1\util;
 use Assert\LazyAssertionException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class Error
 {
@@ -77,9 +78,19 @@ class Error
         return new JsonResponse(['message' => 'Missing or invalid JWT.'], 403);
     }
 
-    public static function simpleErrorJsonResponse($msg, $code = 400): JsonResponse
+    /**
+    * Returns a simple error JSON response with a specified HTTP status code.
+    *
+    * @param mixed $e The error message or exception.
+    * @param int $code The HTTP status code of the response. Defaults to 400 Bad Request if not specified.
+    * @return JsonResponse The JSON response object.
+    */
+    public static function simpleErrorJsonResponse($e, $code = 400): JsonResponse
     {
-        return new JsonResponse(['message' => ($msg instanceof Exception) ? $msg->getMessage() : $msg], $code);
+        $isValidHttpStatus = array_key_exists($code, Response::$statusTexts);
+        $code = $isValidHttpStatus ? $code : Response::HTTP_BAD_REQUEST;
+
+        return new JsonResponse(['message' => $e instanceof Exception ? $e->getMessage() : $e], $code);
     }
 
     public static function jr($msg)
