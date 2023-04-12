@@ -166,6 +166,9 @@ class AccessChecker
 
         if (!empty($user)) {
             if (!$portalName || empty($user->instance) || ($user->instance == $portalName)) {
+                // custom root user from upstream service might have negative user id
+                // but our db require the type to be unsigned, hence the workaround
+                $user->id = max($user->id, 0);
                 return $user;
             }
 
