@@ -170,4 +170,23 @@ class AccessCheckerTest extends UtilCoreTestCase
             $this->assertTrue(AccessChecker::isRequestVerified($req, $scope));
         }
     }
+
+    public function testNegativeUserId()
+    {
+        $portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
+        $userId = $this->createUser($this->go1, ['id' => -100, 'instance' => 'accounts.gocatalyze.com']);
+        $accountId = $this->createUser($this->go1, ['instance' => 'qa.mygo1.com']);
+        $this->link($this->go1, EdgeTypes::HAS_ACCOUNT, $userId, $accountId);
+
+        $req = new Request();
+        $jwt = $this->jwtForUser($this->go1, $userId, 'qa.mygo1.com');
+        $payload = Text::jwtContent($jwt);
+        $req->attributes->set('jwt.payload', $payload);
+        $service = new AccessChecker();
+
+        {
+            $user = $service->validUser($req);
+            $this->assertFalse($user->id < 0);
+        }
+    }
 }
