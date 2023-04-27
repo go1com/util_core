@@ -55,13 +55,14 @@ class Service
     {
         if (getenv('AZURE_BRIDGE_MODE')) {
             // K8S Service discovery using ENV variables
-            $k8sName = strtoupper(str_replace(["-", "."], "_", $name));
+            $proxyService = 'bridge-to-k8s-proxy';
+            $k8sName = strtoupper(str_replace(["-", "."], "_", $proxyService));
             $k8sHost = getenv("{$k8sName}_SERVICE_HOST");
             // https://github.com/Azure/Bridge-To-Kubernetes/pull/173
             // prefer named port
             $k8sPort = getenv("{$k8sName}_SERVICE_PORT_HTTP") ?: getenv("{$k8sName}_SERVICE_PORT");
             if ($k8sHost && $k8sPort) {
-                return "http://{$k8sHost}:{$k8sPort}";
+                return "http://{$k8sHost}:{$k8sPort}/{$name}";
             }
         }
 
