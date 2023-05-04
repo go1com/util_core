@@ -169,34 +169,36 @@ class PlanRepository
         return $revisions;
     }
 
-    public function create(Plan &$plan, bool $notify = false, array $queueContext = [], array $embedded = [], $isBatch = false)
+    public function create(Plan &$plan, bool $apiUpliftV3 = false, bool $notify = false, array $queueContext = [], array $embedded = [], $isBatch = false)
     {
         $this->db->insert('gc_plan', [
-            'type'         => $plan->type,
-            'user_id'      => $plan->userId,
-            'assigner_id'  => $plan->assignerId,
-            'instance_id'  => $plan->instanceId,
-            'entity_type'  => $plan->entityType,
-            'entity_id'    => $plan->entityId,
-            'status'       => $plan->status,
+            'type' => $plan->type,
+            'user_id' => $plan->userId,
+            'assigner_id' => $plan->assignerId,
+            'instance_id' => $plan->instanceId,
+            'entity_type' => $plan->entityType,
+            'entity_id' => $plan->entityId,
+            'status' => $plan->status,
             'created_date' => ($plan->created ?? new DateTime())->format(DATE_MYSQL),
-            'due_date'     => $plan->due ? $plan->due->format(DATE_MYSQL) : null,
-            'data'         => $plan->data ? json_encode($plan->data) : null,
+            'due_date' => $plan->due ? $plan->due->format(DATE_MYSQL) : null,
+            'data' => $plan->data ? json_encode($plan->data) : null,
         ]);
 
         $plan->id = (int) $this->db->lastInsertId('gc_plan');
         $plan->notify = $notify ?: ($queueContext['notify'] ?? false);
-        $queueContext['notify'] = $plan->notify;
-        $queueContext['sessionId'] = Uuid::uuid4()->toString();
 
-        $payload = $plan->jsonSerialize();
-        $payload['embedded'] = $embedded + $this->planCreateEventEmbedder->embedded($plan);
-        if ($isBatch) {
-            $this->queue->batchAdd($payload, Queue::PLAN_CREATE, $queueContext);
-        } else {
-            $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
+        if (!$apiUpliftV3) {
+            $queueContext['notify'] = $plan->notify;
+            $queueContext['sessionId'] = Uuid::uuid4()->toString();
+
+            $payload = $plan->jsonSerialize();
+            $payload['embedded'] = $embedded + $this->planCreateEventEmbedder->embedded($plan);
+            if ($isBatch) {
+                $this->queue->batchAdd($payload, Queue::PLAN_CREATE, $queueContext);
+            } else {
+                $this->queue->publish($payload, Queue::PLAN_CREATE, $queueContext);
+            }
         }
-
 
         return $plan->id;
     }
@@ -282,7 +284,7 @@ class PlanRepository
             $this->update($original, $plan, $notify, $embedded, $queueContext);
             $planId = $original->id;
         } else {
-            $planId = $this->create($plan, $notify, $queueContext, $embedded);
+            $planId = $this->create($plan, false, $notify, $queueContext, $embedded);
         }
 
         return $planId;
