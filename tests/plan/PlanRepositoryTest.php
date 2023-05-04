@@ -83,7 +83,7 @@ class PlanRepositoryTest extends UtilCoreTestCase
             'type'        => PlanTypes::SUGGESTED,
             'status'      => PlanStatuses::ASSIGNED,
         ]);
-        $this->rPlan->create($plan, $notifyStatus, $dataContext);
+        $this->rPlan->create($plan, false, $notifyStatus, $dataContext);
         $this->assertArrayHasKey('embedded', $this->queueMessages[Queue::PLAN_CREATE][0]);
         $msg = (object) $this->queueMessages[Queue::PLAN_CREATE][0];
         $this->assertEquals($msg->notify, $expectedNotify);
