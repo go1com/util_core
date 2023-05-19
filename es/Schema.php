@@ -54,6 +54,8 @@ class Schema
     public const T_NESTED              = 'nested';
     public const T_GEO_POINT           = 'geo_point';
     public const T_RANK_FEATURES       = 'rank_features';
+    public const T_FLATTENED           = 'flattened';
+    public const T_DENSE_VECTOR        = 'dense_vector';
 
     public const O_EDGE                = 'edge';
     public const O_LO                  = 'lo';

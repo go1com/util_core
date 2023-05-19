@@ -244,6 +244,25 @@ class LoExploreSchema
                     'confidence'  => ['type' => Schema::T_FLOAT],
                 ],
             ],
+            'text_embedding' => [
+                'properties' => [
+                    'is_truncated' => ['type' => Schema::T_BOOL],
+                    'model_id' => ['type' => Schema::T_TEXT],
+                    'predicted_value' => [
+                        'type' => Schema::T_DENSE_VECTOR,
+                        'dims' => 768,
+                        'index' => true,
+                        'similarity' => 'cosine',
+                    ],
+                    'skip' => ['type' => Schema::T_BOOL],
+                ],
+            ],
+            'text_embedding_errors' => [
+                'properties' => [
+                    'errors' => ['type' => Schema::T_FLATTENED],
+                    'failed' => ['type' => Schema::T_BOOL],
+                ],
+            ],
         ],
     ];
 
