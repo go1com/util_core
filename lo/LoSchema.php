@@ -362,4 +362,14 @@ class LoSchema
             }
         }
     }
+
+    public static function update04(Schema $schema)
+    {
+        if ($schema->hasTable('gc_lo_attributes')) {
+            $table = $schema->getTable('gc_lo_attributes');
+            if ($table->hasColumn('value')) {
+                $table->changeColumn('value', ['notnull' => false]);
+            }
+        }
+    }
 }

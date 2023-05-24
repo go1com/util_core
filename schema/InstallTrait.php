@@ -81,6 +81,9 @@ trait InstallTrait
 
                 // Added ulid to gc_lo table
                 LoSchema::update03($schema);
+
+                // Updated gc_lo_attributes to accept NULL values on 'value' column
+                LoSchema::update04($schema);
             },
             function (Schema $schema) use ($coreOnly) {
                 if (!$coreOnly) {
