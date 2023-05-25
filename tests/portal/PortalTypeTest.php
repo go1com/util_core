@@ -18,6 +18,8 @@ class PortalTypeTest extends TestCase
             'complispace',
             'jse_customer',
             'totara_customer',
+            'team',
+            'reportable_customer'
         ], $portalTypes));
     }
 

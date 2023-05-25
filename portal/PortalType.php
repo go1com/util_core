@@ -18,4 +18,5 @@ class PortalType extends ConstantContainer
     public const JSE_CUSTOMER         = 'jse_customer';
     public const TOTARA_CUSTOMER      = 'totara_customer';
     public const TEAM                 = 'team';
+    public const REPORTABLE_CUSTOMER  = 'reportable_customer';
 }
