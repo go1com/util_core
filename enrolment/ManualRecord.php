@@ -50,7 +50,7 @@ class ManualRecord implements JsonSerializable
         }
 
         if ($this->verified != $record->verified) {
-            $values['verified'] = $record->verified;
+            $values['verified'] = $record->verified ? 1 : 0;
         }
 
         if (($this->data != $record->data)) {
