@@ -3,6 +3,7 @@
 namespace go1\util\plan;
 
 use DateTime as DefaultDateTime;
+use DateTimeZone;
 use go1\util\DateTime;
 use go1\util\Text;
 use JsonSerializable;
@@ -30,13 +31,13 @@ class Plan implements JsonSerializable
     /** @var integer */
     public $instanceId;
 
-    /** @var  string */
+    /** @var string */
     public $entityType;
 
-    /** @var  integer */
+    /** @var integer */
     public $entityId;
 
-    /** @var  integer */
+    /** @var integer */
     public $status;
 
     /** @var DefaultDateTime */
@@ -92,7 +93,7 @@ class Plan implements JsonSerializable
         ($this->type != $plan->type) && $values['type'] = $plan->type;
         ($this->assignerId != $plan->assignerId) && $values['assigner_id'] = $plan->assignerId;
         ($this->status != $plan->status) && $values['status'] = $plan->status;
-        ($this->due != $plan->due) && $values['due_date'] = $plan->due ? $plan->due->format(DATE_MYSQL) : null;
+        ($this->due != $plan->due) && $values['due_date'] = $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL) : null;
         ($processData($this->data) != $processData($plan->data)) && $values['data'] = is_scalar($plan->data) ? $plan->data : json_encode($plan->data);
 
         return $values ?? [];

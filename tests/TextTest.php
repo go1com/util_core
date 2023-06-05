@@ -2,21 +2,11 @@
 
 namespace go1\util\schema\tests;
 
-use Behat\Transliterator\Transliterator;
 use go1\util\Text;
 use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (!class_exists(Transliterator::class)) {
-            $this->markTestSkipped();
-        }
-    }
-
     public function testToSnakeCaseSpecialCharater()
     {
         $input = "&*^*^)(*instance - id &*%^%&*123";

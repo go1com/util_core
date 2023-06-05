@@ -312,9 +312,8 @@ class DBTest extends UtilCoreTestCase
         putenv("FOO_DB_HOST=:?$/");
 
         $this->expectException(\PDOException::class);
-        $this->expectExceptionMessage(
-            'SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo ' .
-                'failed: Name does not resolve'
+        $this->expectExceptionMessageMatches(
+            '/SQLSTATE\[HY000\] \[2002\] php_network_getaddresses\: getaddrinfo failed\:/'
         );
         $_ = DB::connectionPoolOptions($connectionName, false, true, \PDO::class);
     }

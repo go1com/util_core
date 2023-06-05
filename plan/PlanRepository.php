@@ -2,6 +2,7 @@
 
 namespace go1\util\plan;
 
+use DateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use Doctrine\DBAL\Connection;
@@ -172,16 +173,16 @@ class PlanRepository
     public function create(Plan &$plan, bool $apiUpliftV3 = false, bool $notify = false, array $queueContext = [], array $embedded = [], $isBatch = false)
     {
         $this->db->insert('gc_plan', [
-            'type' => $plan->type,
-            'user_id' => $plan->userId,
-            'assigner_id' => $plan->assignerId,
-            'instance_id' => $plan->instanceId,
-            'entity_type' => $plan->entityType,
-            'entity_id' => $plan->entityId,
-            'status' => $plan->status,
-            'created_date' => ($plan->created ?? new DateTime())->format(DATE_MYSQL),
-            'due_date' => $plan->due ? $plan->due->format(DATE_MYSQL) : null,
-            'data' => $plan->data ? json_encode($plan->data) : null,
+            'type'         => $plan->type,
+            'user_id'      => $plan->userId,
+            'assigner_id'  => $plan->assignerId,
+            'instance_id'  => $plan->instanceId,
+            'entity_type'  => $plan->entityType,
+            'entity_id'    => $plan->entityId,
+            'status'       => $plan->status,
+            'created_date' => ($plan->created ?? new DateTime())->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL),
+            'due_date'     => $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL) : null,
+            'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
 
         $plan->id = (int) $this->db->lastInsertId('gc_plan');
@@ -214,8 +215,8 @@ class PlanRepository
             'entity_type'  => $plan->entityType,
             'entity_id'    => $plan->entityId,
             'status'       => $plan->status,
-            'created_date' => ($plan->created ?? new DateTime())->format(DATE_MYSQL),
-            'due_date'     => $plan->due ? $plan->due->format(DATE_MYSQL) : null,
+            'created_date' => ($plan->created ?? new DateTime())->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL),
+            'due_date'     => $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL) : null,
             'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
     }
