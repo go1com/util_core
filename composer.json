@@ -24,7 +24,9 @@
   },
   "require-dev": {
     "ezyang/htmlpurifier": "^4.12",
-    "phpspec/prophecy": "^1.15"
+    "phpspec/prophecy": "^1.15",
+    "phpspec/prophecy-phpunit": "^2.0",
+    "behat/transliterator": "^1.5"
   },
   "suggest": {
     "go1/app": "for go1\\util\\DB::connectionOptions()",
