@@ -33,4 +33,9 @@ class EnrolmentOriginalTypes
                 throw new InvalidArgumentException('Unknown original enrolment type: '.$type);
         }
     }
+
+    public static function all(): array
+    {
+        return [static::SELF_DIRECTED, static::ASSIGNED];
+    }
 }
