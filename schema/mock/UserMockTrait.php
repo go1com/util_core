@@ -198,6 +198,10 @@ trait UserMockTrait
             $account['portal_id'] = $options['portal_id'];
         }
 
+        if (isset($options['ulid'])) {
+            $account['ulid'] = $options['ulid'];
+        }
+
         $user = [
             'id'            => intval($userId),
             'first_name'    => 'A',
@@ -211,7 +215,7 @@ trait UserMockTrait
             ],
         ];
 
-        return (object) [
+        $payload = (object) [
             'iss'    => 'go1.user',
             'ver'    => '1.1',
             'exp'    => strtotime('+ 1 year'),
@@ -220,6 +224,12 @@ trait UserMockTrait
                 'content' => $this->formatUser($user, true, "{$user['first_name']} {$user['last_name']}"),
             ],
         ];
+
+        if (isset($options['masqById'])) {
+            $payload['masqById'] = $options['masqById'];
+        }
+
+        return $payload;
     }
 
     protected function getPayloadMultipleInstances(array $options)
@@ -298,6 +308,7 @@ trait UserMockTrait
                 'name'       => $root ? $name : (($username === $name) ? null : $name),
                 'roles'      => $roles ?? [],
                 'accounts'   => $accounts ?? [],
+                'ulid'       => !$root && $user['ulid'] ? $user['ulid'] : null,
             ]
         );
     }
