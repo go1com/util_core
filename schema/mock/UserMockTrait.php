@@ -308,7 +308,7 @@ trait UserMockTrait
                 'name'       => $root ? $name : (($username === $name) ? null : $name),
                 'roles'      => $roles ?? [],
                 'accounts'   => $accounts ?? [],
-                'ulid'       => !$root && $user['ulid'] ? $user['ulid'] : null,
+                'ulid'       => !$root && !empty($user['ulid']) ? $user['ulid'] : null,
             ]
         );
     }
