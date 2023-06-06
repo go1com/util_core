@@ -226,7 +226,7 @@ trait UserMockTrait
         ];
 
         if (isset($options['masqById'])) {
-            $payload['masqById'] = $options['masqById'];
+            $payload->masqById = $options['masqById'];
         }
 
         return $payload;
