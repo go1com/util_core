@@ -229,6 +229,10 @@ trait UserMockTrait
             $payload->masqById = $options['masqById'];
         }
 
+        if (isset($options['sub'])) {
+            $payload->sub = $options['sub'];
+        }
+
         return $payload;
     }
 
