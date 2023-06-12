@@ -7,6 +7,7 @@ use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\DBAL\Schema\Comparator;
 use PDO;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use go1\util\Driver\PDOMySql\Driver;
 
 class DB
 {
@@ -92,6 +93,17 @@ class DB
             ini_set("zend.exception_ignore_args", 1);  // PHP >= 7.4.0
             throw $e;
         }
+    }
+
+    public static function connectionPersistentOptions(string $name, $forceSlave = false, $forceMaster = false): array
+    {
+        $options = self::connectionOptions($name, $forceSlave, $forceMaster);
+        $options['driverOptions'] = $options['driverOptions'] + [
+            PDO::ATTR_PERSISTENT => true,
+        ];
+        $options['driverClass'] = Driver::class;
+
+        return $options;
     }
 
     private static function getEnvByPriority(array $names)
