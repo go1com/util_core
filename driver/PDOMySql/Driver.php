@@ -1,6 +1,6 @@
 <?php
 
-namespace go1\util\Driver\PDOMySql;
+namespace go1\util\driver\PDOMySql;
 
 use go1\util\Driver\PDOConnection;
 use Doctrine\DBAL\Driver\PDOMySql\Driver as PDOMySQLDriver;
