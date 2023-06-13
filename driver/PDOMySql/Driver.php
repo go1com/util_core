@@ -2,7 +2,7 @@
 
 namespace go1\util\driver\PDOMySql;
 
-use go1\util\Driver\PDOConnection;
+use go1\util\driver\PDOConnection;
 use Doctrine\DBAL\Driver\PDOMySql\Driver as PDOMySQLDriver;
 use Doctrine\DBAL\Exception;
 use PDOException;
