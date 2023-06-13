@@ -1,6 +1,6 @@
 <?php
 
-namespace go1\util\Driver;
+namespace go1\util\driver;
 
 use Doctrine\DBAL\Driver\Connection as ConnectionInterface;
 use Doctrine\DBAL\Driver\PDO\Exception;
