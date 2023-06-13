@@ -4,7 +4,7 @@ namespace go1\util\schema\tests;
 
 use go1\util\tests\MockPDO;
 use go1\util\DB;
-use go1\util\Driver\PDOMySql\Driver;
+use go1\util\driver\PDOMySql\Driver;
 use go1\util\tests\UtilCoreTestCase;
 use go1\util\user\UserHelper;
 use PDO;

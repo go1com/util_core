@@ -7,7 +7,7 @@ use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\DBAL\Schema\Comparator;
 use PDO;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use go1\util\Driver\PDOMySql\Driver;
+use go1\util\driver\PDOMySql\Driver;
 
 class DB
 {
