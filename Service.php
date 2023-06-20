@@ -2,6 +2,8 @@
 
 namespace go1\util;
 
+use go1\util\k8s\K8SBridgeHelper;
+
 use function defined;
 use function getenv;
 
@@ -56,11 +58,7 @@ class Service
         if (getenv('AZURE_BRIDGE_MODE')) {
             // K8S Service discovery using ENV variables
             $proxyService = 'bridge-to-k8s-proxy';
-            $k8sName = strtoupper(str_replace(["-", "."], "_", $proxyService));
-            $k8sHost = getenv("{$k8sName}_SERVICE_HOST");
-            // https://github.com/Azure/Bridge-To-Kubernetes/pull/173
-            // prefer named port
-            $k8sPort = getenv("{$k8sName}_SERVICE_PORT_HTTP") ?: getenv("{$k8sName}_SERVICE_PORT");
+            [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($proxyService);
             if ($k8sHost && $k8sPort) {
                 return "http://{$k8sHost}:{$k8sPort}/{$name}";
             }
