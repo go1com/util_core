@@ -79,8 +79,8 @@ class K8SBridgeHelper
             }
 
             // Rewrite MemCached ENVs
-            if ($memCachedHostOverride = getenv('CACHE_HOST_OVERRIDE')) {
-                [$memCachedHost, $memCachedPort] = self::getServiceEnvValues($memCachedHostOverride);
+            if (getenv('CACHE_HOST_OVERRIDE')) {
+                [$memCachedHost, $memCachedPort] = self::getServiceEnvValues('k8s-qa-memcached', 'k8s-qa');
                 $cachBackend = getenv('CACHE_BACKEND');
                 if ($memCachedHost && $memCachedPort && $cachBackend === 'memcached') {
                     putenv("CACHE_HOST={$memCachedHost}");
@@ -89,11 +89,11 @@ class K8SBridgeHelper
             }
 
             // Rewrite Rabbit Queue ENVs
-            [$queueHost, $queuePort] = self::getServiceEnvValues('k8s-qa-rabbitmq', 'k8s-qa', 'amqp');
-            if ($queueHost && $queuePort) {
+            if (getenv('QUEUE_HOST_OVERRIDE')) {
+                [$queueHost, $queuePort] = self::getServiceEnvValues('k8s-qa-rabbitmq', 'k8s-qa', 'amqp');
                 $queuePass = getenv('QUEUE_PASSWORD');
                 $queueUser = getenv('QUEUE_USER');
-                if ($queuePass && $queueUser) {
+                if ($queueHost && $queuePort && $queuePass && $queueUser) {
                     $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePort}";
                     putenv("QUEUE_HOST={$queueHost}");
                     putenv("QUEUE_PORT={$queuePort}");
