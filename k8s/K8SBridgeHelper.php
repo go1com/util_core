@@ -30,8 +30,7 @@ class K8SBridgeHelper
              * to get the right value
              */
             if ($dbHostOverride = getenv('RDS_DB_HOST_OVERRIDE')) {
-                $dbEnvName = $this->k8sEnvNameTransform($dbHostOverride);
-                [$dbHost, $dbPort] = $this->getServiceEnvValues($dbEnvName);
+                [$dbHost, $dbPort] = self::getServiceEnvValues($dbHostOverride);
                 $masterUsername = getenv('RDS_DB_USERNAME');
                 $masterPassword = getenv('RDS_DB_PASSWORD');
                 // Rewrite DB ENVs
@@ -68,8 +67,7 @@ class K8SBridgeHelper
 
             // Rewrite Redis ENVs
             if ($redisHostOverride = getenv('REDIS_HOST_OVERRIDE')) {
-                $redisHostEnvName = $this->k8sEnvNameTransform($redisHostOverride);
-                [$redisHost, $redisPort] = $this->getServiceEnvValues($redisHostEnvName);
+                [$redisHost, $redisPort] = self::getServiceEnvValues($redisHostOverride);
                 $redisAuth = getenv('REDIS_AUTH');
                 if ($redisHost && $redisAuth && $redisPort) {
                     putenv("REDIS_HOST=" . $redisHost);
@@ -82,8 +80,7 @@ class K8SBridgeHelper
 
             // Rewrite MemCached ENVs
             if ($memCachedHostOverride = getenv('CACHE_HOST_OVERRIDE')) {
-                $memCachedHostEnvName = $this->k8sEnvNameTransform($memCachedHostOverride);
-                [$memCachedHost, $memCachedPort] = $this->getServiceEnvValues($memCachedHostEnvName);
+                [$memCachedHost, $memCachedPort] = self::getServiceEnvValues($memCachedHostOverride);
                 $cachBackend = getenv('CACHE_BACKEND');
                 if ($memCachedHost && $memCachedPort && $cachBackend === 'memcached') {
                     putenv("CACHE_HOST={$memCachedHost}");
@@ -92,28 +89,11 @@ class K8SBridgeHelper
             }
 
             // Rewrite Rabbit Queue ENVs
-            if ($queueHost = getenv('K8S_QA_RABBITMQ_SERVICE_HOST')) {
+            [$queueHost, $queuePort] = self::getServiceEnvValues('k8s-qa-rabbitmq', 'k8s-qa', 'amqp');
+            if ($queueHost && $queuePort) {
                 $queuePass = getenv('QUEUE_PASSWORD');
                 $queueUser = getenv('QUEUE_USER');
-                // Service has 3 ports, K8S_QA_RABBITMQ_SERVICE_PORT will be the first defined
-                // ports:
-                // - appProtocol: amqp
-                //     name: amqp
-                //     port: 5672
-                //     protocol: TCP
-                //     targetPort: 5672
-                // - appProtocol: http
-                //     name: management
-                //     port: 15672
-                //     protocol: TCP
-                //     targetPort: 15672
-                // - appProtocol: prometheus.io/metrics
-                //     name: prometheus
-                //     port: 15692
-                //     protocol: TCP
-                //     targetPort: 15692
-                $queuePort = getenv('K8S_QA_RABBITMQ_SERVICE_PORT_AMQP'); // https://github.com/Azure/Bridge-To-Kubernetes/pull/173
-                if ($queueHost && $queuePort && $queuePass && $queueUser) {
+                if ($queuePass && $queueUser) {
                     $queueUrl = "amqp://{$queueUser}:{$queuePass}@{$queueHost}:{$queuePort}";
                     putenv("QUEUE_HOST={$queueHost}");
                     putenv("QUEUE_PORT={$queuePort}");
@@ -124,41 +104,52 @@ class K8SBridgeHelper
 
             // Rewrite ES ENVs
             if ($esHostOverride = getenv('ES_URL_AU_V8_HOST_OVERRIDE')) {
-                $esHostEnvName = $this->k8sEnvNameTransform($esHostOverride);
-                [$esHost, $esPort] = $this->getServiceEnvValues($esHostEnvName);
+                [$esHost, $esPort] = self::getServiceEnvValues($esHostOverride);
                 $esUrl = getenv('ES_URL_AU_V8');
                 if ($esHost && $esPort && $esUrl) {
                     $prefix = explode('@', $esUrl)[0];
                     putenv("ES_URL_AU_V8={$prefix}@{$esHost}:{$esPort}");
                 }
             }
-
-            // Rewrite other Service ENVs, replacing namespace, allowing uniformed treatment for local, QA and Prod
-            $env = getenv();
-            foreach ($env as $key => $value) {
-                if (stripos($key, "_K8S_QA")) {
-                    // Save new without namspace
-                    putenv(str_replace("_K8S_QA", "", $key) . "=" . $value);
-                    // Remove old to avoid confusion
-                    putenv($key);
-                }
-            }
         }
     }
 
-    public function k8sEnvNameTransform(string $name): string
+    public static function k8sEnvNameTransform(string $name): string
     {
         # https://github.com/Azure/Bridge-To-Kubernetes/blame/3b208325c25bbc10db440dd7035c245cc8a78446/src/library/Connect/LocalEnvironmentManager.cs#L453
         return strtoupper(str_replace([".", "-"], "_", explode(".", $name)[0]));
     }
 
-    public function getServiceEnvValues(string $serviceName): array
+    public static function getServiceEnvValues(string $name, string $ns = 'k8s-qa', string $portName = 'http'): array
     {
-        // https://github.com/Azure/Bridge-To-Kubernetes/pull/173
-        $namedPort = getenv("{$serviceName}_SERVICE_PORT_HTTP");
         return [
-            getenv("{$serviceName}_SERVICE_HOST"),
-            $namedPort ?: getenv("{$serviceName}_SERVICE_PORT")
+            self::getHostByNamePreferNs($name, $ns),
+            self::getPortByNamePreferNs($name, $ns, $portName)
         ];
+    }
+
+    public static function getHostByNamePreferNs(string $name, string $ns = 'k8s-qa'): string
+    {
+        $transformedName = self::k8sEnvNameTransform($name);
+        $transformedNs = self::k8sEnvNameTransform($ns);
+
+        $host = getenv("{$transformedName}_SERVICE_HOST");
+        $nsHost = getenv("{$transformedName}_{$transformedNs}_SERVICE_HOST");
+
+        return $nsHost ?: $host; // prefer ns specified host
+    }
+
+    public static function getPortByNamePreferNs(string $name, string $ns = 'k8s-qa', string $portName = 'http'): string
+    {
+        $transformedName = self::k8sEnvNameTransform($name);
+        $transformedPortName = self::k8sEnvNameTransform($portName);
+        $transformedNs = self::k8sEnvNameTransform($ns);
+
+        $port = getenv("{$transformedName}_SERVICE_PORT");
+        $namedPort = getenv("{$transformedName}_SERVICE_PORT_{$transformedPortName}");
+        $nsPort = getenv("{$transformedName}_{$transformedNs}_SERVICE_PORT");
+        $nsNamedPort = getenv("{$transformedName}_{$transformedNs}_SERVICE_PORT_{$transformedPortName}");
+
+        return $nsNamedPort ?: $nsPort ?: $namedPort ?: $port; // prefer ns specified port
     }
 }
