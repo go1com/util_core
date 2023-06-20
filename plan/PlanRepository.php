@@ -172,6 +172,7 @@ class PlanRepository
 
     public function create(Plan &$plan, bool $apiUpliftV3 = false, bool $notify = false, array $queueContext = [], array $embedded = [], $isBatch = false)
     {
+        $plan->created = $plan->created ?? new DateTime();
         $this->db->insert('gc_plan', [
             'type'         => $plan->type,
             'user_id'      => $plan->userId,
@@ -180,7 +181,7 @@ class PlanRepository
             'entity_type'  => $plan->entityType,
             'entity_id'    => $plan->entityId,
             'status'       => $plan->status,
-            'created_date' => ($plan->created ?? new DateTime())->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL),
+            'created_date' => $plan->created->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL),
             'due_date'     => $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL) : null,
             'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
