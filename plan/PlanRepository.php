@@ -283,6 +283,7 @@ class PlanRepository
             if (false === $plan->due) {
                 $plan->due = $original->due;
             }
+            $plan->created = $original->created;
             $this->update($original, $plan, $notify, $embedded, $queueContext);
             $planId = $original->id;
         } else {
