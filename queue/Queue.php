@@ -262,6 +262,11 @@ class Queue
     public const USER_DOMAIN_PORTAL_ACCOUNT_UPDATE = 'user-domain.portal-account.update';
     public const USER_DOMAIN_PORTAL_ACCOUNT_DELETE = 'user-domain.portal-account.delete';
 
+    # account-fields events
+    public const ACCOUNT_FIELDS_CREATE             = 'account-fields.create';
+    public const ACCOUNT_FIELDS_UPDATE             = 'account-fields.update';
+    public const ACCOUNT_FIELDS_DELETE             = 'account-fields.delete';
+
     /**
      * @deprecated
      *
