@@ -660,4 +660,22 @@ class LoHelperTest extends UtilCoreTestCase
         $this->assertEquals($lo->pending_decommission_at, '3122-12-31T15:10:11+00:00');
         $this->assertFalse(property_exists($lo, 'hashed_source_id'), 'hashed_source_id should not be returned');
     }
+
+    public function testLoadWithFields()
+    {
+        $portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
+        $loId = $this->createLO($this->go1, [
+            'instance_id' => $portalId,
+            'type' => 'video'
+        ]);
+        $lo = LoHelper::loadMultipleFieldsOnly($this->go1, [$loId], ['instance_id', 'type'])[0];
+        $this->assertEquals($portalId, $lo->instance_id);
+        $this->assertEquals('video', $lo->type);
+    }
+
+    public function testLoadWithFieldsNoRecord()
+    {
+        $lo = LoHelper::loadMultipleFieldsOnly($this->go1, [999]);
+        $this->assertTrue(!$lo);
+    }
 }
