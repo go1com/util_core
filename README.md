@@ -15,12 +15,12 @@ The core including:
     - install
 
 ## Installation
-```shell
+```sh
 composer install
 ```
 
 ## Unit tests
 - Run all tests: 
-```
+```sh
 XDEBUG_MODE=coverage phpunit -c phpunit.xml --coverage-text
 ```
