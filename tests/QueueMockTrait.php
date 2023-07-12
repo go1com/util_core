@@ -17,7 +17,7 @@ trait QueueMockTrait
             $queue = $this
                 ->getMockBuilder(MqClient::class)
                 ->disableOriginalConstructor()
-                ->setMethods(['publish', 'queue', 'publishEvent', 'batchDone'])
+                ->setMethods(['publish', 'queue', 'publishEvent', 'batchDone', 'isAvailable'])
                 ->getMock();
 
             $response = function ($body, string $routingKey, $context) use ($callback) {
@@ -31,6 +31,11 @@ trait QueueMockTrait
                 }
                 $this->queueMessages[$routingKey][] = $body;
             };
+
+            $queue
+                ->expects($this->any())
+                ->method('isAvailable')
+                ->willReturn(true);
 
             $queue
                 ->expects($this->any())
