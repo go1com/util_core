@@ -213,6 +213,23 @@ class LoHelper
         return $arr;
     }
 
+    // load specified fields only
+    public static function loadMultipleFieldsOnly(Connection $db, array $ids, array $fields = null): array
+    {
+        $ids = array_map('intval', $ids);
+        $fieldsStr = $fields ? implode(",", $fields) : '*';
+
+        $learningObjects = !$ids ? [] : $db
+            ->executeQuery(
+                "SELECT $fieldsStr FROM gc_lo WHERE id IN (?)",
+                [$ids],
+                [DB::INTEGERS]
+            )
+            ->fetchAll(DB::OBJ);
+
+        return $learningObjects;
+    }
+
     public static function findIds(array &$items, array &$ids = [])
     {
         foreach ($items as &$item) {
