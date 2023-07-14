@@ -68,6 +68,7 @@ class ServiceConsumeController
 
     protected function consume(string $routingKey, stdClass $body, $context): JsonResponse
     {
+        $errored = false;
         foreach ($this->consumers as $consumer) {
             if ($consumer->aware()[$routingKey] ?? false) {
                 try {
@@ -76,38 +77,50 @@ class ServiceConsumeController
                 } catch (IgnoreMessageException $e) {
                     $this->logger->warning('Message is ignored', [
                         'message'    => $e->getMessage(),
-                        'routingKey' => $routingKey,
+                        'routing_key' => $routingKey,
                         'body'       => $body,
                         'context'    => $context,
                     ]);
                 } catch (NotifyException $e) {
-                    $this->logger->log($e->getNotifyExceptionType(), sprintf('Failed to consume [%s] with %s %s: %s', $routingKey, json_encode($body), json_encode($context), json_encode($e->getNotifyExceptionMessage())));
+                    $this->logger->log(
+                        $e->getNotifyExceptionType(),
+                        sprintf(
+                            'Failed to consume [%s] with %s %s: %s',
+                            $routingKey,
+                            json_encode($body),
+                            json_encode($context),
+                            json_encode($e->getNotifyExceptionMessage())
+                        )
+                    );
                 } catch (Exception $e) {
-                    $errors[] = [
-                        'message' => $e->getMessage(),
-                        'trace'   => $e->getTraceAsString(),
-                    ];
+                    $errored = true;
+                    $this->logger->error('failed to consume', [
+                        'routing_key'  => $routingKey,
+                        'exception'   => $e,
+                        'consume_controller' => get_class($consumer),
+                        'msg.payload.id' => $body->id ?? null,
+                        'msg.payload.keys' => array_keys((array) $body),
+                        'msg.context' => $context,
+                    ]);
 
                     if (class_exists(TestCase::class, false)) {
                         throw $e;
                     }
                 } catch (SystemError $e) {
-                    $errors[] = [
-                        'message' => $e->getMessage(),
-                        'trace'   => $e->getTraceAsString(),
-                    ];
+                    $errored = true;
+                    $this->logger->error('failed to consume', [
+                        'routing_key'  => $routingKey,
+                        'exception'   => $e,
+                        'consume_controller' => get_class($consumer),
+                        'msg.payload.id' => $body->id ?? null,
+                        'msg.payload.keys' => array_keys((array) $body),
+                        'msg.context' => $context,
+                    ]);
                 }
             }
         }
 
-        if (!empty($errors)) {
-            $this->logger->error('failed to consume', [
-                'routingKey'  => $routingKey,
-                'errors'      => $errors,
-                'msg.payload' => $body,
-                'msg.context' => $context,
-            ]);
-
+        if ($errored) {
             return new JsonResponse(null, 500);
         }
 
