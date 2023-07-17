@@ -41,6 +41,7 @@ class Schema
 
     public const T_BOOL                = 'boolean'; # Don't use this, because query_string will match true always, use T_INT instead.
     public const T_SHORT               = 'short';
+    public const T_LONG                = 'long';
     public const T_INT                 = 'integer';
     public const T_FLOAT               = 'float';
     public const T_DOUBLE              = 'double'; # Use double if you want to use aggregation feature.
@@ -416,6 +417,7 @@ class Schema
             ],
             'metadata'            => [
                 'properties' => [
+                    'id'                  => ['type' => self::T_LONG],
                     'account_id'          => ['type' => self::T_INT],
                     'course_enrolment_id' => ['type' => self::T_INT],
                     'course_id'           => ['type' => self::T_INT],
