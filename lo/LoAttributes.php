@@ -43,6 +43,7 @@ class LoAttributes
     public const STREAMABLE                    = 32;
     public const CURATED_BY                    = 33; // use this to surface content curation tool and also in recommendations, could be used as a signal displayed on lo cards. Eg: curated_by = "go1"
     public const FEATURED_BY                   = 34; // for featured playlists, combine use with featured_status, Eg: featured_status = true & featured_by = "go1"
+    public const LAUNCH_BEHAVIOR               = 35;
 
     public static function machineName(int $attribute): ?string
     {
@@ -81,6 +82,7 @@ class LoAttributes
             self::STREAMABLE                => 'streamable',
             self::CURATED_BY                => 'curated_by',
             self::FEATURED_BY               => 'featured_by',
+            self::LAUNCH_BEHAVIOR           => 'launch_behavior'
         ];
 
         return $map[$attribute] ?? null;
