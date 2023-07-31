@@ -64,7 +64,12 @@ class Service
             }
         }
 
-        $pattern = $pattern ?: 'http://SERVICE.ENVIRONMENT.go1.service';
+        if (strpos($name, 'grpc-') === 0) {
+            $name = substr($name, 5);
+            $pattern = 'SERVICE.ENVIRONMENT:5555';
+        }
+
+        $pattern = $pattern ?? 'http://SERVICE.ENVIRONMENT';
 
         // There are some services don't have staging instance yet.
         if (in_array($name, ['rules'])) {
