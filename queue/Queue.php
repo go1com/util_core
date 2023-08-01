@@ -196,6 +196,7 @@ class Queue
     public const QUIZ_USER_ANSWER_CREATE           = 'quiz.user_answer.create';
     public const QUIZ_USER_ANSWER_UPDATE           = 'quiz.user_answer.update';
     public const QUIZ_USER_ANSWER_DELETE           = 'quiz.user_answer.delete';
+    public const QUIZ_QUESTION_RESULT_DELETE       = 'quiz.question_result.delete';
     public const LOCATION_CREATE                   = 'location.create';
     public const LOCATION_UPDATE                   = 'location.update';
     public const LOCATION_DELETE                   = 'location.delete';
