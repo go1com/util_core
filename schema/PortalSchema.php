@@ -7,7 +7,7 @@ use Doctrine\DBAL\Types\Type;
 
 class PortalSchema
 {
-    public static function install(Schema $schema, bool $installPortalConf = true)
+    public static function install(Schema $schema, bool $installPortalConf = true): void
     {
         if (!$schema->hasTable('gc_instance')) {
             $instance = $schema->createTable('gc_instance');
@@ -83,14 +83,16 @@ class PortalSchema
             $stream->addIndex(['created']);
         }
 
-        $installPortalConf && self::installPortalConf($schema);
+        if ($installPortalConf) {
+            self::installPortalConf($schema);
+        }
         self::update01($schema);
         self::update02($schema);
         self::update03($schema);
         self::update04($schema);
     }
 
-    public static function installPortalConf(Schema $schema)
+    public static function installPortalConf(Schema $schema): void
     {
         if (!$schema->hasTable('portal_conf')) {
             $conf = $schema->createTable('portal_conf');
@@ -107,7 +109,7 @@ class PortalSchema
         }
     }
 
-    public static function installPortalIntegration(Schema $schema)
+    public static function installPortalIntegration(Schema $schema): void
     {
         if ($schema->hasTable('portal_integration')) {
             return;
@@ -121,7 +123,7 @@ class PortalSchema
         $table->addIndex(['integration', 'enabled'], 'idx_integration_enabled');
     }
 
-    public static function update01(Schema $schema)
+    public static function update01(Schema $schema): void
     {
         if ($schema->hasTable('portal_data')) {
             $portalData = $schema->getTable('portal_data');
@@ -132,7 +134,7 @@ class PortalSchema
         }
     }
 
-    public static function update02(Schema $schema)
+    public static function update02(Schema $schema): void
     {
         if ($schema->hasTable('portal_data')) {
             $portalData = $schema->getTable('portal_data');
@@ -143,7 +145,7 @@ class PortalSchema
         }
     }
 
-    public static function update03(Schema $schema)
+    public static function update03(Schema $schema): void
     {
         if ($schema->hasTable('gc_instance')) {
             $portalTable = $schema->getTable('gc_instance');
@@ -153,7 +155,7 @@ class PortalSchema
         }
     }
 
-    public static function update04(Schema $schema)
+    public static function update04(Schema $schema): void
     {
         if ($schema->hasTable('portal_data')) {
             $portalData = $schema->getTable('portal_data');

@@ -7,11 +7,10 @@ use go1\util\lo\LoHelper;
 use go1\util\plan\Plan;
 use go1\util\plan\PlanTypes;
 use go1\util\portal\PortalHelper;
-use go1\util\user\UserHelper;
 
 class PlanCreateEventEmbedder
 {
-    protected $go1;
+    protected Connection $go1;
 
     public function __construct(Connection $go1)
     {

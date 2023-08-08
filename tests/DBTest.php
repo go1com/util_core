@@ -299,7 +299,7 @@ class DBTest extends UtilCoreTestCase
 
         //SSL TEST
         putenv('RDS_DB_ENABLE_SSL=true');
-        $o = DB::connectionOptions('foo', false, true, MockPDO::class);
+        $o = DB::connectionOptions('foo', false, true);
         $this->assertEquals([
             PDO::MYSQL_ATTR_INIT_COMMAND            => 'SET NAMES utf8mb4',
             PDO::MYSQL_ATTR_SSL_CA                  => '/etc/ssl/certs/ca-certificates.crt',
@@ -311,7 +311,7 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals($sslPort, $o['port']);
 
         //SLAVE SSL TEST
-        $o = DB::connectionOptions('foo', true, false, MockPDO::class);
+        $o = DB::connectionOptions('foo', true, false);
         $this->assertEquals($sslSlaveHost, $o['host']);
         $this->assertEquals($sslSlaveUsername, $o['user']);
         $this->assertEquals($sslSlavePassword, $o['password']);
@@ -319,7 +319,7 @@ class DBTest extends UtilCoreTestCase
         //NO SSL TEST
         putenv('FOO_DB_ENABLE_SSL');
         putenv('RDS_DB_ENABLE_SSL=false');
-        $o = DB::connectionOptions('foo', false, true, MockPDO::class);
+        $o = DB::connectionOptions('foo', false, true);
         $this->assertEquals([
             1002 => 'SET NAMES utf8mb4',
         ], $o['driverOptions']);
@@ -329,7 +329,7 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals($port, $o['port']);
 
         //SLAVE NO SSL TEST
-        $o = DB::connectionOptions('foo', true, false, MockPDO::class);
+        $o = DB::connectionOptions('foo', true, false);
         $this->assertEquals($slaveHost, $o['host']);
         $this->assertEquals($slaveUsername, $o['user']);
         $this->assertEquals($slavePassword, $o['password']);

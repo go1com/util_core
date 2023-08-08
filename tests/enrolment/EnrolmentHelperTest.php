@@ -182,7 +182,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
             'module'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->moduleId, 'parent_lo_id' => $this->courseId]),
             'video'    => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liVideoId, 'parent_lo_id' => $this->moduleId, 'status' => 'completed']),
             'question' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveQuestionId, 'parent_lo_id' => $this->moduleId]),
-            'question' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liResourceId, 'parent_lo_id' => $this->moduleId]),
+            'resource' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->liResourceId, 'parent_lo_id' => $this->moduleId]),
         ];
 
         $completion = EnrolmentHelper::sequenceEnrolmentCompleted($this->go1, $this->electiveTextId, $this->moduleId, LoTypes::MODULE, $this->userId);

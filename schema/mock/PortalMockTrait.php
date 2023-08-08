@@ -127,7 +127,7 @@ trait PortalMockTrait
         $go1->insert('gc_ro', [
             'type'      => EdgeTypes::HAS_DOMAIN,
             'source_id' => $portalId,
-            'target_id' => $domainId = $go1->lastInsertId('gc_domain'),
+            'target_id' => $domainId = (int) $go1->lastInsertId('gc_domain'),
             'weight'    => 0,
         ]);
 

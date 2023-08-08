@@ -22,7 +22,7 @@ class PlanStatuses
     public const S_LATE        = 'late';
     public const S_EXPIRED     = 'expired';
 
-    public static function all()
+    public static function all(): array
     {
         $rClass = new ReflectionClass(self::class);
 

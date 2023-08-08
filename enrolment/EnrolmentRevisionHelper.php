@@ -7,7 +7,10 @@ use go1\util\DB;
 
 class EnrolmentRevisionHelper
 {
-    public static function childIds(Connection $go1, int $enrolmentId, $all = false, string $status = EnrolmentStatuses::COMPLETED): array
+    /**
+     * @return int[]
+     */
+    public static function childIds(Connection $go1, int $enrolmentId, bool $all = false, string $status = EnrolmentStatuses::COMPLETED): array
     {
         $q = 'SELECT enrolment_id FROM gc_enrolment_revision WHERE parent_enrolment_id = ? AND status = ?';
         $q = $go1->executeQuery($q, [$enrolmentId, $status], [DB::INTEGER, DB::STRING]);

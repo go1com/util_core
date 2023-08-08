@@ -46,8 +46,9 @@ class EnrolmentStatuses
     /**
      * All available values that user can input.
      * Expired is only set by our background logic.
+     * @return string[]
      */
-    public static function all()
+    public static function all(): array
     {
         return [self::NOT_STARTED, self::IN_PROGRESS, self::PENDING, self::COMPLETED];
     }
@@ -104,7 +105,7 @@ class EnrolmentStatuses
         }
     }
 
-    public static function defaultStatus(Connection $db, int $profileId, stdClass $lo, string $input = self::IN_PROGRESS)
+    public static function defaultStatus(Connection $db, int $profileId, stdClass $lo, string $input = self::IN_PROGRESS): string
     {
         // Mark status is "pending" enrolment If a user enrolls to a dependency module.
         if (LoTypes::MODULE === $lo->type) {

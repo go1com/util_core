@@ -7,7 +7,7 @@ use stdClass;
 interface ServiceConsumerInterface
 {
     /**
-     * @return [string]string — routingKey -> description.
+     * @return array<string,string> — routingKey -> description.
      */
     public function aware(): array;
 

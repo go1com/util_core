@@ -21,6 +21,9 @@ class ServiceConsumeController
     private LoggerInterface $logger;
     private AccessChecker   $accessChecker;
 
+    /**
+     * @param ServiceConsumerInterface[] $consumers
+     */
     public function __construct(array $consumers, LoggerInterface $logger)
     {
         $this->consumers = $consumers;

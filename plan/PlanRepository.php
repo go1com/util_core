@@ -16,11 +16,11 @@ use go1\util\plan\event_publishing\PlanDeleteEventEmbedder;
 use go1\util\plan\event_publishing\PlanUpdateEventEmbedder;
 use go1\util\queue\Queue;
 use Ramsey\Uuid\Uuid;
-
-const DATE_MYSQL = 'Y-m-d H:i:s';
+use stdClass;
 
 class PlanRepository
 {
+    private const DATE_MYSQL = 'Y-m-d H:i:s';
     private Connection              $db;
     private MqClient                $queue;
     private PlanCreateEventEmbedder $planCreateEventEmbedder;
@@ -41,7 +41,7 @@ class PlanRepository
         $this->planDeleteEventEmbedder = $planDeleteEventEmbedder;
     }
 
-    public static function install(Schema $schema)
+    public static function install(Schema $schema): void
     {
         if (!$schema->hasTable('gc_plan')) {
             $plan = $schema->createTable('gc_plan');
@@ -106,7 +106,11 @@ class PlanRepository
         return $plan ? Plan::create($plan) : false;
     }
 
-    public function loadMultiple(array $ids)
+    /**
+     * @param int[] $ids
+     * @return Plan[]
+     */
+    public function loadMultiple(array $ids): array
     {
         $q = $this->db->createQueryBuilder();
         $q = $q
@@ -124,7 +128,10 @@ class PlanRepository
         return $plans;
     }
 
-    public function loadByEntity(string $entityType, int $entityId, int $status = null, $type = PlanTypes::ASSIGN)
+    /**
+     * @return Plan[]
+     */
+    public function loadByEntity(string $entityType, int $entityId, int $status = null, int $type = PlanTypes::ASSIGN): array
     {
         $q = $this->db->createQueryBuilder();
         $q
@@ -133,8 +140,11 @@ class PlanRepository
             ->where($q->expr()->eq('entity_type', ':entityType'))
             ->andWhere($q->expr()->eq('entity_id', ':entityId'))
             ->andWhere($q->expr()->eq('type', ':type'));
-        !is_null($status) && $q
-            ->andWhere($q->expr()->eq('status', ':status'));
+
+        if (!is_null($status)) {
+            $q
+                ->andWhere($q->expr()->eq('status', ':status'));
+        }
 
         $q = $q->setParameters([
             ':entityType' => $entityType,
@@ -151,7 +161,10 @@ class PlanRepository
         return $plans;
     }
 
-    public function loadRevisions(int $planId)
+    /**
+     * @return stdClass[]
+     */
+    public function loadRevisions(int $planId): array
     {
         $q = $this->db
             ->createQueryBuilder()
@@ -170,7 +183,7 @@ class PlanRepository
         return $revisions;
     }
 
-    public function create(Plan &$plan, bool $apiUpliftV3 = false, bool $notify = false, array $queueContext = [], array $embedded = [], $isBatch = false)
+    public function create(Plan &$plan, bool $apiUpliftV3 = false, bool $notify = false, array $queueContext = [], array $embedded = [], bool $isBatch = false): int
     {
         $plan->created = $plan->created ?? new DateTime();
         $this->db->insert('gc_plan', [
@@ -181,8 +194,8 @@ class PlanRepository
             'entity_type'  => $plan->entityType,
             'entity_id'    => $plan->entityId,
             'status'       => $plan->status,
-            'created_date' => $plan->created->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL),
-            'due_date'     => $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL) : null,
+            'created_date' => $plan->created->setTimezone(new DateTimeZone("UTC"))->format(self::DATE_MYSQL),
+            'due_date'     => $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(self::DATE_MYSQL) : null,
             'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
 
@@ -205,7 +218,7 @@ class PlanRepository
         return $plan->id;
     }
 
-    public function createRevision(Plan &$plan)
+    public function createRevision(Plan &$plan): void
     {
         $this->db->insert('gc_plan_revision', [
             'plan_id'      => $plan->id,
@@ -216,8 +229,8 @@ class PlanRepository
             'entity_type'  => $plan->entityType,
             'entity_id'    => $plan->entityId,
             'status'       => $plan->status,
-            'created_date' => ($plan->created ?? new DateTime())->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL),
-            'due_date'     => $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(DATE_MYSQL) : null,
+            'created_date' => ($plan->created ?? new DateTime())->setTimezone(new DateTimeZone("UTC"))->format(self::DATE_MYSQL),
+            'due_date'     => $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(self::DATE_MYSQL) : null,
             'data'         => $plan->data ? json_encode($plan->data) : null,
         ]);
     }
@@ -231,7 +244,7 @@ class PlanRepository
         $this->db->transactional(function () use ($original, $plan, $notify, $diff, $embedded, $queueContext) {
             $diff['updated_at'] = (new DateTimeImmutable('now'))
                 ->setTimezone(new DateTimeZone('UTC'))
-                ->format(DATE_MYSQL);
+                ->format(self::DATE_MYSQL);
             $this->createRevision($original);
             $this->db->update('gc_plan', $diff, ['id' => $original->id]);
             $plan->id = $original->id;
@@ -257,7 +270,7 @@ class PlanRepository
         $this->queue->publish($payload, Queue::PLAN_DELETE);
     }
 
-    public function merge(Plan $plan, bool $notify = false, array $queueContext = [], array $embedded = [])
+    public function merge(Plan $plan, bool $notify = false, array $queueContext = [], array $embedded = []): int
     {
         $qb = $this->db->createQueryBuilder();
         $original = $qb
@@ -293,7 +306,7 @@ class PlanRepository
         return $planId;
     }
 
-    public function archive(int $planId, array $embedded = [], array $queueContext = [], $isBatch = false)
+    public function archive(int $planId, array $embedded = [], array $queueContext = [], bool $isBatch = false): bool
     {
         if (!$plan = $this->load($planId)) {
             return false;
@@ -338,6 +351,9 @@ class PlanRepository
         return $plan ? Plan::create($plan) : null;
     }
 
+    /**
+     * @return stdClass[]
+     */
     public function loadUserPlanByEntity(int $portalId, int $userId, int $entityId, string $entityType = 'lo'): array
     {
         return $this->db->createQueryBuilder()

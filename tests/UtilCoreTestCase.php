@@ -120,7 +120,7 @@ class UtilCoreTestCase extends TestCase
 
     public function setupContainer(Container &$c)
     {
-        $c['go1.client.user-domain-helper'] = function () use ($c) {
+        $c['go1.client.user-domain-helper'] = function () {
             $helper = $this
                 ->getMockBuilder(UserDomainHelper::class)
                 ->disableOriginalConstructor()
@@ -130,7 +130,7 @@ class UtilCoreTestCase extends TestCase
             $helper
                 ->method('loadMultipleUsers')
                 ->willReturnCallback(
-                    function (array $userIds) use ($c) {
+                    function (array $userIds) {
                         $legacyUsers = $this
                             ->go1
                             ->executeQuery('SELECT * FROM gc_user WHERE id IN (?)', [$userIds], [DB::INTEGERS])
@@ -176,7 +176,7 @@ class UtilCoreTestCase extends TestCase
                                 'status'    => $legacyAccount->status ? 'ACTIVE' : 'INACTIVE',
                                 'createdAt' => DateTime::formatDate($legacyAccount->created),
                                 'roles'     => array_map(
-                                    function ($edge) use ($legacyAccount) {
+                                    function ($edge) {
                                         $row = $this
                                             ->go1
                                             ->executeQuery('SELECT name FROM gc_role WHERE id = ?', [$edge->target_id])
@@ -204,7 +204,7 @@ class UtilCoreTestCase extends TestCase
             $helper
                 ->method('loadUser')
                 ->willReturnCallback(
-                    function ($userId, ?string $portalName) use ($c) {
+                    function ($userId, ?string $portalName) {
                         $legacyUser = $this
                             ->go1
                             ->executeQuery('SELECT * FROM gc_user WHERE id = ?', [$userId])
