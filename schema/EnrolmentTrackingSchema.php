@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Types;
 
 class EnrolmentTrackingSchema
 {
-    public static function install(Schema $schema)
+    public static function install(Schema $schema): void
     {
         if (!$schema->hasTable('enrolment_tracking')) {
             $table = $schema->createTable('enrolment_tracking');

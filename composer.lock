@@ -467,18 +467,18 @@
             "source": {
                 "type": "git",
                 "url": "https://code.go1.com.au/mirror/go1-core/util.git",
-                "reference": "8babef253086e0637613300484dd584f222855a5"
+                "reference": "073ac9dfe2f61995574f7c940193931e4cb32768"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://code.go1.com.au/api/v4/projects/mirror%2Fgo1-core%2Futil/repository/archive.zip?sha=8babef253086e0637613300484dd584f222855a5",
-                "reference": "8babef253086e0637613300484dd584f222855a5",
+                "url": "https://code.go1.com.au/api/v4/projects/mirror%2Fgo1-core%2Futil/repository/archive.zip?sha=073ac9dfe2f61995574f7c940193931e4cb32768",
+                "reference": "073ac9dfe2f61995574f7c940193931e4cb32768",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "2.12.1",
                 "ext-json": "*",
-                "monolog/monolog": "^1.24.0",
+                "monolog/monolog": "^1.24.0 | ^2.0 | ^3.0",
                 "php": "^7.4",
                 "psr/http-client": "^1.0.0",
                 "psr/http-factory": "^1.0.1",
@@ -488,13 +488,14 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
+                    "go1\\rest\\": "./vendor/go1/rest/",
                     "go1\\core\\util\\": "./"
                 }
             },
             "support": {
                 "source": "https://code.go1.com.au/mirror/go1-core/util/-/tree/master"
             },
-            "time": "2022-05-30T10:54:48+00:00"
+            "time": "2023-06-26T02:23:46+00:00"
         },
         {
             "name": "go1/flood",

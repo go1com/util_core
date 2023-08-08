@@ -9,8 +9,8 @@ use go1\util\queue\Queue;
 
 class ManualRecordRepository
 {
-    private $db;
-    private $queue;
+    private Connection $db;
+    private MqClient $queue;
 
     public function __construct(Connection $db, MqClient $queue)
     {
@@ -23,7 +23,7 @@ class ManualRecordRepository
         return $this->db;
     }
 
-    public function create(ManualRecord $record)
+    public function create(ManualRecord $record): void
     {
         $this->db->insert('enrolment_manual', $row = [
             'entity_type' => $record->entityType,
@@ -40,7 +40,7 @@ class ManualRecordRepository
         $this->queue->publish($record, Queue::MANUAL_RECORD_CREATE);
     }
 
-    public function update(ManualRecord $record, int $actorId = null)
+    public function update(ManualRecord $record, int $actorId = null): void
     {
         if ($origin = $this->load($record->id)) {
             if ($diff = $origin->diff($record)) {
@@ -64,7 +64,7 @@ class ManualRecordRepository
         }
     }
 
-    public function delete(int $id)
+    public function delete(int $id): void
     {
         if ($record = $this->load($id)) {
             $this->db->delete('enrolment_manual', ['id' => $id]);
@@ -74,9 +74,9 @@ class ManualRecordRepository
 
     /**
      * @param int $id
-     * @return ManualRecord
+     * @return ?ManualRecord
      */
-    public function load(int $id)
+    public function load(int $id): ?ManualRecord
     {
         $row = 'SELECT * FROM enrolment_manual WHERE id = ?';
         $row = $this->db->executeQuery($row, [$id])->fetch(DB::OBJ);
@@ -89,9 +89,9 @@ class ManualRecordRepository
      * @param string $entityType
      * @param string $entityId
      * @param int    $userId
-     * @return ManualRecord
+     * @return ?ManualRecord
      */
-    public function loadByEntity($instanceId, $entityType, $entityId, $userId)
+    public function loadByEntity($instanceId, $entityType, $entityId, $userId): ?ManualRecord
     {
         $row = 'SELECT * FROM enrolment_manual WHERE instance_id = ? AND entity_type = ? AND entity_id = ? AND user_id = ?';
         $row = $this->db->executeQuery($row, [$instanceId, $entityType, $entityId, $userId])->fetch(DB::OBJ);

@@ -1056,7 +1056,7 @@ class Schema
         ],
     ];
 
-    public static function portalIndex(int $portalId)
+    public static function portalIndex(int $portalId): string
     {
         return static::INDEX . '_portal_' . $portalId;
     }

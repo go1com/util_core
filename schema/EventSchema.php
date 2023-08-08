@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 
 class EventSchema
 {
-    public static function install(Schema $schema)
+    public static function install(Schema $schema): void
     {
         if (!$schema->hasTable('event_session')) {
             $session = $schema->createTable('event_session');

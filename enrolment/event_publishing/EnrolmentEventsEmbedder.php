@@ -13,9 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class EnrolmentEventsEmbedder
 {
-    private $go1;
-    private $access;
-    private $userDomainHelper;
+    private Connection $go1;
+    private AccessChecker $access;
+    private UserDomainHelper $userDomainHelper;
 
     public function __construct(Connection $go1, AccessChecker $access, UserDomainHelper $userDomainHelper)
     {

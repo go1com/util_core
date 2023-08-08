@@ -9,7 +9,7 @@ use go1\util\award\AwardStatuses;
 
 class AwardSchema
 {
-    public static function install(Schema $schema)
+    public static function install(Schema $schema): void
     {
         if (!$schema->hasTable('award_award')) {
             $award = $schema->createTable('award_award');
@@ -192,7 +192,7 @@ class AwardSchema
         self::update($schema);
     }
 
-    private static function update(Schema $schema)
+    private static function update(Schema $schema): void
     {
         $awardItem = $schema->getTable('award_item');
         if ($awardItem->hasColumn('type')) {

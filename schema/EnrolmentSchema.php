@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Types;
 
 class EnrolmentSchema
 {
-    public static function install(Schema $schema)
+    public static function install(Schema $schema): void
     {
         if (!$schema->hasTable('gc_enrolment')) {
             $enrolment = $schema->createTable('gc_enrolment');
@@ -126,7 +126,7 @@ class EnrolmentSchema
         static::update04($schema);
     }
 
-    public static function installManualRecord(Schema $schema)
+    public static function installManualRecord(Schema $schema): void
     {
         if (!$schema->hasTable('enrolment_manual')) {
             $manual = $schema->createTable('enrolment_manual');
@@ -151,7 +151,7 @@ class EnrolmentSchema
         }
     }
 
-    public static function update01(Schema $schema)
+    public static function update01(Schema $schema): void
     {
         if ($schema->hasTable('gc_enrolment')) {
             $enrolment = $schema->getTable('gc_enrolment');
@@ -169,7 +169,7 @@ class EnrolmentSchema
         }
     }
 
-    public static function update02(Schema $schema)
+    public static function update02(Schema $schema): void
     {
         if ($schema->hasTable('enrolment_stream')) {
             $stream = $schema->getTable('enrolment_stream');
@@ -180,7 +180,7 @@ class EnrolmentSchema
         }
     }
 
-    public static function update03(Schema $schema)
+    public static function update03(Schema $schema): void
     {
         if ($schema->hasTable('gc_enrolment')) {
             $enrolment = $schema->getTable('gc_enrolment');
@@ -199,7 +199,7 @@ class EnrolmentSchema
         }
     }
 
-    public static function update04(Schema $schema)
+    public static function update04(Schema $schema): void
     {
         if ($schema->hasTable('gc_enrolment')) {
             $enrolment = $schema->getTable('gc_enrolment');

@@ -7,6 +7,7 @@ use go1\util\DB;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
 use PDO;
+use stdClass;
 
 class AwardEnrolmentHelper
 {
@@ -23,7 +24,7 @@ class AwardEnrolmentHelper
     }
 
     /**
-     * @return object|false
+     * @return stdClass|false
      */
     public static function load(Connection $db, int $id)
     {

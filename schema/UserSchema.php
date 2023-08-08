@@ -11,7 +11,7 @@ use go1\flood\Flood;
 
 class UserSchema
 {
-    public static function install(Schema $schema)
+    public static function install(Schema $schema): void
     {
         if (!$schema->hasTable('gc_user')) {
             $user = $schema->createTable('gc_user');
@@ -130,14 +130,14 @@ class UserSchema
         }
     }
 
-    public static function createViews(Connection $db, string $accountsName)
+    public static function createViews(Connection $db, string $accountsName): void
     {
         $manager = $db->getSchemaManager();
         $manager->createView(new View('gc_users', "SELECT * FROM gc_user WHERE instance = '{$accountsName}'"));
         $manager->createView(new View('gc_accounts', "SELECT * FROM gc_user WHERE instance <> '{$accountsName}'"));
     }
 
-    public static function update01(Schema $schema)
+    public static function update01(Schema $schema): void
     {
         $table = $schema->getTable('gc_user');
         if (!$table->hasColumn('locale')) {
@@ -145,12 +145,14 @@ class UserSchema
         }
     }
 
-    public static function update02(Schema $schema)
+    public static function update02(Schema $schema): void
     {
-        $schema->hasTable('gc_user_locale') && $schema->dropTable('gc_user_locale');
+        if ($schema->hasTable('gc_user_locale')) {
+            $schema->dropTable('gc_user_locale');
+        }
     }
 
-    public static function update03(Schema $schema)
+    public static function update03(Schema $schema): void
     {
         $table = $schema->getTable('gc_user_mail');
         if (!$table->hasColumn('user_id')) {
@@ -162,11 +164,13 @@ class UserSchema
             $table->addColumn('verified', 'integer', ['size' => 'tiny', 'default' => 0]);
         }
         if ($table->hasColumn('user_id') && $table->hasColumn('verified')) {
-            !$table->hasIndex('uniq_user_id_email') && $table->addUniqueIndex(['user_id', 'title'], 'uniq_user_id_email');
+            if (!$table->hasIndex('uniq_user_id_email')) {
+                $table->addUniqueIndex(['user_id', 'title'], 'uniq_user_id_email');
+            }
         }
     }
 
-    public static function update06(Schema $schema)
+    public static function update06(Schema $schema): void
     {
         if ($schema->hasTable('gc_user')) {
             $userTable = $schema->getTable('gc_user');
@@ -179,7 +183,7 @@ class UserSchema
         }
     }
 
-    public static function update04(Schema $schema)
+    public static function update04(Schema $schema): void
     {
         if ($schema->hasTable('user_stream')) {
             $userStream = $schema->getTable('user_stream');
@@ -196,7 +200,7 @@ class UserSchema
         }
     }
 
-    public static function update05(Schema $schema)
+    public static function update05(Schema $schema): void
     {
         if ($schema->hasTable('gc_user')) {
             $userTable = $schema->getTable('gc_user');

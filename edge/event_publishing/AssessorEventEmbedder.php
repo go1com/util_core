@@ -8,7 +8,7 @@ use stdClass;
 
 class AssessorEventEmbedder
 {
-    protected $go1;
+    protected Connection $go1;
 
     public function __construct(Connection $go1)
     {

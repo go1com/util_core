@@ -4,7 +4,6 @@ namespace go1\util\enrolment;
 
 use DateTime as DefaultDateTime;
 use Doctrine\DBAL\Connection;
-use go1\clients\MqClient;
 use go1\core\util\client\federation_api\v1\schema\object\User;
 use go1\core\util\client\federation_api\v1\UserMapper;
 use go1\core\util\client\UserDomainHelper;
@@ -12,16 +11,13 @@ use go1\util\DateTime;
 use go1\util\DB;
 use go1\util\edge\EdgeHelper;
 use go1\util\edge\EdgeTypes;
-use go1\util\enrolment\event_publishing\EnrolmentEventsEmbedder;
 use go1\util\lo\LoHelper;
 use go1\util\lo\LoTypes;
 use go1\util\model\Enrolment;
 use go1\util\plan\PlanHelper;
 use go1\util\plan\PlanTypes;
-use go1\util\queue\Queue;
 use LengthException;
 use PDO;
-use ReflectionClass;
 use stdClass;
 
 use function array_map;
@@ -89,7 +85,9 @@ class EnrolmentHelper
             ->where('lo_id = :lo_id')->setParameter(':lo_id', (int) $loId, DB::INTEGER)
             ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int) $profileId, DB::INTEGER);
 
-        $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
+        if ($parentLoId) {
+            $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
+        }
         $enrolments = $q->execute()->fetchAll($fetchMode);
         if (count($enrolments) > 1) {
             throw new LengthException('More than one enrolment return.');
@@ -108,8 +106,9 @@ class EnrolmentHelper
             ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int) $profileId, DB::INTEGER)
             ->andWhere('taken_instance_id = :taken_instance_id')->setParameter(':taken_instance_id', (int) $portalId, DB::INTEGER);
 
-        $parentLoId && $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
-
+        if ($parentLoId) {
+            $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
+        }
         return $q->execute()->fetch($fetchMode);
     }
 
@@ -340,10 +339,11 @@ class EnrolmentHelper
             ->where('profile_id = :profile_id')
             ->setParameter('profile_id', $profileId);
 
-        $takenInstanceId && $q
-            ->andWhere('taken_instance_id = :taken_instance_id')
-            ->setParameter('taken_instance_id', $takenInstanceId);
-
+        if ($takenInstanceId) {
+            $q
+                ->andWhere('taken_instance_id = :taken_instance_id')
+                ->setParameter('taken_instance_id', $takenInstanceId);
+        }
         return $q->execute()->fetchColumn();
     }
 
@@ -354,7 +354,7 @@ class EnrolmentHelper
 
         $dueDate = null;
         while ($edge = $edges->fetch(PDO::FETCH_OBJ)) {
-            if ($edge && ($plan = PlanHelper::load($db, $edge->plan_id))) {
+            if ($plan = PlanHelper::load($db, $edge->plan_id)) {
                 if ($plan->due_date && (PlanTypes::ASSIGN == $plan->type)) {
                     return DateTime::create($plan->due_date);
                 }
@@ -420,10 +420,11 @@ class EnrolmentHelper
             ->andWhere('profile_id = :profileId')->setParameter(':profileId', $profileId)
             ->andWhere('taken_instance_id = :takenInstanceId')->setParameter(':takenInstanceId', $portalId);
 
-        !is_null($parentEnrolmentId) && $q
-            ->andWhere('parent_enrolment_id = :parentEnrolmentId')
-            ->setParameter(':parentEnrolmentId', $parentEnrolmentId);
-
+        if (!is_null($parentEnrolmentId)) {
+            $q
+                ->andWhere('parent_enrolment_id = :parentEnrolmentId')
+                ->setParameter(':parentEnrolmentId', $parentEnrolmentId);
+        }
         $row = $q->execute()->fetch(DB::OBJ);
 
         return $row ? Enrolment::create($row) : null;
@@ -439,10 +440,11 @@ class EnrolmentHelper
             ->andWhere('user_id = :userId')->setParameter(':userId', $userId)
             ->andWhere('taken_instance_id = :takenInstanceId')->setParameter(':takenInstanceId', $portalId);
 
-        !is_null($parentEnrolmentId) && $q
-            ->andWhere('parent_enrolment_id = :parentEnrolmentId')
-            ->setParameter(':parentEnrolmentId', $parentEnrolmentId);
-
+        if (!is_null($parentEnrolmentId)) {
+            $q
+                ->andWhere('parent_enrolment_id = :parentEnrolmentId')
+                ->setParameter(':parentEnrolmentId', $parentEnrolmentId);
+        }
         $row = $q->execute()->fetch(DB::OBJ);
 
         return $row ? Enrolment::create($row) : null;

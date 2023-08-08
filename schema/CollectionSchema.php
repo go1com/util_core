@@ -6,7 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 
 class CollectionSchema
 {
-    public static function install(Schema $schema)
+    public static function install(Schema $schema): void
     {
         if (!$schema->hasTable('collection_collection')) {
             $collection = $schema->createTable('collection_collection');

@@ -2,6 +2,8 @@
 
 namespace go1\util\enrolment;
 
+use InvalidArgumentException;
+
 class EnrolmentOriginalTypes
 {
     public const SELF_DIRECTED = 'self-directed';
@@ -34,6 +36,9 @@ class EnrolmentOriginalTypes
         }
     }
 
+    /**
+     * @return string[]
+     */
     public static function all(): array
     {
         return [static::SELF_DIRECTED, static::ASSIGNED];

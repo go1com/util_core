@@ -2,6 +2,7 @@
 
 namespace go1\util\portal;
 
+use InvalidArgumentException;
 use ReflectionClass;
 
 class PartnerType
