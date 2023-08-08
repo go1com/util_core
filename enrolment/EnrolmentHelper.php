@@ -193,8 +193,7 @@ class EnrolmentHelper
         $parentQuery = function (stdClass $lo, stdClass $enrolment) use ($db, $loadLo) {
             $parentLoId = $enrolment->parent_lo_id ?: false;
             if (empty($parentLoId)) {
-                $roTypes = [EdgeTypes::HAS_LP_ITEM, EdgeTypes::HAS_MODULE, EdgeTypes::HAS_ELECTIVE_LO, EdgeTypes::HAS_LI, EdgeTypes::HAS_ELECTIVE_LI];
-                $query = $db->executeQuery('SELECT source_id FROM gc_ro WHERE type IN (?) AND target_id = ?', [$roTypes, $lo->id], [DB::INTEGERS, DB::INTEGER]);
+                $query = $db->executeQuery('SELECT source_id FROM gc_ro WHERE type IN (?) AND target_id = ?', [EdgeTypes::LO_HAS_CHILDREN, $lo->id], [DB::INTEGERS, DB::INTEGER]);
                 $parentLoId = $query->fetchColumn();
             }
 

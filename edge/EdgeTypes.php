@@ -18,8 +18,16 @@ class EdgeTypes
     public const HAS_SHARE_WITH_LO_USER   = 601; # T: gc_lo.id           | S: gc_user.id
     public const HAS_SHARE_WITH_LO_PORTAL = 603; # T: gc_instance.id     | S: Learning object
 
+    public const LO_HAS_CHILDREN = [
+        self::HAS_LP_ITEM,
+        self::HAS_MODULE,
+        self::HAS_ELECTIVE_LO,
+        self::HAS_LI,
+        self::HAS_ELECTIVE_LI,
+    ];
+
     public const LearningObjectTree = [
-        'all'              => [self::HAS_LP_ITEM, self::HAS_MODULE, self::HAS_ELECTIVE_LO, self::HAS_LI, self::HAS_ELECTIVE_LI],
+        'all'              => self::LO_HAS_CHILDREN,
         'learning_pathway' => [self::HAS_LP_ITEM],
         'course'           => [self::HAS_MODULE, self::HAS_ELECTIVE_LO],
         'module'           => [self::HAS_LI, self::HAS_ELECTIVE_LI],
@@ -33,14 +41,6 @@ class EdgeTypes
         self::HAS_ELECTIVE_LO,
         self::HAS_ELECTIVE_LI,
         self::GROUP_HAS_ITEM,
-    ];
-
-    public const LO_HAS_CHILDREN = [
-        self::HAS_LP_ITEM,
-        self::HAS_MODULE,
-        self::HAS_ELECTIVE_LO,
-        self::HAS_LI,
-        self::HAS_ELECTIVE_LI,
     ];
 
     # Edges which user object is the source
