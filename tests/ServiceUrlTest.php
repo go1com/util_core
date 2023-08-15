@@ -22,6 +22,6 @@ class ServiceUrlTest extends TestCase
         $this->assertEquals('http://iam.qa.go1.service', Service::url('iam', 'qa', 'http://SERVICE.ENVIRONMENT.go1.service'));
         $this->assertEquals('http://iam.k8s-qa', Service::url('iam', 'k8s-qa'));
         $this->assertEquals('http://account-fields.k8s-qa', Service::url('account-fields', 'k8s-qa'));
-        $this->assertEquals('account-fields.k8s-qa:5555', Service::url('grpc-account-fields', 'k8s-qa'));
+        $this->assertEquals('account-fields.k8s-qa:5000', Service::url('grpc-account-fields', 'k8s-qa'));
     }
 }
