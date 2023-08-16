@@ -66,7 +66,9 @@ class Service
 
         if (strpos($name, 'grpc-') === 0) {
             $name = substr($name, 5);
-            $pattern = 'SERVICE.ENVIRONMENT:5000';
+            $pattern = $pattern
+                ? str_replace('http://', '', $pattern) . ':5000'
+                : 'SERVICE.ENVIRONMENT:5000';
         }
 
         $pattern = $pattern ?? 'http://SERVICE.ENVIRONMENT';
