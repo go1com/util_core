@@ -66,7 +66,8 @@ class DB
             'password'      => $dbPass,
             'port'          => self::getEnvByPriority(["{$prefix}{$sslString}_PORT", "RDS{$sslString}_DB_PORT"]) ?: '3306',
             'driverOptions' => [
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4'
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ] + $driverOptions,
         ];
     }
