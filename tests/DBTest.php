@@ -56,6 +56,7 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals([
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
             PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ], $foo['driverOptions']);
         $this->assertEquals(3306, $foo['port']);
 
@@ -232,6 +233,7 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals([
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
             PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ], $o['pdo']->options);
     }
 
@@ -253,7 +255,8 @@ class DBTest extends UtilCoreTestCase
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
             PDO::ATTR_PERSISTENT   => true,
             PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt',
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ], $o['pdo']->options);
     }
 
@@ -303,7 +306,8 @@ class DBTest extends UtilCoreTestCase
         $this->assertEquals([
             PDO::MYSQL_ATTR_INIT_COMMAND            => 'SET NAMES utf8mb4',
             PDO::MYSQL_ATTR_SSL_CA                  => '/etc/ssl/certs/ca-certificates.crt',
-            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT  => true
+            PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT  => true,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ], $o['driverOptions']);
         $this->assertEquals($sslHost, $o['host']);
         $this->assertEquals($sslUsername, $o['user']);
@@ -322,6 +326,7 @@ class DBTest extends UtilCoreTestCase
         $o = DB::connectionOptions('foo', false, true);
         $this->assertEquals([
             1002 => 'SET NAMES utf8mb4',
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ], $o['driverOptions']);
         $this->assertEquals($host, $o['host']);
         $this->assertEquals($username, $o['user']);
