@@ -59,6 +59,15 @@ class Service
             // K8S Service discovery using ENV variables
             $proxyService = 'bridge-to-k8s-proxy';
             [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($proxyService);
+            if (strpos($name, 'grpc-') === 0) {
+                $name = substr($name, 5);
+                [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($proxyService, 'k8s-qa', 'grpc');
+
+                if ($k8sHost && $k8sPort) {
+                    return "{$k8sHost}:{$k8sPort}/{$name}";
+                }
+            }
+
             if ($k8sHost && $k8sPort) {
                 return "http://{$k8sHost}:{$k8sPort}/{$name}";
             }
