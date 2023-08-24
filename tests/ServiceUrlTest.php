@@ -44,11 +44,11 @@ class ServiceUrlTest extends TestCase
 
         putenv('ACCOUNT_FIELDS_SERVICE_HOST=foo');
         putenv('ACCOUNT_FIELDS_SERVICE_PORT_GRPC=4444');
-        $this->assertEquals('http://foo:4444', Service::url('grpc-account-fields', $env));
+        $this->assertEquals('foo:4444', Service::url('grpc-account-fields', $env));
 
         // namespaced env vars preferred
         putenv('ACCOUNT_FIELDS_K8S_QA_SERVICE_HOST=bar');
         putenv('ACCOUNT_FIELDS_K8S_QA_SERVICE_PORT_GRPC=3333');
-        $this->assertEquals('http://bar:3333', Service::url('grpc-account-fields', $env));
+        $this->assertEquals('bar:3333', Service::url('grpc-account-fields', $env));
     }
 }

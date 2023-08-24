@@ -61,7 +61,7 @@ class Service
                 $name = substr($name, 5);
                 [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($name, 'k8s-qa', 'grpc');
                 if ($k8sHost && $k8sPort) {
-                    return "http://{$k8sHost}:{$k8sPort}";
+                    return "{$k8sHost}:{$k8sPort}";
                 }
             }
 
