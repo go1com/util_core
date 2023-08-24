@@ -56,18 +56,18 @@ class Service
     public static function url(string $name, string $env, string $pattern = null): string
     {
         if (getenv('AZURE_BRIDGE_MODE')) {
-            // K8S Service discovery using ENV variables
-            $proxyService = 'bridge-to-k8s-proxy';
-            [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($proxyService);
+            // must be grpc prefixed service -> don't use proxy
             if (strpos($name, 'grpc-') === 0) {
                 $name = substr($name, 5);
-                [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($proxyService, 'k8s-qa', 'grpc');
-
+                [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($name, 'k8s-qa', 'grpc');
                 if ($k8sHost && $k8sPort) {
-                    return "{$k8sHost}:{$k8sPort}/{$name}";
+                    return "http://{$k8sHost}:{$k8sPort}";
                 }
             }
 
+            // K8S Service discovery using ENV variables
+            $proxyService = 'bridge-to-k8s-proxy';
+            [$k8sHost, $k8sPort] = K8SBridgeHelper::getServiceEnvValues($proxyService);
             if ($k8sHost && $k8sPort) {
                 return "http://{$k8sHost}:{$k8sPort}/{$name}";
             }
