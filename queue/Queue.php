@@ -112,6 +112,9 @@ class Queue
     public const PLAN_CREATE                       = 'plan.create';
     public const PLAN_UPDATE                       = 'plan.update';
     public const PLAN_DELETE                       = 'plan.delete';
+    public const PLAN_REFERENCE_CREATE             = 'plan-reference.create';
+    public const PLAN_REFERENCE_UPDATE             = 'plan-reference.update';
+    public const PLAN_REFERENCE_DELETE             = 'plan-reference.delete';
     public const PLAN_REASSIGN                     = 'plan.re-assign'; # Body: {type: STRING,user_id: INT,assigner_id: INT,instance_id: INT,entity_type: STRING,entity_id: INT,status: INT,created_date: INT,due_date: INT}
     public const ENROLMENT_CREATE                  = 'enrolment.create';
     public const ENROLMENT_UPDATE                  = 'enrolment.update';
