@@ -97,7 +97,7 @@ class UserHelper
      */
     public function profileId2uuid(Client $client, $userUrl, $profileId)
     {
-        $jwt = JWT::encode(['admin' => true], 'INTERNAL');
+        $jwt = JWT::encode(['admin' => true], 'INTERNAL', 'HS256');
         $url = rtrim($userUrl, '/') . "/account/masquerade/-/{$profileId}?jwt=$jwt";
         $res = $client->get($url, ['https_errors' => false]);
 
@@ -185,7 +185,7 @@ class UserHelper
             'object' => ['type' => 'user', 'content' => $payload],
         ];
 
-        return JWT::encode($array, 'INTERNAL');
+        return JWT::encode($array, 'INTERNAL', 'HS256');
     }
 
     /**
@@ -410,6 +410,6 @@ class UserHelper
             ],
         ];
 
-        return JWT::encode($payload, 'INTERNAL');
+        return JWT::encode($payload, 'INTERNAL', 'HS256');
     }
 }
