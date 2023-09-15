@@ -3,6 +3,7 @@
 namespace go1\util\tests;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use go1\util\edge\EdgeTypes;
 use go1\util\schema\mock\PortalMockTrait;
 use go1\util\schema\mock\UserMockTrait;
@@ -232,7 +233,7 @@ class UserHelperTest extends UtilCoreTestCase
             'id'    => 30
         ];
         $jwt = UserHelper::getPortalJWT($portal);
-        $payload = JWT::decode($jwt, 'INTERNAL', ['HS256']);
+        $payload = JWT::decode($jwt, new Key('INTERNAL', 'HS256'));
         $expectedPayload = (object)[
             'iss'    => 'go1.user',
             'ver'    => '1.0',

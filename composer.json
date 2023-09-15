@@ -13,7 +13,7 @@
     "ext-pdo": "*",
     "ext-json": "*",
     "doctrine/dbal": "2.12.1",
-    "firebase/php-jwt": "^5.0",
+    "firebase/php-jwt": "^6.8",
     "go1/flood": "dev-master",
     "go1/kv": "dev-master",
     "go1.core/util": "dev-master",

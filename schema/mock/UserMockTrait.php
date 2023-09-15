@@ -123,7 +123,7 @@ trait UserMockTrait
 
         !$payload['object']->content && Error::throw(new InvalidArgumentException('User not found.'));
 
-        return JWT::encode($payload, 'INTERNAL');
+        return JWT::encode($payload, 'INTERNAL', 'HS256');
     }
 
     /**
@@ -161,7 +161,7 @@ trait UserMockTrait
             'user_profile_id' => $userProfileId,
         ]);
 
-        return $encode ? JWT::encode($payload, 'private_key') : $payload;
+        return $encode ? JWT::encode((array) $payload, 'private_key', 'HS256') : $payload;
     }
 
     protected function getRootPayload()

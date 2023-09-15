@@ -3,6 +3,7 @@
 namespace go1\util\tests;
 
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use go1\util\AccessChecker;
 use go1\util\edge\EdgeTypes;
 use go1\util\schema\mock\PortalMockTrait;
@@ -89,7 +90,7 @@ class AccessCheckerTest extends UtilCoreTestCase
 
         $req = new Request();
         $access = new AccessChecker();
-        $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
+        $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), new Key('INTERNAL', 'HS256')));
         $this->assertTrue((bool) $access->isPortalAdmin($req, $portalName));
         $this->assertTrue((bool) $access->isPortalAdmin($req, $portalId));
         $this->assertTrue((bool) $access->isPortalAdmin($req, $portalName), false);
@@ -117,7 +118,7 @@ class AccessCheckerTest extends UtilCoreTestCase
 
         $req = new Request();
         $accessChecker = new AccessChecker();
-        $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), 'INTERNAL', ['HS256']));
+        $req->attributes->set('jwt.payload', JWT::decode($this->jwtForUser($this->go1, $userId, $portalName), new Key('INTERNAL', 'HS256')));
         $this->assertTrue((bool) $accessChecker->isPortalAdmin($req, $portalName));
         $this->assertFalse((bool) $accessChecker->isPortalAdmin($req, $portalName, Roles::ADMIN, false));
         $this->assertTrue((bool) $accessChecker->isContentAdministrator($req, $portalName));
@@ -163,9 +164,9 @@ class AccessCheckerTest extends UtilCoreTestCase
         }
 
         {
-            $jwt = JWT::encode(['sid' => 'SID', 'exp' => strtotime('+ 15 minutes'), 'scope' => $scope], 'INTERNAL');
+            $jwt = JWT::encode(['sid' => 'SID', 'exp' => strtotime('+ 15 minutes'), 'scope' => $scope], 'INTERNAL', 'HS256');
             $req = new Request();
-            $req->attributes->set('jwt.payload', JWT::decode($jwt, 'INTERNAL', ['HS256']));
+            $req->attributes->set('jwt.payload', JWT::decode($jwt, new Key('INTERNAL', 'HS256')));
             $req->headers->set('X-ACCESS', 'verified');
             $this->assertTrue(AccessChecker::isRequestVerified($req, $scope));
         }
