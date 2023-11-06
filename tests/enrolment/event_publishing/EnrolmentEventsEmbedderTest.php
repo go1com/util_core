@@ -30,7 +30,7 @@ class EnrolmentEventsEmbedderTest extends UtilCoreTestCase
     {
         parent::setUp();
 
-        $c = $this->getContainer();
+        $c = $this->getContainer(true);
         $this->portalId = $this->createPortal($this->go1, ['title' => 'qa.mygo1.com']);
         $this->userId = $this->createUser($this->go1, ['instance' => $c['accounts_name'], 'profile_id' => $this->profileId]);
         $this->accountId = $this->createUser($this->go1, ['instance' => 'qa.mygo1.com', 'profile_id' => $this->profileId]);

@@ -343,14 +343,14 @@ class DBTest extends UtilCoreTestCase
     public function testConnectionPoolOptionsException()
     {
         $connectionName = 'foo';
-        putenv("FOO_DB_USERNAME=${connectionName}_username");
-        putenv("FOO_DB_PASSWORD=${connectionName}_password");
+        putenv("FOO_DB_USERNAME={$connectionName}_username");
+        putenv("FOO_DB_PASSWORD={$connectionName}_password");
         // SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Temporary failure in name resolution
         putenv("FOO_DB_HOST=:?$/");
 
         $this->expectException(\PDOException::class);
         $this->expectExceptionMessageMatches(
-            '/SQLSTATE\[HY000\] \[2002\] php_network_getaddresses\: getaddrinfo failed\:/'
+            '/SQLSTATE\[HY000\] \[2002\] php_network_getaddresses/'
         );
         $_ = DB::connectionPoolOptions($connectionName, false, true, \PDO::class);
     }

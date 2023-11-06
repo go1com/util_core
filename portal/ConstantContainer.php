@@ -8,16 +8,11 @@ abstract class ConstantContainer
 
     protected static $customFormats = [];
 
-    public static function all()
+    public static function all(): array
     {
-        static $types;
-
-        if (!isset($types)) {
-            $reflectedClass = new \ReflectionClass(static::class);
-            $constants = $reflectedClass->getConstants();
-            $types = array_values($constants);
-        }
-
+        $reflectedClass = new \ReflectionClass(static::class);
+        $constants = $reflectedClass->getConstants();
+        $types = array_values($constants);
         return $types;
     }
 
