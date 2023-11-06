@@ -9,7 +9,7 @@
     }
   },
   "require": {
-    "php": "^7.4",
+    "php": ">=7.4",
     "ext-pdo": "*",
     "ext-json": "*",
     "doctrine/dbal": "2.12.1",
@@ -25,7 +25,7 @@
   },
   "require-dev": {
     "ezyang/htmlpurifier": "^4.12",
-    "phpspec/prophecy": "^1.15",
+    "phpspec/prophecy": "^1.17",
     "phpspec/prophecy-phpunit": "^2.0",
     "behat/transliterator": "^1.5"
   },

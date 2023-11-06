@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6d6bce1457deb93f4d2498c3f87610c",
+    "content-hash": "e2c1f6a43c8c87d6ee7cf9dc7462d85a",
     "packages": [
         {
             "name": "datadog/dd-trace",
@@ -473,19 +473,19 @@
             "source": {
                 "type": "git",
                 "url": "https://code.go1.com.au/mirror/go1-core/util.git",
-                "reference": "073ac9dfe2f61995574f7c940193931e4cb32768"
+                "reference": "1575695170e661ebf7cdb501d92bf24d9e0c8d27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://code.go1.com.au/api/v4/projects/mirror%2Fgo1-core%2Futil/repository/archive.zip?sha=073ac9dfe2f61995574f7c940193931e4cb32768",
-                "reference": "073ac9dfe2f61995574f7c940193931e4cb32768",
+                "url": "https://code.go1.com.au/api/v4/projects/mirror%2Fgo1-core%2Futil/repository/archive.zip?sha=1575695170e661ebf7cdb501d92bf24d9e0c8d27",
+                "reference": "1575695170e661ebf7cdb501d92bf24d9e0c8d27",
                 "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "2.12.1",
                 "ext-json": "*",
                 "monolog/monolog": "^1.24.0 | ^2.0 | ^3.0",
-                "php": "^7.4",
+                "php": ">=7.4",
                 "psr/http-client": "^1.0.0",
                 "psr/http-factory": "^1.0.1",
                 "psr/log": "^1.1.0"
@@ -501,7 +501,7 @@
             "support": {
                 "source": "https://code.go1.com.au/mirror/go1-core/util/-/tree/master"
             },
-            "time": "2023-06-26T02:23:46+00:00"
+            "time": "2023-11-03T17:11:34+10:00"
         },
         {
             "name": "go1/flood",
@@ -2451,27 +2451,28 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.15.0",
+            "version": "v1.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "bbcd7380b0ebf3961ee21409db7b38bc31d69a13"
+                "reference": "15873c65b207b07765dbc3c95d20fdf4a320cbe2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/bbcd7380b0ebf3961ee21409db7b38bc31d69a13",
-                "reference": "bbcd7380b0ebf3961ee21409db7b38bc31d69a13",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/15873c65b207b07765dbc3c95d20fdf4a320cbe2",
+                "reference": "15873c65b207b07765dbc3c95d20fdf4a320cbe2",
                 "shasum": ""
             },
             "require": {
-                "doctrine/instantiator": "^1.2",
-                "php": "^7.2 || ~8.0, <8.2",
+                "doctrine/instantiator": "^1.2 || ^2.0",
+                "php": "^7.2 || 8.0.* || 8.1.* || 8.2.*",
                 "phpdocumentor/reflection-docblock": "^5.2",
                 "sebastian/comparator": "^3.0 || ^4.0",
                 "sebastian/recursion-context": "^3.0 || ^4.0"
             },
             "require-dev": {
                 "phpspec/phpspec": "^6.0 || ^7.0",
+                "phpstan/phpstan": "^1.9",
                 "phpunit/phpunit": "^8.0 || ^9.0"
             },
             "type": "library",
@@ -2512,9 +2513,9 @@
             ],
             "support": {
                 "issues": "https://github.com/phpspec/prophecy/issues",
-                "source": "https://github.com/phpspec/prophecy/tree/v1.15.0"
+                "source": "https://github.com/phpspec/prophecy/tree/v1.17.0"
             },
-            "time": "2021-12-08T12:19:24+00:00"
+            "time": "2023-02-02T15:41:36+00:00"
         },
         {
             "name": "phpspec/prophecy-phpunit",
@@ -4072,7 +4073,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4",
+        "php": ">=7.4",
         "ext-pdo": "*",
         "ext-json": "*"
     },
