@@ -14,7 +14,7 @@ class LoUpdateEventEmbedderTest extends LoCreateEventEmbedderTest
 {
     public function test()
     {
-        $c = $this->getContainer();
+        $c = $this->getContainer(true);
         $event = LoHelper::load($this->go1, $this->eventLiId);
         $embedder = new LoUpdateEventEmbedder($this->go1, $c['access_checker'], $c['go1.client.user-domain-helper']);
         $req = Request::create('/', 'POST');
