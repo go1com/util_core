@@ -271,6 +271,9 @@ class Queue
     public const ACCOUNT_FIELDS_UPDATE             = 'account-fields.update';
     public const ACCOUNT_FIELDS_DELETE             = 'account-fields.delete';
 
+    # wallet events
+    public const WALLET_LEARNING_REQUEST_APPROVAL_REQUESTED   = 'wallet.learning-request.approval.requested';
+
     /**
      * @deprecated
      *
