@@ -44,7 +44,7 @@ class Collection implements JsonSerializable
         return $collection;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $array = [
             'id'           => $this->id,

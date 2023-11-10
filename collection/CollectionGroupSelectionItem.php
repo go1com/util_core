@@ -27,7 +27,7 @@ class CollectionGroupSelectionItem implements JsonSerializable
         return $group;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $array = [
             'id'            => $this->id,

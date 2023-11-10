@@ -66,7 +66,7 @@ class Enrolment implements JsonSerializable
         return $enrolment;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $array = [
             'id'                  => $this->id,
