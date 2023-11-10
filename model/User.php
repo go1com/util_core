@@ -109,7 +109,7 @@ class User implements JsonSerializable
         return trim($this->firstName . ' ' . $this->lastName);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id'         => $this->id,

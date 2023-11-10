@@ -39,7 +39,7 @@ class MailTemplate implements JsonSerializable
         return $this->html;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id'      => $this->id,

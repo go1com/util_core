@@ -25,7 +25,7 @@ class CollectionItem implements JsonSerializable
         return $item;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $array = [
             'id'            => $this->id,
