@@ -273,6 +273,7 @@ class Queue
 
     # wallet events
     public const WALLET_LEARNING_REQUEST_APPROVAL_REQUESTED   = 'wallet.learning-request.approval.requested';
+    public const WALLET_LEARNING_REQUEST_APPROVAL_GRANTED   = 'wallet.learning-request.approval.granted';
 
     /**
      * @deprecated
