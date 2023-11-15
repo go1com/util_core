@@ -303,11 +303,11 @@ class LoHelper
             ->get($db, [$loId], [], [EdgeTypes::COURSE_ASSESSOR], PDO::FETCH_COLUMN);
     }
 
-    public static function enrolmentAssessorIds(Connection $db, int $loId, int $learnerProfileId): array
+    public static function enrolmentAssessorIds(Connection $db, int $loId, int $learnerUserId): array
     {
-        if ($enrolmentId = EnrolmentHelper::enrolmentId($db, $loId, $learnerProfileId)) {
+        if ($enrolmentIds = EnrolmentHelper::enrolmentIdsByLoAndUser($db, $loId, $learnerUserId)) {
             return EdgeHelper::select('source_id')
-                ->get($db, [], [$enrolmentId], [EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE], PDO::FETCH_COLUMN);
+                ->get($db, [], $enrolmentIds, [EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE], PDO::FETCH_COLUMN);
         }
 
         return [];
@@ -358,7 +358,7 @@ class LoHelper
         return array_map('intval', $authorIds);
     }
 
-    public static function parentsAssessorIds(Connection $db, int $loId, array $parentLoIds = null, int $learnerProfileId = null): array
+    public static function parentsAssessorIds(Connection $db, int $loId, array $parentLoIds = null, int $learnerUserId = null): array
     {
         $assessorIds = [];
         if (!isset($parentLoIds)) {
@@ -369,8 +369,8 @@ class LoHelper
         foreach ($parentLoIds as $parentLoId) {
             $assessorIds = array_merge($assessorIds, self::assessorIds($db, $parentLoId));
 
-            if ($learnerProfileId) {
-                $assessorIds = array_merge($assessorIds, self::enrolmentAssessorIds($db, $parentLoId, $learnerProfileId));
+            if ($learnerUserId) {
+                $assessorIds = array_merge($assessorIds, self::enrolmentAssessorIds($db, $parentLoId, $learnerUserId));
             }
         }
 

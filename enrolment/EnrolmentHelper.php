@@ -4,6 +4,7 @@ namespace go1\util\enrolment;
 
 use DateTime as DefaultDateTime;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use go1\core\util\client\federation_api\v1\schema\object\User;
 use go1\core\util\client\federation_api\v1\UserMapper;
 use go1\core\util\client\UserDomainHelper;
@@ -41,9 +42,30 @@ class EnrolmentHelper
         return $portal ? $portal->status : true;
     }
 
+    /**
+     * @deprecated
+     * @see EnrolmentHelper::enrolmentIdsByLoAndUser()
+     */
     public static function enrolmentId(Connection $db, int $loId, int $profileId)
     {
         return $db->fetchColumn('SELECT id FROM gc_enrolment WHERE lo_id = ? AND profile_id = ?', [$loId, $profileId]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function enrolmentIdsByLoAndUser(Connection $db, int $loId, int $userId): array
+    {
+        return $db
+            ->createQueryBuilder()
+            ->select('id')
+            ->from('gc_enrolment')
+            ->where('lo_id = :lo_id')
+            ->andWhere('user_id = :user_id')
+            ->setParameter(':lo_id', $loId, DB::INTEGER)
+            ->setParameter(':user_id', $userId, DB::INTEGER)
+            ->execute()
+            ->fetchFirstColumn();
     }
 
     public static function load(Connection $db, int $id, bool $loadEdges = false)
@@ -277,7 +299,7 @@ class EnrolmentHelper
      * @param string $entityType
      * @return mixed|false False is returned if no rows are found.
      * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public static function loadUserPlanIdByEntity(Connection $go1, int $portalId, int $userId, int $entityId, string $entityType = 'lo')
     {

@@ -200,33 +200,32 @@ class LoHelperTest extends UtilCoreTestCase
 
     public function testParentAssessorIdsIncludeEnrolmentAssessors()
     {
-        $course1EnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->course1Id, 'profile_id' => $learnerProfileId = 123]);
-        $module1EnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->module1Id, 'profile_id' => $learnerProfileId]);
-        $li1EnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->resource1Id, 'profile_id' => $learnerProfileId]);
-        $li2EnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->resource2Id, 'profile_id' => $learnerProfileId]);
+        $course1EnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->course1Id, 'profile_id' => $learnerProfileId = 123, 'user_id' => $learnerUserId = 123]);
+        $li1EnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->resource1Id, 'profile_id' => $learnerProfileId,  'user_id' => $learnerUserId]);
+        $li2EnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->resource2Id, 'profile_id' => $learnerProfileId,  'user_id' => $learnerUserId]);
 
         $this->link($this->go1, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $this->author1Id, $course1EnrolmentId);
         $this->link($this->go1, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $this->author2Id, $li1EnrolmentId);
         $this->link($this->go1, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $this->author3Id, $li2EnrolmentId);
 
-        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->course1Id, null, $learnerProfileId);
+        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->course1Id, null, $learnerUserId);
         $this->assertEquals(3, count($assessors));
         $this
             ->hasAssessor($this->assessor1Id, $assessors)
             ->hasAssessor($this->assessor2Id, $assessors)
             ->hasAssessor($this->author1Id, $assessors);
 
-        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->course2Id, null, $learnerProfileId);
+        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->course2Id, null, $learnerUserId);
         $this->assertEquals(0, count($assessors));
 
-        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->module1Id, null, $learnerProfileId);
+        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->module1Id, null, $learnerUserId);
         $this->assertEquals(3, count($assessors));
         $this
             ->hasAssessor($this->assessor1Id, $assessors)
             ->hasAssessor($this->assessor2Id, $assessors)
             ->hasAssessor($this->author1Id, $assessors);
 
-        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->resource1Id, null, $learnerProfileId);
+        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->resource1Id, null, $learnerUserId);
         $this->assertEquals(5, count($assessors));
         $this
             ->hasAssessor($this->assessor1Id, $assessors)
@@ -235,10 +234,10 @@ class LoHelperTest extends UtilCoreTestCase
             ->hasAssessor($this->author1Id, $assessors)
             ->hasAssessor($this->author2Id, $assessors);
 
-        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->module2Id, null, $learnerProfileId);
+        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->module2Id, null, $learnerUserId);
         $this->assertEquals(0, count($assessors));
 
-        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->resource2Id, null, $learnerProfileId);
+        $assessors = LoHelper::parentsAssessorIds($this->go1, $this->resource2Id, null, $learnerUserId);
         $this->assertEquals(2, count($assessors));
         $this
             ->hasAssessor($this->assessor2Id, $assessors)
