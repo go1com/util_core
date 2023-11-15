@@ -105,16 +105,17 @@ class EnrolmentStatuses
         }
     }
 
-    public static function defaultStatus(Connection $db, int $profileId, stdClass $lo, string $input = self::IN_PROGRESS): string
+    public static function defaultStatus(Connection $db, int $userId, stdClass $lo, string $input = self::IN_PROGRESS): string
     {
         // Mark status is "pending" enrolment If a user enrolls to a dependency module.
         if (LoTypes::MODULE === $lo->type) {
             $query = $db->executeQuery('SELECT target_id FROM gc_ro WHERE source_id = ? AND type = ?', [$lo->id, EdgeTypes::HAS_MODULE_DEPENDENCY]);
 
             while ($dependencyModuleId = $query->fetchColumn()) {
-                if (!$enrolmentId = EnrolmentHelper::enrolmentId($db, $dependencyModuleId, $profileId)) {
+                if (!$enrolmentIds = EnrolmentHelper::enrolmentIdsByLoAndUser($db, $dependencyModuleId, $userId)) {
                     return self::PENDING;
                 } else {
+                    $enrolmentId = reset($enrolmentIds);
                     $enrolment = EnrolmentHelper::load($db, $enrolmentId);
                     if (EnrolmentStatuses::COMPLETED != $enrolment->status) {
                         return self::PENDING;

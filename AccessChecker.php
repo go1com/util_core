@@ -276,7 +276,7 @@ class AccessChecker
         Connection $db,
         int        $courseId,
         int        $assessorId,
-        int        $studentProfileId = null,
+        int        $studentUserId = null,
         Request    $req = null
     ): bool {
         $checker = new self();
@@ -295,8 +295,9 @@ class AccessChecker
             return true;
         }
 
-        if ($studentProfileId) {
-            if ($enrolmentId = EnrolmentHelper::enrolmentId($db, $courseId, $studentProfileId)) {
+        if ($studentUserId) {
+            if ($enrolmentIds = EnrolmentHelper::enrolmentIdsByLoAndUser($db, $courseId, $studentUserId)) {
+                $enrolmentId = reset($enrolmentIds);
                 if (EdgeHelper::hasLink($db, EdgeTypes::HAS_TUTOR_ENROLMENT_EDGE, $assessorId, $enrolmentId)) {
                     return true;
                 }
