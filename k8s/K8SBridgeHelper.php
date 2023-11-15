@@ -90,7 +90,7 @@ class K8SBridgeHelper
 
             // Rewrite Rabbit Queue ENVs
             if (getenv('QUEUE_HOST_OVERRIDE')) {
-                [$queueHost, $queuePort] = self::getServiceEnvValues('k8s-qa-rabbitmq', 'k8s-qa', 'amqp');
+                [$queueHost, $queuePort] = self::getServiceEnvValues('rabbitmq', 'k8s-qa', 'amqp');
                 $queuePass = getenv('QUEUE_PASSWORD');
                 $queueUser = getenv('QUEUE_USER');
                 if ($queueHost && $queuePort && $queuePass && $queueUser) {
