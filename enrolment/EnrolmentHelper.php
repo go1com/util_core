@@ -56,16 +56,7 @@ class EnrolmentHelper
      */
     public static function enrolmentIdsByLoAndUser(Connection $db, int $loId, int $userId): array
     {
-        return $db
-            ->createQueryBuilder()
-            ->select('id')
-            ->from('gc_enrolment')
-            ->where('lo_id = :lo_id')
-            ->andWhere('user_id = :user_id')
-            ->setParameter(':lo_id', $loId, DB::INTEGER)
-            ->setParameter(':user_id', $userId, DB::INTEGER)
-            ->execute()
-            ->fetchFirstColumn();
+        return $db->fetchFirstColumn('SELECT id FROM gc_enrolment WHERE lo_id = ? AND user_id = ?', [$loId, $userId]);
     }
 
     public static function load(Connection $db, int $id, bool $loadEdges = false)
