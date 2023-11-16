@@ -312,6 +312,12 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         EnrolmentHelper::loadByLoAndProfileId($this->go1, 1, 1);
     }
 
+    public function testEnrolmentIdsByLoAndUser()
+    {
+        $enrolmentId = $this->createEnrolment($this->go1, ['profile_id' => 1, 'user_id' => 1, 'taken_instance_id' => 1, 'lo_id' => 1]);
+        $this->assertEquals($enrolmentId, EnrolmentHelper::enrolmentIdsByLoAndUser($this->go1, 1, 1)[0]);
+    }
+
     public function testLoadByLoProfileAndPortal()
     {
         $fooEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => 1, 'taken_instance_id' => 1, 'lo_id' => 1]);
