@@ -109,6 +109,10 @@ class EnrolmentHelper
         return $enrolments ? $enrolments[0] : null;
     }
 
+    /**
+     * @deprecated
+     * @see EnrolmentHelper::findEnrolment()
+     */
     public static function loadByLoProfileAndPortal(Connection $db, int $loId, int $profileId, int $portalId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ)
     {
         $q = $db
@@ -267,8 +271,8 @@ class EnrolmentHelper
         }
         $progress = ['total' => count($childIds)];
         if ($childIds) {
-            $q = 'SELECT status, count(id) as totalEnrolment FROM gc_enrolment WHERE lo_id IN (?) AND profile_id = ? AND parent_lo_id IN (?) GROUP BY status';
-            $q = $db->executeQuery($q, [$childIds, $enrolment->profileId, $parentIds], [DB::INTEGERS, DB::INTEGER, DB::INTEGERS]);
+            $q = 'SELECT status, count(id) as totalEnrolment FROM gc_enrolment WHERE lo_id IN (?) AND user_id = ? AND parent_lo_id IN (?) GROUP BY status';
+            $q = $db->executeQuery($q, [$childIds, $enrolment->userId, $parentIds], [DB::INTEGERS, DB::INTEGER, DB::INTEGERS]);
             while ($row = $q->fetch(DB::OBJ)) {
                 $progress[$row->status] = $row->totalEnrolment;
             }
@@ -343,14 +347,14 @@ class EnrolmentHelper
         );
     }
 
-    public static function countUserEnrolment(Connection $db, int $profileId, int $takenInstanceId = null): int
+    public static function countUserEnrolment(Connection $db, int $userId, int $takenInstanceId = null): int
     {
         $q = $db->createQueryBuilder();
         $q
             ->select('count(*)')
             ->from('gc_enrolment')
-            ->where('profile_id = :profile_id')
-            ->setParameter('profile_id', $profileId);
+            ->where('user_id = :user_id')
+            ->setParameter('user_id', $userId);
 
         if ($takenInstanceId) {
             $q

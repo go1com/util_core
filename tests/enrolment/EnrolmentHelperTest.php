@@ -206,11 +206,11 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->link($this->go1, EdgeTypes::HAS_MODULE, $this->courseId, $module3, 3);
         $this->link($this->go1, EdgeTypes::HAS_MODULE, $this->courseId, $module4, 4);
         $this->link($this->go1, EdgeTypes::HAS_MODULE, $this->courseId, $module5, 5);
-        $courseEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => $this->profileId, 'lo_id' => $this->courseId]);
+        $courseEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => $this->profileId, 'user_id' => $this->userId, 'lo_id' => $this->courseId]);
         $courseEnrolment = EnrolmentHelper::loadSingle($this->go1, $courseEnrolmentId);
         $progress = EnrolmentHelper::childrenProgressCount($this->go1, $courseEnrolment);
         $this->assertEquals(5, $progress['total']);
-        $basicModuleData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId, 'parent_lo_id' => $this->courseId];
+        $basicModuleData = ['profile_id' => $this->profileId, 'user_id' => $this->userId, 'taken_instance_id' => $this->portalId, 'parent_lo_id' => $this->courseId];
         $this->createEnrolment($this->go1, $basicModuleData + ['lo_id' => $this->moduleId]);
         $this->createEnrolment($this->go1, $basicModuleData + ['lo_id' => $module2]);
         $this->createEnrolment($this->go1, $basicModuleData + ['lo_id' => $module3]);
@@ -246,11 +246,11 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         foreach ($learningItemIds as $key => $learningItemId) {
             $this->link($this->go1, EdgeTypes::HAS_LI, $module2, $learningItemId, $key);
         }
-        $courseEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => $this->profileId, 'lo_id' => $course1]);
+        $courseEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => $this->profileId, 'user_id' => $this->userId, 'lo_id' => $course1]);
         $courseEnrolment = EnrolmentHelper::loadSingle($this->go1, $courseEnrolmentId);
         $progress = EnrolmentHelper::childrenProgressCount($this->go1, $courseEnrolment, true, LiTypes::all());
         $this->assertEquals(7, $progress['total']);
-        $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId, 'parent_lo_id' => $module2];
+        $basicLiData = ['profile_id' => $this->profileId, 'user_id' => $this->userId, 'taken_instance_id' => $this->portalId, 'parent_lo_id' => $module2];
         $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $learningItemIds[0]]);
         $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $learningItemIds[5]]);
         $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $learningItemIds[3]]);
@@ -287,7 +287,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
     public function testCountUserEnrolment()
     {
-        $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
+        $basicLiData = ['profile_id' => $this->profileId, 'user_id' => $this->userId, 'taken_instance_id' => $this->portalId];
         $enrolments = [
             'lp'       => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->lpId]),
             'course'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->courseId, 'parent_lo_id' => $this->lpId]),
@@ -297,8 +297,8 @@ class EnrolmentHelperTest extends UtilCoreTestCase
             'question' => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveQuestionId, 'parent_lo_id' => $this->moduleId]),
             'text'     => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveTextId, 'parent_lo_id' => $this->moduleId]),
         ];
-        $this->assertEquals(count($enrolments), EnrolmentHelper::countUserEnrolment($this->go1, $this->profileId));
-        $this->assertEquals(count($enrolments), EnrolmentHelper::countUserEnrolment($this->go1, $this->profileId, $this->portalId));
+        $this->assertEquals(count($enrolments), EnrolmentHelper::countUserEnrolment($this->go1, $this->userId));
+        $this->assertEquals(count($enrolments), EnrolmentHelper::countUserEnrolment($this->go1, $this->userId, $this->portalId));
         $this->assertEquals(0, EnrolmentHelper::countUserEnrolment($this->go1, 20202));
     }
 
