@@ -105,7 +105,7 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
     public function testFindParentEnrolmentNoParentId()
     {
-        $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
+        $basicLiData = ['profile_id' => $this->profileId, 'user_id' => $this->userId, 'taken_instance_id' => $this->portalId];
         $enrolments = [
             'lp'       => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->lpId]),
             'course'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->courseId]),
@@ -116,31 +116,31 @@ class EnrolmentHelperTest extends UtilCoreTestCase
             'text'     => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveTextId]),
         ];
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['lp']));
-        $this->assertFalse($course);
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['lp'])));
+        $this->assertNull($course);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['module']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['module'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['video'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['resource']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['resource'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['question']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['question'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['text']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['text'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEARNING_PATHWAY);
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['video'])), LoTypes::LEARNING_PATHWAY);
         $this->assertEquals($this->lpId, $lp->id);
     }
 
     public function testFindParentEnrolmentWithParentId()
     {
-        $basicLiData = ['profile_id' => $this->profileId, 'taken_instance_id' => $this->portalId];
+        $basicLiData = ['profile_id' => $this->profileId, 'user_id' => $this->userId, 'taken_instance_id' => $this->portalId];
         $enrolments = [
             'lp'       => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->lpId]),
             'course'   => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->courseId, 'parent_lo_id' => $this->lpId]),
@@ -151,25 +151,25 @@ class EnrolmentHelperTest extends UtilCoreTestCase
             'text'     => $this->createEnrolment($this->go1, $basicLiData + ['lo_id' => $this->electiveTextId, 'parent_lo_id' => $this->moduleId]),
         ];
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['lp']));
-        $this->assertFalse($course);
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['lp'])));
+        $this->assertNull($course);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['module']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['module'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['video'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['resource']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['resource'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['question']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['question'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $course = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['text']));
+        $course = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['text'])));
         $this->assertEquals($this->courseId, $course->id);
 
-        $lp = EnrolmentHelper::findParentEnrolment($this->go1, EnrolmentHelper::load($this->go1, $enrolments['video']), LoTypes::LEARNING_PATHWAY);
+        $lp = EnrolmentHelper::findParentEnrolment($this->go1, Enrolment::create(EnrolmentHelper::load($this->go1, $enrolments['video'])), LoTypes::LEARNING_PATHWAY);
         $this->assertEquals($this->lpId, $lp->id);
     }
 

@@ -199,15 +199,16 @@ class EnrolmentHelper
 
     /**
      * @deprecated
+     * see EnrolmentHelper::parentEnrolment()
      */
-    public static function findParentEnrolment(Connection $db, stdClass $enrolment, $parentLoType = LoTypes::COURSE)
+    public static function findParentEnrolment(Connection $db, Enrolment $enrolment, $parentLoType = LoTypes::COURSE): ?Enrolment
     {
         $loadLo = function ($loId) use ($db) {
             return $db->executeQuery('SELECT id, type FROM gc_lo WHERE id = ?', [$loId])->fetch(DB::OBJ);
         };
 
-        $parentQuery = function (stdClass $lo, stdClass $enrolment) use ($db, $loadLo) {
-            $parentLoId = $enrolment->parent_lo_id ?: false;
+        $parentQuery = function (stdClass $lo, Enrolment $enrolment) use ($db, $loadLo) {
+            $parentLoId = $enrolment->parentLoId ?: false;
             if (empty($parentLoId)) {
                 $query = $db->executeQuery('SELECT source_id FROM gc_ro WHERE type IN (?) AND target_id = ?', [EdgeTypes::LO_HAS_CHILDREN, $lo->id], [DB::INTEGERS, DB::INTEGER]);
                 $parentLoId = $query->fetchColumn();
@@ -215,16 +216,16 @@ class EnrolmentHelper
 
             return [
                 $parentLo = $parentLoId ? $loadLo($parentLoId) : false,
-                $parentEnrolment = $parentLo ? EnrolmentHelper::loadByLoProfileAndPortal($db, $parentLo->id, $enrolment->profile_id, $enrolment->taken_instance_id) : false,
+                $parentLo ? EnrolmentHelper::findEnrolment($db, $enrolment->takenPortalId, $enrolment->userId, $parentLo->id) : false,
             ];
         };
-        $lo = $loadLo($enrolment->lo_id);
+        $lo = $loadLo($enrolment->loId);
         [$parentLo, $parentEnrolment] = $parentQuery($lo, $enrolment);
         while ($parentLo && $parentEnrolment && ($parentLo->type != $parentLoType)) {
             [$parentLo, $parentEnrolment] = $parentQuery($parentLo, $parentEnrolment);
         }
 
-        return $parentLo && ($parentLo->type == $parentLoType) ? $parentEnrolment : false;
+        return $parentLo && ($parentLo->type == $parentLoType) ? $parentEnrolment : null;
     }
 
     public static function sequenceEnrolmentCompleted(Connection $db, int $loId, int $parentLoId, string $parentLoType = LoTypes::COURSE, int $userId = 0)
