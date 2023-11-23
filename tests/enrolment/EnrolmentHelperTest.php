@@ -312,6 +312,17 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         EnrolmentHelper::loadByLoAndProfileId($this->go1, 1, 1);
     }
 
+    public function testLoadByLoAndUserId()
+    {
+        $enrolmentId = $this->createEnrolment($this->go1, ['user_id' => 1, 'taken_instance_id' => 1, 'lo_id' => 1, 'parent_lo_id' => 2]);
+        $this->assertEquals($enrolmentId, EnrolmentHelper::loadByLoAndUserId($this->go1, 1, 1, 2)[0]->id);
+
+        $this->createEnrolment($this->go1, ['user_id' => 1, 'taken_instance_id' => 2, 'lo_id' => 1, 'parent_lo_id' => 2]);
+        $this->assertEquals(2, count(EnrolmentHelper::loadByLoAndUserId($this->go1, 1, 1)));
+
+        $this->assertEquals(0, count(EnrolmentHelper::loadByLoAndUserId($this->go1, 1, 1, 6)));
+    }
+
     public function testEnrolmentIdsByLoAndUser()
     {
         $enrolmentId = $this->createEnrolment($this->go1, ['profile_id' => 1, 'user_id' => 1, 'taken_instance_id' => 1, 'lo_id' => 1]);
@@ -320,11 +331,11 @@ class EnrolmentHelperTest extends UtilCoreTestCase
 
     public function testLoadByLoProfileAndPortal()
     {
-        $fooEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => 1, 'taken_instance_id' => 1, 'lo_id' => 1]);
-        $barEnrolmentId = $this->createEnrolment($this->go1, ['profile_id' => 1, 'taken_instance_id' => 2, 'lo_id' => 1]);
+        $fooEnrolmentId = $this->createEnrolment($this->go1, ['user_id' => 1, 'taken_instance_id' => 1, 'lo_id' => 1]);
+        $barEnrolmentId = $this->createEnrolment($this->go1, ['user_id' => 1, 'taken_instance_id' => 2, 'lo_id' => 1]);
 
-        $this->assertEquals($fooEnrolmentId, EnrolmentHelper::loadByLoProfileAndPortal($this->go1, 1, 1, 1)->id);
-        $this->assertEquals($barEnrolmentId, EnrolmentHelper::loadByLoProfileAndPortal($this->go1, 1, 1, 2)->id);
+        $this->assertEquals($fooEnrolmentId, EnrolmentHelper::findEnrolment($this->go1, 1, 1, 1)->id);
+        $this->assertEquals($barEnrolmentId, EnrolmentHelper::findEnrolment($this->go1, 2, 1, 1)->id);
     }
 
     public function testAssessors()
@@ -459,30 +470,6 @@ class EnrolmentHelperTest extends UtilCoreTestCase
         $this->assertEquals($courseEnrolmentId, EnrolmentHelper::parentEnrolment($this->go1, $videoEnrolment)->id);
         $this->assertEquals($courseEnrolmentId, EnrolmentHelper::parentEnrolment($this->go1, $moduleEnrolment)->id);
         $this->assertEquals($moduleEnrolmentId, EnrolmentHelper::parentEnrolment($this->go1, $videoEnrolment, LoTypes::MODULE)->id);
-    }
-
-    public function testHasEnrolment()
-    {
-        $portalAId = $this->portalId;
-        $portalBName = 'za.mygo1.com';
-        $portalBId = $this->createPortal($this->go1, ['title' => $portalBName]);
-
-        $coursePortalAEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->courseId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalAId]);
-        $modulePortalAEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->moduleId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalAId, 'parent_lo_id' => $this->courseId, 'parent_enrolment_id' => $coursePortalAEnrolmentId]);
-        $videoPortalAEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->liVideoId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalAId, 'parent_lo_id' => $this->moduleId, 'parent_enrolment_id' => $modulePortalAEnrolmentId]);
-
-        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId));
-        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->liVideoId, $this->profileId, $this->moduleId));
-
-        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId, null, $portalAId));
-        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->liVideoId, $this->profileId, $this->moduleId, $portalAId));
-
-        $coursePortalBEnrolmentId = $this->createEnrolment($this->go1, ['lo_id' => $this->courseId, 'profile_id' => $this->profileId, 'taken_instance_id' => $portalBId]);
-        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId, null, $portalBId));
-
-        $this->expectException(\LengthException::class);
-        $this->expectExceptionMessage('More than one enrolment return.');
-        $this->assertTrue(EnrolmentHelper::hasEnrolment($this->go1, $this->courseId, $this->profileId));
     }
 
     public function testLoadUserPlanIdByEntity()

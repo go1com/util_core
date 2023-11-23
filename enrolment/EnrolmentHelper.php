@@ -87,7 +87,7 @@ class EnrolmentHelper
 
     /**
      * @deprecated
-     * @see EnrolmentHelper::loadByLoProfileAndPortal()
+     * @see EnrolmentHelper::loadByLoAndUserId()
      */
     public static function loadByLoAndProfileId(Connection $db, int $loId, int $profileId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ)
     {
@@ -107,6 +107,22 @@ class EnrolmentHelper
         }
 
         return $enrolments ? $enrolments[0] : null;
+    }
+
+    public static function loadByLoAndUserId(Connection $db, int $loId, int $userId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ): array
+    {
+        $q = $db
+            ->createQueryBuilder()
+            ->select($select)
+            ->from('gc_enrolment')
+            ->where('lo_id = :loId')->setParameter(':loId', $loId, DB::INTEGER)
+            ->andWhere('user_id = :userId')->setParameter(':userId', $userId, DB::INTEGER);
+
+        if ($parentLoId) {
+            $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', $parentLoId, DB::INTEGER);
+        }
+
+        return $q->execute()->fetchAll($fetchMode);
     }
 
     /**
@@ -337,15 +353,6 @@ class EnrolmentHelper
             'enrolment_id' => $enrolmentId,
             'plan_id'      => $planId,
         ]);
-    }
-
-    public static function hasEnrolment(Connection $db, int $loId, int $profileId, int $parentLoId = null, int $takenPortalId = null)
-    {
-        return (bool) (
-            $takenPortalId
-                ? static::loadByLoProfileAndPortal($db, $loId, $profileId, $takenPortalId, $parentLoId, '1', DB::COL)
-                : static::loadByLoAndProfileId($db, $loId, $profileId, $parentLoId, '1', DB::COL)
-        );
     }
 
     public static function countUserEnrolment(Connection $db, int $userId, int $takenInstanceId = null): int
