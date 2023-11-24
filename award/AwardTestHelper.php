@@ -172,8 +172,7 @@ class AwardTestHelper
                     $enrolment->pass = (AwardEnrolmentStatuses::COMPLETED == $enrolment->status) ? 1 : 0;
                     $enrolment->status = AwardEnrolmentStatuses::toString($enrolment->status);
                 } else {
-                    $user = UserHelper::load($go1, $awardEnrolment->user_id);
-                    $enrolment = EnrolmentHelper::loadByLoProfileAndPortal($go1, $awardItem->entity_id, $user->profile_id, $awardEnrolment->instance_id);
+                    $enrolment = EnrolmentHelper::findEnrolment($go1, $awardEnrolment->instance_id, $awardEnrolment->user_id, $awardItem->entity_id);
                 }
 
                 $awardItemEnrolmentId = $this->createAwardItemEnrolment($this->db, [
