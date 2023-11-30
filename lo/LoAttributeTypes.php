@@ -11,6 +11,8 @@ class LoAttributeTypes
     public const TEXT      = "TEXT";
     public const DIMENSION = "DIMENSION";
     public const DATE      = "DATE";
+    public const JSON      = "JSON";
+
 
     public static function all()
     {
