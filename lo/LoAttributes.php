@@ -44,6 +44,9 @@ class LoAttributes
     public const CURATED_BY                    = 33; // use this to surface content curation tool and also in recommendations, could be used as a signal displayed on lo cards. Eg: curated_by = "go1"
     public const FEATURED_BY                   = 34; // for featured playlists, combine use with featured_status, Eg: featured_status = true & featured_by = "go1"
     public const LAUNCH_BEHAVIOR               = 35;
+    public const GENAI_PLAYLIST_METADATA       = 36; // for GenAI to manage a playlist, JSON/Text type eg: generated_playlist_metadata = {"skills": ["Effective communication"], "filters": { "level": ["beginner"]}}
+    public const GENAI_PLAYLIST_HISTORY        = 37; // for GenAI to manage a playlist, Array type eg: generated_playlist_history = [{metadata: {"skills": [ ".." ], "filters": { ... }, "playlist": { ... }}]
+    public const GENAI_PLAYLIST_STATUS         = 38; // for GenAI to manage a playlist, Text type eg: generated_playlist_status = "in-progress"
 
     public static function machineName(int $attribute): ?string
     {
@@ -82,7 +85,10 @@ class LoAttributes
             self::STREAMABLE                => 'streamable',
             self::CURATED_BY                => 'curated_by',
             self::FEATURED_BY               => 'featured_by',
-            self::LAUNCH_BEHAVIOR           => 'launch_behavior'
+            self::LAUNCH_BEHAVIOR           => 'launch_behavior',
+            self::GENAI_PLAYLIST_METADATA   => 'genai_playlist_metadata',
+            self::GENAI_PLAYLIST_HISTORY    => 'genai_playlist_history',
+            self::GENAI_PLAYLIST_STATUS     => 'genai_playlist_status',
         ];
 
         return $map[$attribute] ?? null;
