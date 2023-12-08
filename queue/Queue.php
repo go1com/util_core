@@ -275,6 +275,9 @@ class Queue
     public const WALLET_LEARNING_REQUEST_APPROVAL_REQUESTED   = 'wallet.learning-request.approval.requested';
     public const WALLET_LEARNING_REQUEST_APPROVAL_GRANTED   = 'wallet.learning-request.approval.granted';
 
+    # content retirements events
+    public const CONTENT_RETIREMENTS_REMINDER = 'content-retirements.reminder';
+
     /**
      * @deprecated
      *
