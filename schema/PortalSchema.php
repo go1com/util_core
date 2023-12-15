@@ -78,6 +78,7 @@ class PortalSchema
             $stream->addColumn('created', Type::INTEGER, ['unsigned' => true]);
             $stream->addColumn('action', Type::STRING);
             $stream->addColumn('payload', Type::BLOB);
+            $stream->addColumn('actor_id', TYPE::INTEGER, ['unsigned' => true]);
             $stream->setPrimaryKey(['id']);
             $stream->addIndex(['portal_id']);
             $stream->addIndex(['created']);
@@ -90,6 +91,7 @@ class PortalSchema
         self::update02($schema);
         self::update03($schema);
         self::update04($schema);
+        self::update05($schema);
     }
 
     public static function installPortalConf(Schema $schema): void
@@ -161,6 +163,16 @@ class PortalSchema
             $portalData = $schema->getTable('portal_data');
             if (!$portalData->hasColumn('data_residency_region')) {
                 $portalData->addColumn('data_residency_region', 'string', ['length' => 30, 'notnull' => false]);
+            }
+        }
+    }
+
+    public static function update05(Schema $schema): void
+    {
+        if ($schema->hasTable('portal_stream')) {
+            $portalData = $schema->getTable('portal_stream');
+            if (!$portalData->hasColumn('actor_id')) {
+                $portalData->addColumn('actor_id', TYPE::INTEGER, ['unsigned' => true, 'notnull' => false]);
             }
         }
     }
