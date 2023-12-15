@@ -78,7 +78,7 @@ class PortalSchema
             $stream->addColumn('created', Type::INTEGER, ['unsigned' => true]);
             $stream->addColumn('action', Type::STRING);
             $stream->addColumn('payload', Type::BLOB);
-            $stream->addColumn('actor_id', TYPE::INTEGER, ['unsigned' => true]);
+            $stream->addColumn('actor_id', TYPE::INTEGER, ['unsigned' => true, 'notnull' => false]);
             $stream->setPrimaryKey(['id']);
             $stream->addIndex(['portal_id']);
             $stream->addIndex(['created']);
