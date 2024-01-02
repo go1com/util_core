@@ -36,7 +36,7 @@ class LearningObject
     /** @var Edge[][] */
     public $edges = [];
 
-    public static function create(stdClass $row, int $userProfileId = null, Connection $db = null): LearningObject
+    public static function create(stdClass $row, int $userId = null, Connection $db = null): LearningObject
     {
         $lo = new LearningObject();
         $lo->id = $row->id;
@@ -60,8 +60,8 @@ class LearningObject
 
         if ($db) {
             # Load enrolment for the user
-            $enrolment = 'SELECT * FROM gc_enrolment WHERE profile_id = ? AND lo_id = ?';
-            $enrolment = $db->executeQuery($enrolment, [$userProfileId, $lo->id]);
+            $enrolment = 'SELECT * FROM gc_enrolment WHERE user_id = ? AND lo_id = ?';
+            $enrolment = $db->executeQuery($enrolment, [$userId, $lo->id]);
             if ($enrolment = $enrolment->fetch(DB::OBJ)) {
                 $lo->enrolment = Enrolment::create($enrolment);
             }

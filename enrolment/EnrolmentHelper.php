@@ -43,15 +43,6 @@ class EnrolmentHelper
     }
 
     /**
-     * @deprecated
-     * @see EnrolmentHelper::enrolmentIdsByLoAndUser()
-     */
-    public static function enrolmentId(Connection $db, int $loId, int $profileId)
-    {
-        return $db->fetchColumn('SELECT id FROM gc_enrolment WHERE lo_id = ? AND profile_id = ?', [$loId, $profileId]);
-    }
-
-    /**
      * @throws Exception
      */
     public static function enrolmentIdsByLoAndUser(Connection $db, int $loId, int $userId): array
@@ -85,30 +76,6 @@ class EnrolmentHelper
             ->fetchAll(DB::OBJ);
     }
 
-    /**
-     * @deprecated
-     * @see EnrolmentHelper::loadByLoAndUserId()
-     */
-    public static function loadByLoAndProfileId(Connection $db, int $loId, int $profileId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ)
-    {
-        $q = $db
-            ->createQueryBuilder()
-            ->select($select)
-            ->from('gc_enrolment')
-            ->where('lo_id = :lo_id')->setParameter(':lo_id', (int) $loId, DB::INTEGER)
-            ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int) $profileId, DB::INTEGER);
-
-        if ($parentLoId) {
-            $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
-        }
-        $enrolments = $q->execute()->fetchAll($fetchMode);
-        if (count($enrolments) > 1) {
-            throw new LengthException('More than one enrolment return.');
-        }
-
-        return $enrolments ? $enrolments[0] : null;
-    }
-
     public static function loadByLoAndUserId(Connection $db, int $loId, int $userId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ): array
     {
         $q = $db
@@ -123,26 +90,6 @@ class EnrolmentHelper
         }
 
         return $q->execute()->fetchAll($fetchMode);
-    }
-
-    /**
-     * @deprecated
-     * @see EnrolmentHelper::findEnrolment()
-     */
-    public static function loadByLoProfileAndPortal(Connection $db, int $loId, int $profileId, int $portalId, int $parentLoId = null, $select = '*', $fetchMode = DB::OBJ)
-    {
-        $q = $db
-            ->createQueryBuilder()
-            ->select($select)
-            ->from('gc_enrolment')
-            ->where('lo_id = :lo_id')->setParameter(':lo_id', (int) $loId)
-            ->andWhere('profile_id = :profile_id')->setParameter(':profile_id', (int) $profileId, DB::INTEGER)
-            ->andWhere('taken_instance_id = :taken_instance_id')->setParameter(':taken_instance_id', (int) $portalId, DB::INTEGER);
-
-        if ($parentLoId) {
-            $q->andWhere('parent_lo_id = :parent_lo_id')->setParameter(':parent_lo_id', (int) $parentLoId, DB::INTEGER);
-        }
-        return $q->execute()->fetch($fetchMode);
     }
 
     public static function loadRevision(Connection $db, int $id)
@@ -423,36 +370,6 @@ class EnrolmentHelper
         }
 
         return [$dueDate, $planType];
-    }
-
-    /**
-     * @param Connection $db
-     * @param int        $portalId
-     * @param int        $profileId
-     * @param int        $loId
-     * @param int|null   $parentEnrolmentId
-     * @return Enrolment|null
-     * @deprecated
-     * @see findEnrolment
-     */
-    public static function loadUserEnrolment(Connection $db, int $portalId, int $profileId, int $loId, int $parentEnrolmentId = null): ?Enrolment
-    {
-        $q = $db
-            ->createQueryBuilder()
-            ->select('*')
-            ->from('gc_enrolment')
-            ->where('lo_id = :loId')->setParameter(':loId', $loId)
-            ->andWhere('profile_id = :profileId')->setParameter(':profileId', $profileId)
-            ->andWhere('taken_instance_id = :takenInstanceId')->setParameter(':takenInstanceId', $portalId);
-
-        if (!is_null($parentEnrolmentId)) {
-            $q
-                ->andWhere('parent_enrolment_id = :parentEnrolmentId')
-                ->setParameter(':parentEnrolmentId', $parentEnrolmentId);
-        }
-        $row = $q->execute()->fetch(DB::OBJ);
-
-        return $row ? Enrolment::create($row) : null;
     }
 
     public static function findEnrolment(Connection $db, int $portalId, int $userId, int $loId, int $parentEnrolmentId = null): ?Enrolment

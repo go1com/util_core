@@ -25,7 +25,7 @@
   },
   "require-dev": {
     "ezyang/htmlpurifier": "^4.12",
-    "phpspec/prophecy": "^1.17",
+    "phpspec/prophecy": "^1.18",
     "phpspec/prophecy-phpunit": "^2.0",
     "behat/transliterator": "^1.5"
   },
