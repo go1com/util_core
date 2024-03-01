@@ -93,6 +93,7 @@ class Plan implements JsonSerializable
                 : null;
         };
         ($this->type != $plan->type) && $values['type'] = $plan->type;
+        ($this->created != $plan->created) && $values['created_date'] = $plan->created ? $plan->created->setTimezone(new DateTimeZone("UTC"))->format(self::DATE_MYSQL) : null;
         ($this->assignerId != $plan->assignerId) && $values['assigner_id'] = $plan->assignerId;
         ($this->status != $plan->status) && $values['status'] = $plan->status;
         ($this->due != $plan->due) && $values['due_date'] = $plan->due ? $plan->due->setTimezone(new DateTimeZone("UTC"))->format(self::DATE_MYSQL) : null;
