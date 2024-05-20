@@ -263,6 +263,19 @@ class LoExploreSchema
                     'failed' => ['type' => Schema::T_BOOL],
                 ],
             ],
+            'revisions' => [
+                'type' => Schema::T_OBJECT,
+            ],
+            '__search' => [
+                'properties' => [
+                    'supported_languages' => [
+                        'type' => Schema::T_KEYWORD,
+                    ],
+                    'playlist_owner_id' => [
+                        'type' => Schema::T_KEYWORD,
+                    ]
+                ]
+            ],
         ],
     ];
 
