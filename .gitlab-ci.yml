@@ -19,7 +19,7 @@ test:phpunit:
   image: go1com/ci-php:php7
   stage: test
   script:
-    - composer config gitlab-token.code.go1.com.au $GITLAB_TOKEN
+    - composer config gitlab-token.code.go1.com.au ${UTIL_GITLAB_TOKEN}
     - composer install
     - phpunit --colors=never --log-junit report.xml --coverage-text --coverage-cobertura=cobertura.xml
   coverage: /^\s*Lines:\s*\d+.\d+\%/
