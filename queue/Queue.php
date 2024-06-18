@@ -274,6 +274,7 @@ class Queue
     # wallet events
     public const WALLET_LEARNING_REQUEST_APPROVAL_REQUESTED   = 'wallet.learning-request.approval.requested';
     public const WALLET_LEARNING_REQUEST_APPROVAL_GRANTED   = 'wallet.learning-request.approval.granted';
+    public const WALLET_ORGANIZATION_TOP_UP_BALANCE_REMINDER   = 'wallet.organization.top-up-balance-reminder';
 
     # content retirements events
     public const CONTENT_RETIREMENTS_REMINDER = 'content-retirements.reminder';
