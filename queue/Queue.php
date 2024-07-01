@@ -315,6 +315,8 @@ class Queue
     public const DO_FINDER                            = 'do.finder';
     public const DO_PUBLIC_API_WEBHOOK_REQUEST        = 'do.public-api.webhook-request'; # { appId: INT, url: STRING, subject: OBJECT, original: null|OBJECT }
     public const DO_MAIL_SEND                         = 'do.mail.send'; # { subject: STRING, body: STRING, html: STRING, context: OBJECT, attachments: STRING[], options: OBJECT }
+    public const DO_MAIL_SEND_BULK                    = 'do.mail.send-bulk'; # { subject: STRING, body: STRING, html: STRING, context: OBJECT, attachments: STRING[], options: OBJECT }
+    // @deprecated
     public const DO_MAIL_BULK_SEND                    = 'mail-bulk.send'; # { subject: STRING, body: STRING, html: STRING, context: OBJECT, attachments: STRING[], options: OBJECT }
     public const DO_HISTORY_RECORD                    = 'do.history.record';
     public const DO_ENROLMENT                         = 'process.enrolment'; # { action: STRING, body: OBJECT }
