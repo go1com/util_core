@@ -275,6 +275,8 @@ class Queue
     public const WALLET_LEARNING_REQUEST_APPROVAL_REQUESTED   = 'wallet.learning-request.approval.requested';
     public const WALLET_LEARNING_REQUEST_APPROVAL_GRANTED   = 'wallet.learning-request.approval.granted';
     public const WALLET_LEARNING_REQUEST_APPROVAL_DENIED   = 'wallet.learning-request.approval.denied';
+    public const WALLET_LEARNING_REQUEST_INVOICE_REMINDER   = 'wallet.learning-request.invoice.reminder';
+    public const WALLET_LEARNING_REQUEST_PURCHASE_REMINDER   = 'wallet.learning-request.purchase.reminder';
     public const WALLET_ORGANIZATION_TOP_UP_BALANCE_REMINDER   = 'wallet.organization.top-up-balance-reminder';
 
     # content retirements events
