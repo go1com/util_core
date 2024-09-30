@@ -61,11 +61,18 @@ class LoHelper
         return $payload->embedded->lo ?? self::load($go1, $payload->{$loIdProperty});
     }
 
+    
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function load(Connection $go1, int $id, int $portalId = null, bool $expensiveTree = false, bool $attachAttributes = false)
     {
         return ($learningObjects = static::loadMultiple($go1, [$id], $portalId, $expensiveTree, $attachAttributes)) ? $learningObjects[0] : false;
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function loadMultiple(Connection $db, array $ids, int $portalId = null, bool $expensiveTree = false, bool $attachAttributes = false): array
     {
         $ids = array_map('intval', $ids);
@@ -213,7 +220,9 @@ class LoHelper
         return $arr;
     }
 
-    // load specified fields only
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function loadMultipleFieldsOnly(Connection $db, array $ids, array $fields = null): array
     {
         $ids = array_map('intval', $ids);
@@ -327,6 +336,9 @@ class LoHelper
             ->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function parentIds(Connection $db, int $loId, $allParent = true): array
     {
         $q = 'SELECT source_id FROM gc_ro WHERE type IN (?) AND target_id = ?';
@@ -341,6 +353,9 @@ class LoHelper
         return array_unique($ids);
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function parentsAuthorIds(Connection $db, int $loId, array $parentLoIds = null): array
     {
         $authorIds = [];
@@ -379,6 +394,9 @@ class LoHelper
         return array_map('intval', $assessorIds);
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function childIds(Connection $db, int $loId, $all = false): array
     {
         $q = 'SELECT target_id FROM gc_ro WHERE type IN (?) AND source_id = ?';
@@ -393,6 +411,9 @@ class LoHelper
         return $ids;
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function moduleIdToCourseId(Connection $db, int $moduleId): int
     {
         $_ = 'SELECT source_id FROM gc_ro WHERE (type = ? OR type = ?) AND target_id = ?';
@@ -401,6 +422,9 @@ class LoHelper
         return (int) $_;
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function moduleIds(Connection $db, int $loId): array
     {
         return EdgeHelper::select('target_id')
@@ -426,6 +450,9 @@ class LoHelper
         return [];
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function isSingleLi(stdClass $lo): bool
     {
         $isSingleLi = $lo->single_li ?? $lo->data->{self::SINGLE_LI} ?? false;
@@ -435,12 +462,18 @@ class LoHelper
             : false;
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function authorIds(Connection $db, int $loId): array
     {
         return EdgeHelper::select('target_id')
             ->get($db, [$loId], [], [EdgeTypes::HAS_AUTHOR_EDGE], PDO::FETCH_COLUMN);
     }
 
+    /**
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
+     */
     public static function authors(Connection $db, UserDomainHelper $userDomainHelper, int $loId): array
     {
         $authorIds = self::authorIds($db, $loId);
@@ -475,8 +508,7 @@ class LoHelper
     }
 
     /**
-     * Return the number of LIs in a Course (if having LI.events in the course, they will be counted as one LI)
-     *
+     * @deprecated Visit https://go1web.atlassian.net/wiki/spaces/PE/pages/3484975224/Migrating+from+PHP+Go1+Utils#Migrating-util_core%5CLoHelper-functions for migration steps to the 1Content system
      */
     public static function countChild(Connection $db, int $id): int
     {
